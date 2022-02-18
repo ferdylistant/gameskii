@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+
+class ImageController extends Controller
+{
+    public function getImage($imageName)
+    {
+        $imagePath = storage_path('uploads/avatar/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Image not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getPicture($imageName)
+    {
+        $imagePath = storage_path('uploads/picture-game/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Picture not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getPictureTeam($imageName)
+    {
+        $imagePath = storage_path('uploads/picture-team/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Picture not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getBannerTop($imageName)
+    {
+        $imagePath = storage_path('uploads/banner-game/top/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Banner not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getBannerBottom($imageName)
+    {
+        $imagePath = storage_path('uploads/banner-game/bottom/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Banner not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+}
