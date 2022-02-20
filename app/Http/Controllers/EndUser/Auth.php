@@ -125,7 +125,7 @@ class Auth extends Controller
             return response()->json([
                 'code' => 404,
                 'status'  => 'error',
-                'message' => 'Email not registered!'
+                'message' => 'Email not terdaftar!'
             ],404);
         }
         if ($data->roles_id != '3')  {
