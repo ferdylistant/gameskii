@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use App\Models\User;
 use Ramsey\Uuid\Uuid;
+use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Models\TopBannerGame;
 use App\Models\BottomBannerGame;
@@ -21,34 +22,19 @@ class GameController extends Controller
         $this->user = new User();
         $this->topBanner = new TopBannerGame();
         $this->bottomBanner = new BottomBannerGame();
+        $this->gameAccount = new GameAccount();
     }
     public function getGameData(Request $request)
     {
-        $dataGame = $this->game->all();
-        $dataJoin = DB::table('users')
-            ->select('users.email', 'roles.name')
-            ->join('games', 'users.id', '=', 'games.user_id')
-            ->join('roles', 'roles.id', '=', 'users.roles_id')
-            ->where('games.user_id', $dataGame[0]->user_id)
-            ->get();
-        $email = $this->user->where('email', $dataJoin[0]->email)->first();
+        $dataGame = $this->game->join('top_banner_games','games.id','=',"top_banner_games.games_id")
+        ->join('bottom_banner_games','games.id','=',"bottom_banner_games.games_id")
+        ->select('games.*','top_banner_games.path as top_banner','bottom_banner_games.path as bottom_banner')
+        ->get();
         try {
             $arrayData = [
                 'code' => 200,
                 'status' => 'success',
-                'data' => [
-                    'game'=>[
-                        'name' => $dataGame[0]->name,
-                        'picture' => URL::to('/api/picture-game/'.$dataGame[0]->picture),
-                        'banner' => URL::to('/api/banner-game/'.$dataGame[0]->banner),
-                        'created_at' => $dataGame[0]->created_at,
-                        'updated_at' => $dataGame[0]->updated_at,
-                    ],
-                    'by' =>[
-                        'name' => $email->name,
-                        'role' => $dataJoin[0]->name
-                    ]
-                ]
+                'data' => $dataGame
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
@@ -60,8 +46,7 @@ class GameController extends Controller
     }
     public function postGame(Request $request, $idGame)
     {
-        try {
-            $game = $this->game->where('id', $idGame)->first();
+        $game = $this->game->where('id', $idGame)->first();
             $topBanner = $this->topBanner->where('games_id', $game->id)->get();
             $bottomBanner = $this->bottomBanner->where('games_id', $game->id)->get();
             foreach ($topBanner as $result) {
@@ -88,18 +73,31 @@ class GameController extends Controller
                 ]
 
             ];
-            $request->session()->put('gamedata', $data);
-            return response()->json([
-                'code' => 200,
-                'status' => 'success',
-                'data' => $data
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ]);
+
+        if ($this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=', $idGame)->count() != 0) {
+            try {
+                $dataGameAccount = $this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=', $idGame)->first();
+                $request->session()->put('gamedata', $data);
+                $request->session()->put('game_account', $dataGameAccount);
+                return response()->json([
+                    'status' => 'logged',
+                    'message' => 'You already have an account for this game',
+                    'game-account-data' => $dataGameAccount,
+                    'game-data' => $data
+                ], 200);
+            } catch (\Exception $e) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $e->getMessage()
+                ]);
+            }
         }
+        return response()->json([
+            'code' => 201,
+            'status' => 'created',
+            'message' => 'You will be redirected to the registration game account page',
+            'data' => $data
+        ], 201);
     }
 
     public function create(Request $request)

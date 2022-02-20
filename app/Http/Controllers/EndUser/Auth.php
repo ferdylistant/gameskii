@@ -121,7 +121,14 @@ class Auth extends Controller
 
         //cek ke database
         $data = $this->endUser->where('email', $request->email)->first();
-        if ($data->roles_id == '1' || $data->roles_id == '2')  {
+        if (!$data) {
+            return response()->json([
+                'code' => 404,
+                'status'  => 'error',
+                'message' => 'Email not registered!'
+            ],404);
+        }
+        if ($data->roles_id != '3')  {
             return response()->json([
                 "code" => 403,
                 "status" => "error",

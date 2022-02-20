@@ -19,7 +19,7 @@ class Scrim extends Model implements AuthenticatableContract, AuthorizableContra
     public $incrementing = false;
     protected $fillable = [
         'id',
-        'teams_id',
+        'games_id',
         'game_accounts_id',
         'name_party',
         'image',

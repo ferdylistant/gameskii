@@ -50,11 +50,12 @@ class GameAccountController extends Controller
             $this->gameAccount->games_id = $sessGame['game']['id'];
             $this->gameAccount->is_online = '0';
             if ($this->gameAccount->save()) {
-                // $request->session()->put('game_account', $this->gameAccount);
+                $request->session()->put('game_account', $this->gameAccount);
                 return response()->json([
                     'code' => 201,
                     'status' => 'success',
-                    'message' => 'Game account sign up successfully!'
+                    'message' => 'Game account sign up successfully!',
+                    'data' => $this->gameAccount
                 ], 201);
             }
         } catch (\Exception $e) {
