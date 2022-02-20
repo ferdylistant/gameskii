@@ -13,6 +13,26 @@ class ScrimController extends Controller
     {
         $this->scrim = new Scrim();
     }
+    public function getMyScrim(Request $request, $idScrim){
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
+        try {
+            $scrim = $this->scrim->where('id', '=', $idScrim)
+            ->where('games_id','=',$sessGame['game']['id'])->first();
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 
     public function createScrim(Request $request)
     {
