@@ -186,7 +186,8 @@ class SocialFollowController extends Controller
             return response()->json([
                 'code' => 200,
                 'status' => 'success',
-                'message' => 'Test'
+                'message' => 'Test',
+                'data' => $dataFollowing
             ], 200);
             $alreadyFollowed = $this->follow->where('acc_following_id', '=', $dataFollowing->id)->first();
             if ($alreadyFollowed) {
