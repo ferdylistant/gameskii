@@ -37,7 +37,7 @@ class SocialAccountController extends Controller
     }
     public function callbackFromGoogle(Request $request)
     {
-        $userSocial =   Socialite::driver('google')->stateless()->user();
+        $userSocial = Socialite::driver('google')->stateless()->user();
         $userdata = $this->endUser->where('google_id', $userSocial->id)->first();
         if ($userdata) {
             return $this->loginGuzzle($request, $userSocial, $userdata);
