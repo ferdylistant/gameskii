@@ -26,7 +26,7 @@ class SocialAccountController extends Controller
     {
         try {
             // Socialite::driver('google')->redirect();
-            return Socialite::driver('google')->redirect();
+            return Socialite::driver('google')->stateless()->redirect();
         } catch (\Exception $e) {
             // You should show something simple fail message
             return response()->json([
@@ -37,7 +37,7 @@ class SocialAccountController extends Controller
     }
     public function callbackFromGoogle(Request $request)
     {
-        $userSocial =   Socialite::driver('google')->user();
+        $userSocial =   Socialite::driver('google')->stateless()->user();
         $userdata = $this->endUser->where('google_id', $userSocial->id)->first();
         if ($userdata) {
             return $this->loginGuzzle($request, $userSocial, $userdata);
