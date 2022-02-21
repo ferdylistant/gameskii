@@ -183,7 +183,7 @@ class SocialFollowController extends Controller
                     'message' => "Game account data not found"
                 ], 404);
             }
-            return response()->json($dataFollowing);
+            return response()->json($dataFollowing->id);
             $alreadyFollowed = $this->follow->where('acc_following_id', '=', $dataFollowing->id)->first();
             if ($alreadyFollowed) {
                 return response()->json([
