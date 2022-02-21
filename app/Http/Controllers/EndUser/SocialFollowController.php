@@ -188,10 +188,10 @@ class SocialFollowController extends Controller
             ->count();
             if ($alreadyFollowed > 0) {
                 return response()->json([
-                    'code' => 404,
+                    'code' => 409,
                     'status' => 'error',
                     'message' => "You already followed this account"
-                ], 404);
+                ], 409);
             }
             $user = $this->user->where('id', '=', $dataFollowing->users_id)->first();
             $details = [
