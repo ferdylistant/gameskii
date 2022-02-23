@@ -22,11 +22,11 @@ class SocialAccountController extends Controller
     {
         $this->endUser = new User();
     }
-    public function redirectToGoogle()
+    public function redirectToGoogle($provider)
     {
         try {
             // Socialite::driver('google')->redirect();
-            return Socialite::driver('google')->stateless()->redirect();
+            return Socialite::driver($provider)->stateless()->redirect();
         } catch (\Exception $e) {
             // You should show something simple fail message
             return response()->json([
