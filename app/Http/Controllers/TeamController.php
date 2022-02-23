@@ -255,7 +255,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You already accepted!'
-            ], 404);
+            ], 409);
         }
         try {
             $dataTeamPlayer->status = '1';
