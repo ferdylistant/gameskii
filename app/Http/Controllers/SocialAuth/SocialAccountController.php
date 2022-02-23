@@ -24,6 +24,7 @@ class SocialAccountController extends Controller
     }
     public function redirectToGoogle($provider)
     {
+        return "redirectToGoogle";
         try {
             // Socialite::driver('google')->redirect();
             return Socialite::driver($provider)->stateless()->redirect();
