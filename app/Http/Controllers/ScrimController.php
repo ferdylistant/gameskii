@@ -12,7 +12,34 @@ class ScrimController extends Controller
     public function __construct()
     {
         $this->scrim = new Scrim();
+        $this->gameAccount = new GameAccount();
     }
+    public function getMyScrims(Request $request)
+    {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'It is not your role'
+            ], 403);
+        }
+        $user = auth('user')->user();
+        $scrims = $this->scrim->where('user_id', $user->id)->get();
+        try {
+            $arrayData = [
+                'status' => 'success',
+                'message' => 'Data Scrim',
+                'data' => $scrims
+            ];
+            return response()->json($arrayData, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
     public function getMyScrim(Request $request, $idScrim){
         $roles_id = auth('user')->user()->roles_id;
         if ($roles_id != '3') {
@@ -26,6 +53,7 @@ class ScrimController extends Controller
         try {
             $scrim = $this->scrim->where('id', '=', $idScrim)
             ->where('games_id','=',$sessGame['game']['id'])->first();
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
