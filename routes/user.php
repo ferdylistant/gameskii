@@ -13,7 +13,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('/reset-password', 'Api\NewPasswordController@reset');
     $router->get('/email-verification', 'Api\EmailVerificationController@emailVerify');
     $router->get('/auth/redirect', function(){
-        return Socialite::driver('google')->stateless()->redirect();
+        return Socialite::driver('google')->redirect();
     });
     $router->get('/auth/callback', 'SocialAuth\SocialAccountController@callbackFromGoogle');
     $router->get('/avatar/{imageName}', 'Api\ImageController@getImage');
