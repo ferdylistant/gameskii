@@ -30,11 +30,25 @@ class GameController extends Controller
         ->join('bottom_banner_games','games.id','=',"bottom_banner_games.games_id")
         ->select('games.*','top_banner_games.path as top_banner','bottom_banner_games.path as bottom_banner')
         ->get();
+        foreach ($dataGame[0]->top_banner as $value) {
+            $topBanner[] = URL::to('/api/banner-game/top/').$value;
+        }
+        foreach ($dataGame[0]->bottom_banner as $value) {
+            $bottomBanner[] = URL::to('/api/banner-game/bottom/').$value;
+        }
         try {
             $arrayData = [
-                'code' => 200,
                 'status' => 'success',
-                'data' => $dataGame
+                'message' => 'Data Game',
+                'data' => [
+                    'id' => $dataGame[0]->id,
+                    'name' => $dataGame[0]->name,
+                    'picture' => $dataGame[0]->picture,
+                    'created_at' => $dataGame[0]->created_at,
+                    'updated_at' => $dataGame[0]->updated_at,
+                    'top_banner' => $topBanner,
+                    'bottom_banner' => $bottomBanner,
+                ]
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
@@ -82,8 +96,11 @@ class GameController extends Controller
                 return response()->json([
                     'status' => 'logged',
                     'message' => 'You already have an account for this game',
-                    'game-account-data' => $dataGameAccount,
-                    'game-data' => $data
+                    'data' => [
+                        'game-account-data' => $dataGameAccount,
+                        'game-data' => $data
+                    ],
+                    
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
@@ -93,7 +110,6 @@ class GameController extends Controller
             }
         }
         return response()->json([
-            'code' => 201,
             'status' => 'created',
             'message' => 'You will be redirected to the registration game account page',
             'data' => $data
@@ -106,7 +122,6 @@ class GameController extends Controller
         // return response()->json($role);
         if (($role != '1' && $role != '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -155,7 +170,6 @@ class GameController extends Controller
                 $this->topBanner->save();
                 $this->bottomBanner->save();
                 return response()->json([
-                    'code' => 201,
                     'status' => 'posted',
                     'message' => 'Game has been posted successfully!'
                 ], 201);

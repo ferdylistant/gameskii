@@ -21,7 +21,6 @@ class GameAccountController extends Controller
         // return response()->json($role);
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -37,9 +36,8 @@ class GameAccountController extends Controller
         }
         if ($this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=',$sessGame['game']['id'])->exists()) {
             return response()->json([
-                "code" => 409,
                 "status" => "error",
-                "message" => "You already have a '".$sessGame['game']['name']."' account"
+                "message" => "You already have a '".$sessGame['game']['name']."' account",
             ], 409);
         }
         try {
@@ -52,7 +50,6 @@ class GameAccountController extends Controller
             if ($this->gameAccount->save()) {
                 $request->session()->put('game_account', $this->gameAccount);
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'Game account sign up successfully!',
                     'data' => $this->gameAccount
@@ -72,7 +69,6 @@ class GameAccountController extends Controller
         // return response()->json();
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
