@@ -247,7 +247,16 @@ class TeamController extends Controller
                 'message' => 'Nothing to accept!'
             ], 404);
         }
-
+        $alreadyAccept = $this->teamPlayer->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
+        ->where('teams_id', '=', $idTeam)
+        ->where('status','=','1')
+        ->first();
+        if ($alreadyAccept) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You already accepted!'
+            ], 404);
+        }
         try {
             $dataTeamPlayer->status = '1';
             if ($dataTeamPlayer->save()){
@@ -287,7 +296,6 @@ class TeamController extends Controller
                 $user = $this->user->where('id', $dataGameAccountMaster->users_id)->first();
                 $user->notify(new TeamNotification($details));
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'You accepted the invitation!',
                 ], 201);
