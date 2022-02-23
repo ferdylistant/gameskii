@@ -22,7 +22,7 @@ class SocialAccountController extends Controller
     {
         $this->endUser = new User();
     }
-    public function redirectToGoogle($provider)
+    public function redirectToGoogle()
     {
         // return "redirectToGoogle";
         try {
