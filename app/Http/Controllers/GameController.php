@@ -30,10 +30,10 @@ class GameController extends Controller
         ->join('bottom_banner_games','games.id','=',"bottom_banner_games.games_id")
         ->select('games.*','top_banner_games.path as top_banner','bottom_banner_games.path as bottom_banner')
         ->get();
-        foreach ($dataGame['top_banner'] as $value) {
+        foreach ($dataGame->top_banner as $value) {
             $topBanner[] = URL::to('/api/banner-game/top/').$value;
         }
-        foreach ($dataGame['bottom_banner'] as $value) {
+        foreach ($dataGame->bottom_banner as $value) {
             $bottomBanner[] = URL::to('/api/banner-game/bottom/').$value;
         }
         try {
