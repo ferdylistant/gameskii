@@ -37,11 +37,11 @@ class GameController extends Controller
                 'data' => [
                     'id' => $dataGame[0]->id,
                     'name' => $dataGame[0]->name,
-                    'picture' => $dataGame[0]->picture,
+                    'picture' => URL::to('/api/picture-game/'.$dataGame[0]->picture),
                     'created_at' => $dataGame[0]->created_at,
                     'updated_at' => $dataGame[0]->updated_at,
-                    'top_banner' => URL::to('/api/banner-game/top/').$dataGame[0]->top_banner,
-                    'bottom_banner' => URL::to('/api/banner-game/bottom/').$dataGame[0]->bottom_banner,
+                    'top_banner' => URL::to('/api/banner-game/top/'.$dataGame[0]->top_banner),
+                    'bottom_banner' => URL::to('/api/banner-game/bottom/'.$dataGame[0]->bottom_banner),
                 ]
             ];
             return response()->json($arrayData, 200);
