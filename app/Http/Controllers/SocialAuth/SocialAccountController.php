@@ -24,10 +24,10 @@ class SocialAccountController extends Controller
     }
     public function redirectToGoogle($provider)
     {
-        return "redirectToGoogle";
+        // return "redirectToGoogle";
         try {
             // Socialite::driver('google')->redirect();
-            return Socialite::driver($provider)->stateless()->redirect();
+            return Socialite::driver($provider)->redirect();
         } catch (\Exception $e) {
             // You should show something simple fail message
             return response()->json([
