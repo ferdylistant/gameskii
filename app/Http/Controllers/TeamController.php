@@ -221,7 +221,6 @@ class TeamController extends Controller
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Team not found!'
             ], 404);
@@ -231,7 +230,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataMaster) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Master not found!'
             ], 404);
@@ -242,7 +240,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataTeamPlayer) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Nothing to accept!'
             ], 404);
@@ -298,7 +295,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'You accepted the invitation!',
-                ], 201);
+                ], 202);
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -323,7 +320,6 @@ class TeamController extends Controller
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Team not found!'
             ], 404);
@@ -333,7 +329,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataMaster) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Master not found!'
             ], 404);
@@ -344,7 +339,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataTeamPlayer) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Nothing to reject!'
             ], 404);
@@ -416,7 +410,6 @@ class TeamController extends Controller
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Team not found!'
             ], 404);
@@ -426,10 +419,29 @@ class TeamController extends Controller
         ->first();
         if (!$dataMaster) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Master not found!'
             ], 404);
+        }
+        $alreadyJoin = $this->teamPlayer->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
+        ->where('teams_id', '=', $idTeam)
+        ->where('status', '=', '0')
+        ->first();
+        if ($alreadyJoin) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You already try to join this team, wait for the master to accept your join request!'
+            ], 409);
+        }
+        $alreadyTeam = $this->teamPlayer->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
+        ->where('teams_id', '=', $idTeam)
+        ->where('status', '=', '1')
+        ->first();
+        if ($alreadyTeam) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You already joined this team!'
+            ], 409);
         }
         $dataGameAccountMaster = $this->gameAccount->where('id_game_account', $dataMaster->game_accounts_id)->first();
         $dataPlayers = $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
@@ -476,7 +488,6 @@ class TeamController extends Controller
                 $user = $this->user->where('id', $dataGameAccountMaster->users_id)->first();
                 $user->notify(new TeamNotification($details));
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'You want to join the team!',
                 ], 201);

@@ -165,7 +165,6 @@ class SocialFollowController extends Controller
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -178,7 +177,6 @@ class SocialFollowController extends Controller
             ->first();
             if (!$dataFollowing) {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => "Game account data not found"
                 ], 404);
@@ -188,7 +186,6 @@ class SocialFollowController extends Controller
             ->count();
             if ($alreadyFollowed > 0) {
                 return response()->json([
-                    'code' => 409,
                     'status' => 'error',
                     'message' => "You already followed this account"
                 ], 409);
@@ -215,10 +212,9 @@ class SocialFollowController extends Controller
             ->update(['acc_followers_id' => $sessGameAccount->id,'status_follow' => '1']);
             $user->notify(new SocialAcceptFriendNotification($details));
             return response()->json([
-                'code' => 200,
                 'status' => 'success',
                 'message' => 'Friend accept successfully'
-            ], 200);
+            ], 202);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -232,7 +228,6 @@ class SocialFollowController extends Controller
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -244,7 +239,6 @@ class SocialFollowController extends Controller
             ->first();
             if (!$dataFollowing) {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => "Game account data not found"
                 ], 404);
@@ -253,7 +247,6 @@ class SocialFollowController extends Controller
             ->where('status_follow', '=', '1')->first();
             if ($statusFollow) {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => "You are friend with this account"
                 ], 404);
@@ -280,7 +273,6 @@ class SocialFollowController extends Controller
             ->update(['status_follow' => '2']);
             $user->notify(new SocialRejectFriendNotification($details));
             return response()->json([
-                'code' => 200,
                 'status' => 'success',
                 'message' => 'Reject successfully'
             ], 200);
