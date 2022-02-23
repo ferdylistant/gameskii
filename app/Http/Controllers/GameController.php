@@ -30,12 +30,6 @@ class GameController extends Controller
         ->join('bottom_banner_games','games.id','=',"bottom_banner_games.games_id")
         ->select('games.*','top_banner_games.path as top_banner','bottom_banner_games.path as bottom_banner')
         ->get();
-        foreach ($dataGame->top_banner as $value) {
-            $topBanner[] = URL::to('/api/banner-game/top/').$value;
-        }
-        foreach ($dataGame->bottom_banner as $value) {
-            $bottomBanner[] = URL::to('/api/banner-game/bottom/').$value;
-        }
         try {
             $arrayData = [
                 'status' => 'success',
@@ -46,8 +40,8 @@ class GameController extends Controller
                     'picture' => $dataGame[0]->picture,
                     'created_at' => $dataGame[0]->created_at,
                     'updated_at' => $dataGame[0]->updated_at,
-                    'top_banner' => $topBanner,
-                    'bottom_banner' => $bottomBanner,
+                    'top_banner' => URL::to('/api/banner-game/top/').$dataGame[0]->top_banner,
+                    'bottom_banner' => URL::to('/api/banner-game/bottom/').$dataGame[0]->bottom_banner,
                 ]
             ];
             return response()->json($arrayData, 200);
