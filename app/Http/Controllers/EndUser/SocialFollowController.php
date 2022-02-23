@@ -85,7 +85,6 @@ class SocialFollowController extends Controller
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -97,7 +96,6 @@ class SocialFollowController extends Controller
             ->get();
             if ($data == '[]') {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => "You don't have any friend"
                 ], 404);
@@ -106,10 +104,12 @@ class SocialFollowController extends Controller
                 $result[] = $this->gameAccount->where('id', '=', $value->acc_following_id)->get();
             }
             return response()->json([
-                'code' => 200,
                 'status' => 'success',
-                'total' => count($result),
-                'data' => $result
+                'message' => 'Get friends successfully',
+                'data' => [
+                    'quantity' => count($result),
+                    'data-friend' => $result
+                ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
