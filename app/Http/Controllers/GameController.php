@@ -106,6 +106,7 @@ class GameController extends Controller
                 ]);
             }
         }
+        $request->session()->put('gamedata', $data);
         return response()->json([
             'status' => 'created',
             'message' => 'You will be redirected to the registration game account page',
