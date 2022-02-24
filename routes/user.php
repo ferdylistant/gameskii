@@ -25,7 +25,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->group(['middleware' => 'auth:user'], function () use ($router) {
         $router->group(['middleware' => 'session'], function () use ($router) {
             $router->post('/create-game-account', 'EndUser\GameAccountController@create');
-            $router->post('/login-game-account', 'EndUser\GameAccountController@login');
+            // $router->post('/login-game-account', 'EndUser\GameAccountController@login');
             $router->post('/choose-game/{idGame}', 'GameController@postGame');
             $router->get('/profile', 'EndUser\ProfileController@getProfile');
             $router->get('/dashboard', 'EndUser\DashboardGame@getDashboard');
