@@ -19,6 +19,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/avatar/{imageName}', 'Api\ImageController@getImage');
     $router->get('/picture-game/{imageName}', 'Api\ImageController@getPicture');
     $router->get('/picture-team/{imageName}', 'Api\ImageController@getPictureTeam');
+    $router->get('/picture-scrim/{imageName}', 'Api\ImageController@getPictureScrim');
+    $router->get('/logo-rank/{imageName}', 'Api\ImageController@getLogoRank');
     $router->get('/banner-game/top/{imageName}', 'Api\ImageController@getBannerTop');
     $router->get('/banner-game/bottom/{imageName}', 'Api\ImageController@getBannerBottom');
 

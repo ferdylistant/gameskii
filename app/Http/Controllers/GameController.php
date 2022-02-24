@@ -30,18 +30,27 @@ class GameController extends Controller
         ->join('bottom_banner_games','games.id','=',"bottom_banner_games.games_id")
         ->select('games.*','top_banner_games.path as top_banner','bottom_banner_games.path as bottom_banner')
         ->get();
+        foreach ($dataGame as $value) {
+            $id[] = $value->id;
+            $name[] = $value->name;
+            $picture[] = URL::to('/api/picture-game/'.$value->picture);
+            $created_at[] = $value->created_at;
+            $updated_at[] = $value->updated_at;
+            $top_banner[] = URL::to('/api/banner-game/top/'.$value->top_banner);
+            $bottom_banner[] = URL::to('/api/banner-game/bottom/'.$value->bottom_banner);
+        }
         try {
             $arrayData = [
                 'status' => 'success',
                 'message' => 'Data Game',
                 'data' => [
-                    'id' => $dataGame[0]->id,
-                    'name' => $dataGame[0]->name,
-                    'picture' => URL::to('/api/picture-game/'.$dataGame[0]->picture),
-                    'created_at' => $dataGame[0]->created_at,
-                    'updated_at' => $dataGame[0]->updated_at,
-                    'top_banner' => URL::to('/api/banner-game/top/'.$dataGame[0]->top_banner),
-                    'bottom_banner' => URL::to('/api/banner-game/bottom/'.$dataGame[0]->bottom_banner),
+                    'id' => $id,
+                    'name' => $name,
+                    'picture' => $picture,
+                    'created_at' => $created_at,
+                    'updated_at' => $updated_at,
+                    'top_banner' => $top_banner,
+                    'bottom_banner' => $bottom_banner,
                 ]
             ];
             return response()->json($arrayData, 200);
@@ -106,7 +115,9 @@ class GameController extends Controller
         return response()->json([
             'status' => 'created',
             'message' => 'You will be redirected to the registration game account page',
-            'data' => $data
+            'data' => [
+                'game-data' => $data
+            ]
         ], 201);
     }
 

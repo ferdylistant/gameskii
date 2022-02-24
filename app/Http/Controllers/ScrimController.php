@@ -13,6 +13,63 @@ class ScrimController extends Controller
     {
         $this->scrim = new Scrim();
         $this->gameAccount = new GameAccount();
+        
+    }
+    public function getAllScrims(Request $request)
+    {
+        $dataScrim = $this->scrim->join('games','scrims.games_id','=','games.id')
+        ->join('top_banner_games','games.id','=','top_banner_games.games_id')
+        ->join('bottom_banner_games','games.id','=','bottom_banner_games.games_id')
+        ->join('game_accounts','scrims.game_accounts_id','=','game_accounts.id')
+        ->join('ranks', 'scrims.ranks_id', '=', 'ranks.id')
+        ->join('users','game_accounts.users_id','=','users.id')
+        ->select('scrims.*','games.name as game_name', 'games.picture','game_accounts.nickname','top_banner_games.path as top_banner_url','bottom_banner_games.path as bottom_banner_url','users.name as user_name',
+        'users.avatar as user_avatar','ranks.class','ranks.logo')
+        ->get();
+        try {
+            $arrayData = [
+                'status' => 'success',
+                'message' => 'Data Scrim',
+                'data' => [
+                    'scrims' => [
+                        'id' => $dataScrim[0]->id,
+                        'name_scrim' => $dataScrim[0]->name_party,
+                        'image' => URL::to('/api/picture-scrim/'.$dataScrim[0]->image),
+                        'quota' => $dataScrim[0]->quota,
+                        'scrim_system' => $dataScrim[0]->scrim_system,
+                        'scrim_date' => $dataScrim[0]->scrim_date,
+                        'status' => $dataScrim[0]->status,
+                        'result' => $dataScrim[0]->result,
+                        'created_at' => $dataScrim[0]->created_at,
+                        'updated_at' => $dataScrim[0]->updated_at,
+                    ],
+                    'scrim-master' => [
+                        'id_game_account' => $dataScrim[0]->game_accounts_id,
+                        'nickname' => $dataScrim[0]->nickname,
+                        'name' => $dataScrim[0]->user_name,
+                        'picture' => URL::to('/api/avatar/'.$dataScrim[0]->avatar),
+                    ],
+                    'scrim-game' => [
+                        'id_game' => $dataScrim[0]->games_id,
+                        'name' => $dataScrim[0]->game_name,
+                        'picture' => URL::to('/api/picture-game/'.$dataScrim[0]->picture),
+                        'top_banner' => URL::to('/api/banner-game/top/'.$dataScrim[0]->top_banner_url),
+                        'bottom_banner' => URL::to('/api/banner-game/bottom'.$dataScrim[0]->bottom_banner_url),
+                    ],
+                    'scrim-rank' => [
+                        'id_rank' => $dataScrim[0]->ranks_id,
+                        'class' => $dataScrim[0]->class,
+                        'logo' => URL::to('/api/logo-rank/'.$dataScrim[0]->logo),
+                    ],
+                ]
+            ];
+            return response()->json($arrayData, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage()
+            ]);
+        }
     }
     public function getMyScrims(Request $request)
     {
@@ -23,13 +80,32 @@ class ScrimController extends Controller
                 'message' => 'It is not your role'
             ], 403);
         }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
         $user = auth('user')->user();
-        $scrims = $this->scrim->where('user_id', $user->id)->get();
+        $gameAccount = $this->gameAccount->where('id_game_account', '=', $sessGameAccount->id_game_account)
+        ->where('users_id', '=', $user->id)->where('games_id', '=', $sessGame['game']['id'])->first();
+        if (!$gameAccount) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "You don't have a game account"
+            ], 404);
+        }
+        $scrims = $this->scrim->where('game_accounts_id','=', $gameAccount->id_game_account)->get();
+        if (!$scrims) {
+            return response()->json([
+                'status' => 'error',
+                'message' => "You don't have any scrims"
+            ], 404);
+        }
         try {
+            foreach ($scrims as $scrim) {
+                $loopScrims[] = $scrim;
+            }
             $arrayData = [
                 'status' => 'success',
                 'message' => 'Data Scrim',
-                'data' => $scrims
+                'data' => $loopScrims
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
@@ -40,7 +116,7 @@ class ScrimController extends Controller
         }
     }
 
-    public function getMyScrim(Request $request, $idScrim){
+    public function getMyScrimId(Request $request, $idScrim){
         $roles_id = auth('user')->user()->roles_id;
         if ($roles_id != '3') {
             return response()->json([
@@ -53,7 +129,12 @@ class ScrimController extends Controller
         try {
             $scrim = $this->scrim->where('id', '=', $idScrim)
             ->where('games_id','=',$sessGame['game']['id'])->first();
-
+            if (!$scrim) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Scrim not found'
+                ], 404);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -102,4 +102,42 @@ class ImageController extends Controller
             ]);
         }
     }
+    public function getPictureScrim($imageName)
+    {
+        $imagePath = storage_path('uploads/picture-scrims/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Pict not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getLogoRank($imageName)
+    {
+        $imagePath = storage_path('uploads/logo-rank/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Pict not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }

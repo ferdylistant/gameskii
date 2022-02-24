@@ -40,7 +40,7 @@ class GameAccountController extends Controller
                 "message" => "You already have a '".$sessGame['game']['name']."' account",
             ], 409);
         }
-        try {
+        try {            
             $this->gameAccount->id = Uuid::uuid4()->toString();
             $this->gameAccount->id_game_account = $request->id_game_account;
             $this->gameAccount->nickname = $request->nickname;
@@ -48,14 +48,15 @@ class GameAccountController extends Controller
             $this->gameAccount->games_id = $sessGame['game']['id'];
             $this->gameAccount->is_online = '0';
             if ($this->gameAccount->save()) {
+                $data = [
+                    'game-account-data' => $this->gameAccount,
+                    'game-data' => $sessGame
+                ];
                 $request->session()->put('game_account', $this->gameAccount);
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Game account sign up successfully!',
-                    'data' => [
-                        'game-account-data' => $this->gameAccount,
-                        'game-data' => $sessGame
-                    ]
+                    'data' => $data
                 ], 201);
             }
         } catch (\Exception $e) {
