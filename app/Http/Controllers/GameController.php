@@ -31,13 +31,15 @@ class GameController extends Controller
         ->select('games.*','top_banner_games.path as top_banner','bottom_banner_games.path as bottom_banner')
         ->get();
         foreach ($dataGame as $value) {
-            $id[] = $value->id;
-            $name[] = $value->name;
-            $picture[] = URL::to('/api/picture-game/'.$value->picture);
-            $created_at[] = $value->created_at;
-            $updated_at[] = $value->updated_at;
-            $top_banner[] = URL::to('/api/banner-game/top/'.$value->top_banner);
-            $bottom_banner[] = URL::to('/api/banner-game/bottom/'.$value->bottom_banner);
+            $data[] = [
+                'id' => $value->id,
+                'name' => $value->name,
+                'picture' => URL::to('/api/picture-game/'.$value->picture),
+                'top_banner' => URL::to('/api/banner-game/top/'.$value->top_banner),
+                'bottom_banner' => URL::to('/api/banner-game/bottom/'.$value->bottom_banner),
+                'created_at' => $value->created_at,
+                'updated_at' => $value->updated_at
+            ];
         }
         try {
             $arrayData = [
