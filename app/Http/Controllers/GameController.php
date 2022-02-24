@@ -45,15 +45,7 @@ class GameController extends Controller
             $arrayData = [
                 'status' => 'success',
                 'message' => 'Data Game',
-                'data' => [
-                    'id' => $id,
-                    'name' => $name,
-                    'picture' => $picture,
-                    'created_at' => $created_at,
-                    'updated_at' => $updated_at,
-                    'top_banner' => $top_banner,
-                    'bottom_banner' => $bottom_banner,
-                ]
+                'data' => $data
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
