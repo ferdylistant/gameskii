@@ -64,7 +64,7 @@ class TeamController extends Controller
                     'id' => $item->id,
                     'games_id' => $item->games_id,
                     'name' => $item->name,
-                    'logo' => URL::to('/api/picture-team'.$item->logo),
+                    'logo' => URL::to('/api/picture-team/'.$item->logo),
                     'won' => $item->won,
                     'lose' => $item->lose,
                     'total_match_scrim' => $item->total_match_scrim,
