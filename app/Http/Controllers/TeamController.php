@@ -50,7 +50,7 @@ class TeamController extends Controller
             $dataMyTeam = $this->team->join('team_players', 'team_players.teams_id', '=', 'teams.id')
             ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
             ->where('team_players.status', '1')
-            ->select('teams.*', 'team_players.game_accounts_id', 'team_players.role_team')
+            ->select('teams.*', 'team_players.role_team')
             ->get();
             if ($dataMyTeam->count() == 0) {
                 return response()->json([
@@ -60,7 +60,19 @@ class TeamController extends Controller
                 ], 404);
             }
             foreach ($dataMyTeam as $item) {
-                $dataTeam[] = $item;
+                $dataTeam[] = [
+                    'id' => $item->id,
+                    'games_id' => $item->games_id,
+                    'name' => $item->name,
+                    'logo' => URL::to('/api/picture-team'.$item->logo),
+                    'won' => $item->won,
+                    'lose' => $item->lose,
+                    'total_match_scrim' => $item->total_match_scrim,
+                    'total_match_tournament' => $item->total_match_tournament,
+                    'point' => $item->point,
+                    'created_at' => $item->created_at,
+                    'role_team' => $item->role_team,
+                ];
             }
             return response()->json([
                 'status' => 'success',
