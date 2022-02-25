@@ -71,6 +71,11 @@ class TeamController extends Controller
                     'total_match_tournament' => $item->total_match_tournament,
                     'point' => $item->point,
                     'created_at' => $item->created_at,
+                    'master-team' => $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+                    ->join('teams', 'team_players.teams_id', '=', 'teams.id')
+                    ->where('team_players.teams_id', $item->id)
+                    ->where('team_players.role_team', 'Master')
+                    ->select('game_accounts.id_game_account', 'game_accounts.nickname'),
                     'role_team' => $item->role_team,
                 ];
             }
