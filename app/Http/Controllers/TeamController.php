@@ -130,9 +130,6 @@ class TeamController extends Controller
             ->where('teams.games_id', $sessGame['game']['id'])
             ->select('game_accounts.id_game_account', 'game_accounts.nickname', 'team_players.role_team')
             ->get();
-            foreach ($dataTeamPlayer as $item) {
-                $dataTeamPlayer[] = $item;
-            }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Get team success',
