@@ -92,20 +92,76 @@ class TeamController extends Controller
         }
     }
 
-    public function getTeam(Request $request)
+    public function getTeam(Request $request, $idTeam)
     {
-        $data = $this->team->all();
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3')
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'code' => 408,
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
+        $dataTeam = $this->team->where('teams.id', $idTeam)->first();
+        if (!$dataTeam) {
+            return response()->json([
+                'code' => 404,
+                'status' => 'error',
+                'message' => 'Team not found'
+            ], 404);
+        }
         try {
+            $dataTeamPlayer = $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+            ->join('teams', 'team_players.teams_id', '=', 'teams.id')
+            ->where('team_players.teams_id', $idTeam)
+            ->select('game_accounts.id_game_account', 'game_accounts.nickname', 'team_players.role_team')
+            ->get();
+            foreach ($dataTeamPlayer as $item) {
+                $dataTeamPlayer[] = [
+                    'id_game_account' => $item->id_game_account,
+                    'nickname' => $item->nickname,
+                    'role_team' => $item->role_team,
+                ];
+            }
             return response()->json([
                 'status' => 'success',
-                'message' => 'Get all team',
-                'data' => $data
+                'message' => 'Get team success',
+                'data' => [
+                    'team' => [
+                        'id' => $dataTeam->id,
+                        'games_id' => $dataTeam->games_id,
+                        'name' => $dataTeam->name,
+                        'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
+                        'won' => $dataTeam->won,
+                        'lose' => $dataTeam->lose,
+                        'total_match_scrim' => $dataTeam->total_match_scrim,
+                        'total_match_tournament' => $dataTeam->total_match_tournament,
+                        'point' => $dataTeam->point,
+                        'created_at' => $dataTeam->created_at,
+                        'master-team' => $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+                        ->join('teams', 'team_players.teams_id', '=', 'teams.id')
+                        ->where('team_players.teams_id', $dataTeam->id)
+                        ->where('team_players.role_team', 'Master')
+                        ->select('game_accounts.id_game_account', 'game_accounts.nickname')
+                        ->first(),
+                    ],
+                    'team_player' => $dataTeamPlayer,
+                ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
-            ], 400);
+            ]);
         }
     }
     public function createTeam(Request $request)
