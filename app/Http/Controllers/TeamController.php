@@ -49,6 +49,7 @@ class TeamController extends Controller
         try{
             $dataMyTeam = $this->team->join('team_players', 'team_players.teams_id', '=', 'teams.id')
             ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
+            ->where('teams.games_id', $sessGame['game']['id'])
             ->where('team_players.status', '1')
             ->select('teams.*', 'team_players.role_team')
             ->get();
@@ -111,7 +112,9 @@ class TeamController extends Controller
                 'message' => 'Session timeout'
             ], 408);
         }
-        $dataTeam = $this->team->where('teams.id', $idTeam)->first();
+        $dataTeam = $this->team->where('teams.id', $idTeam)
+        ->where('teams.games_id', $sessGame['game']['id'])
+        ->first();
         if (!$dataTeam) {
             return response()->json([
                 'code' => 404,
@@ -123,6 +126,8 @@ class TeamController extends Controller
             $dataTeamPlayer = $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
             ->join('teams', 'team_players.teams_id', '=', 'teams.id')
             ->where('team_players.teams_id', $idTeam)
+            ->where('team_players.status', '1')
+            ->where('teams.games_id', $sessGame['game']['id'])
             ->select('game_accounts.id_game_account', 'game_accounts.nickname', 'team_players.role_team')
             ->get();
             foreach ($dataTeamPlayer as $item) {
@@ -151,6 +156,7 @@ class TeamController extends Controller
                         ->join('teams', 'team_players.teams_id', '=', 'teams.id')
                         ->where('team_players.teams_id', $dataTeam->id)
                         ->where('team_players.role_team', 'Master')
+                        ->where('teams.games_id', $sessGame['game']['id'])
                         ->select('game_accounts.id_game_account', 'game_accounts.nickname')
                         ->first(),
                     ],
