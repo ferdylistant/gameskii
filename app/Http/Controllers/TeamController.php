@@ -49,7 +49,7 @@ class TeamController extends Controller
         try{
             $dataMyTeam = $this->team->join('team_players', 'team_players.teams_id', '=', 'teams.id')
             ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
-            ->where('teams.status', '1')
+            ->where('team_players.status', '1')
             ->select('teams.*', 'team_players.game_accounts_id', 'team_players.role_team')
             ->get();
             if ($dataMyTeam->count() == 0) {
