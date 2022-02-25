@@ -131,11 +131,7 @@ class TeamController extends Controller
             ->select('game_accounts.id_game_account', 'game_accounts.nickname', 'team_players.role_team')
             ->get();
             foreach ($dataTeamPlayer as $item) {
-                $dataTeamPlayer[] = [
-                    'id_game_account' => $item->id_game_account,
-                    'nickname' => $item->nickname,
-                    'role_team' => $item->role_team,
-                ];
+                $dataTeamPlayer[] = $item;
             }
             return response()->json([
                 'status' => 'success',
