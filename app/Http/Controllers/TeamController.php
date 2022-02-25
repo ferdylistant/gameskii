@@ -75,7 +75,8 @@ class TeamController extends Controller
                     ->join('teams', 'team_players.teams_id', '=', 'teams.id')
                     ->where('team_players.teams_id', $item->id)
                     ->where('team_players.role_team', 'Master')
-                    ->select('game_accounts.id_game_account', 'game_accounts.nickname'),
+                    ->select('game_accounts.id_game_account', 'game_accounts.nickname')
+                    ->first(),
                     'role_team' => $item->role_team,
                 ];
             }
