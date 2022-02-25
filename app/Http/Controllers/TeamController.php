@@ -26,6 +26,54 @@ class TeamController extends Controller
         $this->user = new User();
     }
 
+    public function getMyTeams(Request $request)
+    {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3')
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
+        // return response()->json($userGame);
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'code' => 408,
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
+        try{
+            $dataMyTeam = $this->team->join('team_players', 'team_players.teams_id', '=', 'teams.id')
+            ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
+            ->where('teams.status', '1')
+            ->select('teams.*', 'team_players.game_accounts_id', 'team_players.role_team')
+            ->get();
+            if ($dataMyTeam->count() == 0) {
+                return response()->json([
+                    'code' => 404,
+                    'status' => 'error',
+                    'message' => 'You dont have any team'
+                ], 404);
+            }
+            foreach ($dataMyTeam as $item) {
+                $dataTeam[] = $item;
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $dataTeam
+            ], 200);
+        }catch(\Exception $e){
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
     public function getTeam(Request $request)
     {
         $data = $this->team->all();
