@@ -18,7 +18,7 @@ use GuzzleHttp\Exception\BadResponseException;
 
 class SocialAccountController extends Controller
 {
-    public function __construct()
+    public function __construct() 
     {
         $this->endUser = new User();
     }
