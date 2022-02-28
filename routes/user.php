@@ -1,5 +1,4 @@
 <?php
-use Laravel\Socialite\Facades\Socialite;
 
 $router->get('/', function () use ($router) {
     return $router->app->version();
