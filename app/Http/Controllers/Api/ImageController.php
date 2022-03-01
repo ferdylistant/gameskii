@@ -104,7 +104,7 @@ class ImageController extends Controller
     }
     public function getPictureScrim($imageName)
     {
-        $imagePath = storage_path('uploads/picture-scrims/'.$imageName);
+        $imagePath = storage_path('uploads/picture-scrim/'.$imageName);
         if ((!file_exists($imagePath))) {
             return response()->json([
                 "status" => "error",
