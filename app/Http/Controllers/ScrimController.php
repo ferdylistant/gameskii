@@ -216,14 +216,16 @@ class ScrimController extends Controller
         $data = $this->scrim->where('games_id', '=', $sessGame['game']['id'])
         ->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
         ->first();
+        
         if ($data) {
             $dateCreated = new Carbon($data->created_at, 'Asia/Jakarta');
             $diffDays = $dateCreated->isToday();
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You can only create scrim once a day',
-                'data' => $diffDays
-            ], 403);
+            if ($diffDays) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You can create scrim only once a day'
+                ], 403);
+            }
         }
         // return response()->json($sessGameAccount);
         //Mobile Legends
