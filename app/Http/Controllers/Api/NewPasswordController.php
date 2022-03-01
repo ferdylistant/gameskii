@@ -18,7 +18,7 @@ class NewPasswordController extends Controller
         $this->validate($request, [
             'email' => 'required|email',
         ]);
-
+        
         $status = Password::sendResetLink(
             $request->only('email')
         );

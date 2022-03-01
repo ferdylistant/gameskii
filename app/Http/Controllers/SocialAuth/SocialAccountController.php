@@ -97,7 +97,8 @@ class SocialAccountController extends Controller
             ->mixedCase()
             ->numbers()
             ->symbols()],
-            'confirm_password' => 'required|same:password'
+            'confirm_password' => 'required|same:password',
+            'terms' => 'required'
         ]);
         //jika validasi eror
         if ($validator->fails()) {
