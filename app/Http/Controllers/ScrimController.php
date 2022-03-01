@@ -104,7 +104,7 @@ class ScrimController extends Controller
         $scrims = $this->scrim->where('game_accounts_id','=', $gameAccount->id_game_account)
         ->where('games_id','=', $sessGame['game']['id'])
         ->get();
-        if (!$scrims) {
+        if ($scrims->count() == 0) {
             return response()->json([
                 'status' => 'error',
                 'message' => "You don't have any scrims"
