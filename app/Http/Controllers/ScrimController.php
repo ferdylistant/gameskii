@@ -87,7 +87,6 @@ class ScrimController extends Controller
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
             return response()->json([
-                'code' => 408,
                 'status' => 'error',
                 'message' => 'Session timeout'
             ], 408);
@@ -152,7 +151,6 @@ class ScrimController extends Controller
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
             return response()->json([
-                'code' => 408,
                 'status' => 'error',
                 'message' => 'Session timeout'
             ], 408);
@@ -208,7 +206,6 @@ class ScrimController extends Controller
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
             return response()->json([
-                'code' => 408,
                 'status' => 'error',
                 'message' => 'Session timeout'
             ], 408);
