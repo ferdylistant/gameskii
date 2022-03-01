@@ -256,7 +256,7 @@ class ScrimController extends Controller
                 $this->scrim->scrim_system = $request->scrim_system;
                 $this->scrim->scrim_date = $request->scrim_date;
                 if ($this->scrim->save()) {
-                    $dataFile->move(storage_path('/home/ubuntu/gameskii/storage/uploads/picture-scrim'), $imageName);
+                    $dataFile->move(storage_path('uploads/picture-scrim'), $imageName);
                     $dataScrim = Scrim::join('ranks', 'ranks.id', '=', 'scrims.ranks_id')
                         ->join('game_accounts', 'game_accounts.id_game_account', '=', 'scrims.game_accounts_id')
                         ->join('games', 'games.id', '=', 'scrims.games_id')
