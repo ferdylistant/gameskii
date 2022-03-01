@@ -36,25 +36,45 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataFollow = $this->team->join('team_players', 'teams.id', '=', 'team_players.teams_id')
-            ->join('games', 'games.id', '=', 'teams.games_id')
-            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
-            ->join('social_follows', 'social_follows.game_accounts_id', '=', 'game_accounts.id_game_account')
-            ->where('teams.games_id', $sessGame['game']['id'])
-            ->where('social_follows.status_follow', '1')
-            ->where('team_players.role_team', 'Master')
-            ->select('teams.*')
+            $dataFollow = $this->follow->where('game_account_id', '=',$sessGameAccount->game_accounts_id)
+            ->where('status_follow','=', '1')
             ->get();
-            if ($dataFollow->count() == 0) {
+            if ($dataFollow->count() == '0') {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'You have not team follow each other'
+                    'message' => 'You dont follow any team'
                 ],404);
             }
+            foreach ($dataFollow as $value) {
+                $resultFollow[] = $this->gameAccount->where('id', $value->acc_following_id)->first();
+            }
+            foreach ($resultFollow as $value) {
+                $result[] = $this->teamPlayer->where('game_accounts_id','=', $value->id_game_account)
+                ->where('role_team','=', 'Master')
+                ->first();
+            }
+            foreach ($result as $value) {
+                $resultTeam[] = $this->team->where('id','=', $value->teams_id)->get();
+            }
+            // $dataFollow = $this->team->join('team_players', 'teams.id', '=', 'team_players.teams_id')
+            // ->join('games', 'games.id', '=', 'teams.games_id')
+            // ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+            // ->join('social_follows', 'social_follows.game_accounts_id', '=', 'game_accounts.id_game_account')
+            // ->where('teams.games_id', $sessGame['game']['id'])
+            // ->where('social_follows.status_follow', '1')
+            // ->where('team_players.role_team', 'Master')
+            // ->select('teams.*')
+            // ->get();
+            // if ($dataFollow->count() == 0) {
+            //     return response()->json([
+            //         'status' => 'error',
+            //         'message' => 'You have not team follow each other'
+            //     ],404);
+            // }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Get all teams success',
-                'data' => $dataFollow
+                'data' => $resultTeam
             ],200);
         } catch (\Exception $e) {
             return response()->json([
