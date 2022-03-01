@@ -223,7 +223,8 @@ class ScrimController extends Controller
             if ($diffDays) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'You can create scrim only once a day'
+                    'message' => 'You can create scrim only once a day',
+                    'data' => $data
                 ], 403);
             }
         }
