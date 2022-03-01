@@ -36,7 +36,7 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataFollow = $this->follow->where('game_account_id', '=',$sessGameAccount->game_accounts_id)
+            $dataFollow = $this->follow->where('game_accounts_id', '=',$sessGameAccount->game_accounts_id)
             ->where('status_follow','=', '1')
             ->get();
             if ($dataFollow->count() == '0') {
