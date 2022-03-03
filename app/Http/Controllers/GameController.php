@@ -57,33 +57,46 @@ class GameController extends Controller
     }
     public function postGame(Request $request, $idGame)
     {
+        $roles_id = user('user')->user()->roles_id;
+        if ($roles_id != '3') {
+            return response()->json([
+                "status" => "error",
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
         $game = $this->game->where('id', $idGame)->first();
-            $topBanner = $this->topBanner->where('games_id', $game->id)->get();
-            $bottomBanner = $this->bottomBanner->where('games_id', $game->id)->get();
-            foreach ($topBanner as $result) {
-                $top[] = URL::to('/api/banner-game/top/'.$result->path);
-            }
-            foreach ($bottomBanner as $value) {
-                $title[] = $value->title;
-                $bottom[] = URL::to('/api/banner-game/bottom/'.$value->path);
-            }
-            $data = [
-                'game' => [
-                    'id' => $game->id,
-                    'name' => $game->name,
-                    'picture' => URL::to('/api/picture-game/'.$game->picture),
-                    'created_at' => $game->created_at,
-                    'updated_at' => $game->updated_at
-                ],
-                'top-banner' => [
-                    'url' => $top,
-                ],
-                'bottom-banner' => [
-                    'title' => $title,
-                    'url' => $bottom
-                ]
+        if (!$game) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Id game is wrong or game not found"
+            ],404);
+        }
+        $topBanner = $this->topBanner->where('games_id', $game->id)->get();
+        $bottomBanner = $this->bottomBanner->where('games_id', $game->id)->get();
+        foreach ($topBanner as $result) {
+            $top[] = URL::to('/api/banner-game/top/'.$result->path);
+        }
+        foreach ($bottomBanner as $value) {
+            $title[] = $value->title;
+            $bottom[] = URL::to('/api/banner-game/bottom/'.$value->path);
+        }
+        $data = [
+            'game' => [
+                'id' => $game->id,
+                'name' => $game->name,
+                'picture' => URL::to('/api/picture-game/'.$game->picture),
+                'created_at' => $game->created_at,
+                'updated_at' => $game->updated_at
+            ],
+            'top-banner' => [
+                'url' => $top,
+            ],
+            'bottom-banner' => [
+                'title' => $title,
+                'url' => $bottom
+            ]
 
-            ];
+        ];
 
         if ($this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=', $idGame)->count() != 0) {
             try {
