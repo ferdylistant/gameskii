@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\EndUser;
 
 use Carbon\Carbon;
 use App\Models\Scrim;
@@ -8,6 +8,7 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Http\Request;
 use App\Models\GameAccount;
 use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
 class ScrimController extends Controller
@@ -16,7 +17,7 @@ class ScrimController extends Controller
     {
         $this->scrim = new Scrim();
         $this->gameAccount = new GameAccount();
-        
+
     }
     public function getAllScrims(Request $request)
     {
@@ -213,7 +214,7 @@ class ScrimController extends Controller
         $data = $this->scrim->where('games_id', '=', $sessGame['game']['id'])
         ->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
         ->first();
-        
+
         if ($data) {
             $dateCreated = new Carbon($data->created_at, 'Asia/Jakarta');
             $diffDays = $dateCreated->isToday();
@@ -263,7 +264,6 @@ class ScrimController extends Controller
                         ->where('scrims.id', $this->scrim->id)
                         ->first();
                     return response()->json([
-                        'code' => 201,
                         'status' => 'success',
                         'message' => 'Scrim created successfully',
                         'data' => [
@@ -337,7 +337,6 @@ class ScrimController extends Controller
                         ->where('scrims.id', $this->scrim->id)
                         ->first();
                     return response()->json([
-                        'code' => 201,
                         'status' => 'success',
                         'message' => 'Scrim created successfully',
                         'data' => $dataScrim

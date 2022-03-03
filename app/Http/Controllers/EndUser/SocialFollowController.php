@@ -20,15 +20,20 @@ class SocialFollowController extends Controller
     }
     public function addFriend(Request $request, $idGameAccount)
     {
-        $sessGame = $request->session()->get('gamedata');
         $role = auth('user')->user()->roles_id;
         // return response()->json($dd['game']['id']);
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
+        }
+        $sessGame = $request->session()->get('gamedata');
+        if ($sessGame == null) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
         }
         try {
             $dataFollowing = $this->gameAccount->where('id_game_account', '=', $idGameAccount)
@@ -36,13 +41,13 @@ class SocialFollowController extends Controller
             ->first();
             if (!$dataFollowing) {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => "Game account data not found"
                 ], 404);
             }
             $userFollowing = $this->user->where('id', '=', $dataFollowing->users_id)->first();
             $sessGameAccount = $request->session()->get('game_account');
+
             // return response()->json($sessGameAccount->id);
             $details = [
                 'id' => $sessGameAccount->id,
@@ -67,7 +72,6 @@ class SocialFollowController extends Controller
                 $followers->save();
                 $userFollowing->notify(new SocialFollowNotification($details));
                 return response()->json([
-                    'code' => 200,
                     'status' => 'success',
                     'message' => 'Following successfully'
                 ], 200);
@@ -81,13 +85,19 @@ class SocialFollowController extends Controller
     }
     public function getFriends(Request $request)
     {
-        $sessGame = $request->session()->get('gamedata');
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
+        }
+        $sessGame = $request->session()->get('gamedata');
+        if ($sessGame == null) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
         }
         try {
             $sessGameAccount = $request->session()->get('game_account');
@@ -120,23 +130,27 @@ class SocialFollowController extends Controller
     }
     public function unfollow(Request $request, $idGameAccount)
     {
-        $sessGame = $request->session()->get('gamedata');
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
         }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         try {
-            $sessGameAccount = $request->session()->get('game_account');
             $dataFollowing = $this->gameAccount->where('id_game_account', '=', $idGameAccount)
             ->where('games_id', '=', $sessGame['game']['id'])
             ->first();
             if (!$dataFollowing) {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => "Game account data not found"
                 ], 404);
@@ -148,7 +162,6 @@ class SocialFollowController extends Controller
             ->where('acc_followers_id', '=', $sessGameAccount->id)
             ->delete();
             return response()->json([
-                'code' => 200,
                 'status' => 'success',
                 'message' => 'Unfollow successfully'
             ], 200);
@@ -161,7 +174,6 @@ class SocialFollowController extends Controller
     }
     public function acceptFriend(Request $request, $idGameAccount)
     {
-        $sessGame = $request->session()->get('gamedata');
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
@@ -169,8 +181,15 @@ class SocialFollowController extends Controller
                 "message" => "It's not your role"
             ], 403);
         }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         try {
-            $sessGameAccount = $request->session()->get('game_account');
             // return response()->json($sessGameAccount);
             $dataFollowing = $this->gameAccount->where('id_game_account', '=', $idGameAccount)
             ->where('games_id', '=', $sessGame['game']['id'])
@@ -224,7 +243,6 @@ class SocialFollowController extends Controller
     }
     public function rejectFriend(Request $request, $idGameAccount)
     {
-        $sessGame = $request->session()->get('gamedata');
         $role = auth('user')->user()->roles_id;
         if (($role == '1' || $role == '2')) {
             return response()->json([
@@ -232,8 +250,15 @@ class SocialFollowController extends Controller
                 "message" => "It's not your role"
             ], 403);
         }
+        $sessGame = $request->session()->get('gamedata');
+        $sessGameAccount = $request->session()->get('game_account');
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         try {
-            $sessGameAccount = $request->session()->get('game_account');
             $dataFollowing = $this->gameAccount->where('id_game_account', '=', $idGameAccount)
             ->where('games_id', '=', $sessGame['game']['id'])
             ->first();

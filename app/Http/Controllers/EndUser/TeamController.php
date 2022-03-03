@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\EndUser;
 
 use App\Models\Rank;
 use App\Models\Team;
@@ -11,6 +11,7 @@ use App\Models\GameAccount;
 use App\Models\SocialFollow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use App\Http\Controllers\Controller;
 use App\Notifications\TeamNotification;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,6 +28,13 @@ class TeamController extends Controller
     }
     public function getAllTeams(Request $request)
     {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3') {
+            return response()->json([
+                'status' => 'error',
+                'message' => "You don't have permission to access this resource"
+            ],401);
+        }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
@@ -98,7 +106,6 @@ class TeamController extends Controller
         // return response()->json($userGame);
         if (($sessGame == null) || ($sessGameAccount == null)) {
             return response()->json([
-                'code' => 408,
                 'status' => 'error',
                 'message' => 'Session timeout'
             ], 408);
@@ -112,7 +119,6 @@ class TeamController extends Controller
             ->get();
             if ($dataMyTeam->count() == 0) {
                 return response()->json([
-                    'code' => 404,
                     'status' => 'error',
                     'message' => 'You dont have any team'
                 ], 404);
@@ -163,7 +169,6 @@ class TeamController extends Controller
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
             return response()->json([
-                'code' => 408,
                 'status' => 'error',
                 'message' => 'Session timeout'
             ], 408);
@@ -173,7 +178,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataTeam) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Team not found'
             ], 404);
@@ -221,6 +225,14 @@ class TeamController extends Controller
     }
     public function createTeam(Request $request)
     {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3')
+        {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:teams',
             'logo' => 'required|file|max:5048|image',
@@ -234,6 +246,12 @@ class TeamController extends Controller
         try {
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == null) || ($sessGameAccount == null)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
             if ($request->hasFile('logo')) {
                 $dataFile = $request->file('logo');
                 $imageName = date('mdYHis') . $dataFile->hashName();
@@ -251,7 +269,6 @@ class TeamController extends Controller
                 $this->teamPlayer->status = '1';
                 $this->teamPlayer->save();
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'Team created successfully!',
                     'data' => [
@@ -286,12 +303,16 @@ class TeamController extends Controller
             ], 401);
         }
         $sessGame = $request->session()->get('gamedata');
-        // return response()->json($sessGame);
         $sessGameAccount = $request->session()->get('game_account');
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         $gameAccount = $this->gameAccount->where('id_game_account',$idGameAccount)->first();
         if (!$gameAccount) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Game account not found!'
             ], 404);
@@ -302,7 +323,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataFollow) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => "You're not be friend with this account!"
             ], 404);
@@ -310,7 +330,6 @@ class TeamController extends Controller
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Team not found!'
             ], 404);
@@ -321,7 +340,6 @@ class TeamController extends Controller
         ->first();
         if (!$dataTeamPlayer) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'You are not master of this team!'
             ], 404);
@@ -394,7 +412,12 @@ class TeamController extends Controller
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
-        // $gameAccount = $this->gameAccount->where('id_game_account',$idGameAccount)->first();
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
@@ -493,7 +516,12 @@ class TeamController extends Controller
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
-        // $gameAccount = $this->gameAccount->where('id_game_account',$idGameAccount)->first();
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
@@ -560,7 +588,6 @@ class TeamController extends Controller
                 $user = $this->user->where('id', $dataGameAccountMaster->users_id)->first();
                 $user->notify(new TeamNotification($details));
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'You rejected the invitation!',
                 ], 201);
@@ -583,7 +610,12 @@ class TeamController extends Controller
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
-        // $gameAccount = $this->gameAccount->where('id_game_account',$idGameAccount)->first();
+        if (($sessGame == null) || ($sessGameAccount == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
@@ -690,7 +722,6 @@ class TeamController extends Controller
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Team not found!'
             ], 404);
@@ -700,7 +731,6 @@ class TeamController extends Controller
             ->where('teams_id', '=', $idTeam)
             ->delete();
             return response()->json([
-                'code' => 200,
                 'status' => 'success',
                 'message' => "You've left the team!",
             ], 200);
