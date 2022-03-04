@@ -95,7 +95,7 @@ class GameAccountController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Game account not found!',
-                    'data' => $gameAccount
+                    'data' => null
                 ], 404);
             }
             return response()->json([
