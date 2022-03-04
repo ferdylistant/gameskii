@@ -77,16 +77,16 @@ class GameAccountController extends Controller
             ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
-        return response()->json($sessGame);
+        // return response()->json($sessGame);
         try{
             $key = explode(" ", request()->get('key'));
             $gameAccount = DB::table('game_accounts')->where('games_id', '=', $sessGame['game']['id'])
-            ->where(function ($query) use ($key) {
+            ->where(function ($query) use ($key, $sessGame) {
                 foreach ($key as $k) {
                     $query->where('id_game_account', 'like', '%' . $k . '%')->where('games_id', '=', $sessGame['game']['id']);
                 }
             })
-            ->orWhere(function ($query) use ($key) {
+            ->orWhere(function ($query) use ($key, $sessGame) {
                 foreach ($key as $k) {
                     $query->where('nickname', 'like', '%' . $k . '%')->where('games_id', '=', $sessGame['game']['id']);
                 }
