@@ -80,7 +80,7 @@ class GameAccountController extends Controller
         try{
             $key = explode(" ", request()->get('key'));
             $gameAccount = DB::table('game_accounts')->where('games_id', '=', $sessGame['game']['id'])
-            ->whereHas(function ($query) use ($key) {
+            ->where(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('id_game_account', 'like', '%' . $k . '%');
                 }
