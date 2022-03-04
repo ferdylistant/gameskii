@@ -77,6 +77,7 @@ class GameAccountController extends Controller
             ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
+        return response()->json($sessGame);
         try{
             $key = explode(" ", request()->get('key'));
             $gameAccount = DB::table('game_accounts')->where('games_id', '=', $sessGame['game']['id'])
