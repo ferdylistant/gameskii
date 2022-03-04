@@ -89,7 +89,7 @@ class GameAccountController extends Controller
                 foreach ($key as $k) {
                     $query->where('nickname', 'like', '%' . $k . '%');
                 }
-            })->get();
+            })->groupBy('games_id')->get();
             if ($gameAccount->count() <= '0') {
                 return response()->json([
                     'status' => 'error',
