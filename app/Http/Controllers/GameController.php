@@ -57,7 +57,7 @@ class GameController extends Controller
     }
     public function postGame(Request $request, $idGame)
     {
-        $roles_id = user('user')->user()->roles_id;
+        $roles_id = auth('user')->user()->roles_id;
         if ($roles_id != '3') {
             return response()->json([
                 "status" => "error",
@@ -110,7 +110,7 @@ class GameController extends Controller
                         'game-account-data' => $dataGameAccount,
                         'game-data' => $data
                     ],
-                    
+
                 ], 200);
             } catch (\Exception $e) {
                 return response()->json([
