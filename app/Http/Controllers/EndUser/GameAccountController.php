@@ -82,12 +82,12 @@ class GameAccountController extends Controller
             $gameAccount = DB::table('game_accounts')->where('games_id', '=', $sessGame['game']['id'])
             ->where(function ($query) use ($key) {
                 foreach ($key as $k) {
-                    $query->where('id_game_account', 'like', '%' . $k . '%');
+                    $query->where('id_game_account', 'like', '%' . $k . '%')->where('games_id', '=', $sessGame['game']['id']);
                 }
             })
             ->orWhere(function ($query) use ($key) {
                 foreach ($key as $k) {
-                    $query->where('nickname', 'like', '%' . $k . '%');
+                    $query->where('nickname', 'like', '%' . $k . '%')->where('games_id', '=', $sessGame['game']['id']);
                 }
             })->get();
             if ($gameAccount->count() <= '0') {
