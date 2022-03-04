@@ -97,14 +97,10 @@ class GameAccountController extends Controller
                     'message' => 'Game account not found!'
                 ], 404);
             }
-            $data = [
-                'game-account-data' => $gameAccount,
-                'game-data' => $sessGame
-            ];
             return response()->json([
                 'status' => 'success',
                 'message' => 'Game account found!',
-                'data' => $data
+                'data' => $gameAccount
             ], 302);
         } catch (\Exception $e) {
             return response()->json([
