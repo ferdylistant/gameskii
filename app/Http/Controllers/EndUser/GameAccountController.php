@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EndUser;
 use Ramsey\Uuid\Uuid;
 use App\Models\GameAccount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 
@@ -78,7 +79,7 @@ class GameAccountController extends Controller
         $sessGame = $request->session()->get('gamedata');
         try{
             $key = explode(" ", request()->get('key'));
-            $gameAccount = $this->gameAccount->whereHas(function ($query) use ($key) {
+            $gameAccount = DB::table('game_accounts')->whereHas(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('id_game_account', 'like', '%' . $k . '%');
                 }
