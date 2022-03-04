@@ -79,12 +79,12 @@ class GameAccountController extends Controller
         try{
             $key = explode(" ", request()->get('key'));
             $gameAccount = $this->gameAccount->query()
-            ->whereHas('id_game_account', function ($query) use ($key) {
+            ->whereHas(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('id_game_account', 'like', '%' . $k . '%');
                 }
             })
-            ->whereHas('nickname', function ($query) use ($key) {
+            ->orWhere(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('nickname', 'like', '%' . $k . '%');
                 }
