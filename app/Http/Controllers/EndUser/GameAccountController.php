@@ -40,7 +40,7 @@ class GameAccountController extends Controller
                 "message" => "You already have a '".$sessGame['game']['name']."' account",
             ], 409);
         }
-        try {            
+        try {
             $this->gameAccount->id = Uuid::uuid4()->toString();
             $this->gameAccount->id_game_account = $request->id_game_account;
             $this->gameAccount->nickname = $request->nickname;
@@ -66,52 +66,51 @@ class GameAccountController extends Controller
            ]);
         }
     }
-    // public function login(Request $request)
-    // {
-    //     $sessGame = $request->session()->get('gamedata');
-    //     $role = auth('user')->user()->roles_id;
-    //     // return response()->json();
-    //     if (($role == '1' || $role == '2')) {
-    //         return response()->json([
-    //             "status" => "error",
-    //             "message" => "It's not your role"
-    //         ], 403);
-    //     }
-    //     //validasi form register
-    //     $validator = Validator::make($request->all(), [
-    //         'id_game_account' => 'required|max:30',
-    //         'nickname' => 'required|string|min:3|max:20',
-    //     ]);
-    //     //jika validasi eror
-    //     if ($validator->fails()) {
-    //         return response()->json(['status' => false, 'message' => $validator->errors()], 409);
-    //     }
-    //     try {
-    //         $login = $this->gameAccount->where('id_game_account', '=', $request->id_game_account)
-    //             ->where(
-    //                 'games_id',
-    //                 '=',
-    //                 $sessGame['game']['id']
-    //             )->where('nickname', '=', $request->nickname)->where('users_id', '=', auth('user')->user()->id)->first();
-    //         // return response()->json($login);
-    //         if (!$login) {
-    //             return response()->json([
-    //             'code' => 410,
-    //             'status' => 'error',
-    //             'message' => 'Something went wrong'
-    //         ], 410);
-    //         }
-    //         $request->session()->put('game_account', $login);
-    //         return response()->json([
-    //                 'code' => 200,
-    //                 'status' => 'success',
-    //                 'message' => 'Game account sign in successfully!'
-    //             ], 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //            'status' => 'error',
-    //            'message' => $e->getMessage()
-    //        ]);
-    //     }
-    // }
+    public function searchAccount(Request $request){
+        $role = auth('user')->user()->roles_id;
+        // return response()->json($role);
+        if ($role != '3') {
+            return response()->json([
+                "status" => "error",
+                "message" => "It's not your role"
+            ], 403);
+        }
+        $sessGame = $request->session()->get('gamedata');
+        try{
+            $key = explode(" ", request()->get('key'));
+            $gameAccount = $this->gameAccount->query()
+            ->whereHas('id_game_account', function ($query) use ($key) {
+                foreach ($key as $k) {
+                    $query->where('id_game_account', 'like', '%' . $k . '%');
+                }
+            })
+            ->whereHas('nickname', function ($query) use ($key) {
+                foreach ($key as $k) {
+                    $query->where('nickname', 'like', '%' . $k . '%');
+                }
+            })->get();
+            if ($gameAccount->count() <= '0') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Game account not found!'
+                ], 404);
+            }
+            $data = [
+                'game-account-data' => $gameAccount,
+                'game-data' => $sessGame
+            ];
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Game account found!',
+                'data' => $data
+            ], 302);
+        } catch (\Exception $e) {
+            return response()->json([
+               'status' => 'error',
+               'message' => $e->getMessage()
+           ]);
+        }
+
+
+    }
 }
