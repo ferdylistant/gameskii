@@ -80,16 +80,16 @@ class GameAccountController extends Controller
         try{
             $key = explode(" ", request()->get('key'));
             $gameAccount = DB::table('game_accounts')->where('games_id', '=', $sessGame['game']['id'])
-            ->where(function ($query) use ($key) {
+            ->whereHas(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('id_game_account', 'like', '%' . $k . '%');
                 }
             })
-            ->orWhere(function ($query) use ($key) {
+            ->orWhereHas(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('nickname', 'like', '%' . $k . '%');
                 }
-            })->groupBy('games_id')->get();
+            })->get();
             if ($gameAccount->count() <= '0') {
                 return response()->json([
                     'status' => 'error',
