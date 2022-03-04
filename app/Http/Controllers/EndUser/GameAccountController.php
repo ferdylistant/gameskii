@@ -78,8 +78,7 @@ class GameAccountController extends Controller
         $sessGame = $request->session()->get('gamedata');
         try{
             $key = explode(" ", request()->get('key'));
-            $gameAccount = $this->gameAccount->query()
-            ->whereHas(function ($query) use ($key) {
+            $gameAccount = $this->gameAccount->whereHas(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('id_game_account', 'like', '%' . $k . '%');
                 }
