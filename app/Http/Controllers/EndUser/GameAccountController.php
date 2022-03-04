@@ -85,7 +85,7 @@ class GameAccountController extends Controller
                     $query->where('id_game_account', 'like', '%' . $k . '%');
                 }
             })
-            ->orWhereHas(function ($query) use ($key) {
+            ->orWhere(function ($query) use ($key) {
                 foreach ($key as $k) {
                     $query->where('nickname', 'like', '%' . $k . '%');
                 }
