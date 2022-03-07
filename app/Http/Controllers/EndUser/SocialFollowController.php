@@ -23,7 +23,7 @@ class SocialFollowController extends Controller
         try {
             $user = auth('user')->user();
             $idGameAccount = $this->gameAccount->where('users_id', $user->id)->first();
-            $listFriendRequest = $this->follow->where('game_accounts_id', $idGameAccount->id)
+            $listFriendRequest = $this->follow->where('game_accounts_id', $idGameAccount->id_game_account)
             ->where('acc_following_id', '=', NULL)
             ->where('status_follow', '=', '0')->get();
             if ($listFriendRequest->count() < '1') {
