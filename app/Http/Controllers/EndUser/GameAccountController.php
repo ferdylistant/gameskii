@@ -102,7 +102,7 @@ class GameAccountController extends Controller
                 'status' => 'success',
                 'message' => 'Game account found!',
                 'data' => $gameAccount
-            ], 302);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                'status' => 'error',
