@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Notifications\SocialFollowNotification;
 use App\Notifications\SocialAcceptFriendNotification;
+use App\Notifications\SocialRejectFriendNotification;
 
 class SocialFollowController extends Controller
 {
