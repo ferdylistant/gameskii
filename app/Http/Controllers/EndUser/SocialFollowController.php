@@ -36,7 +36,7 @@ class SocialFollowController extends Controller
             foreach ($listFriendRequest as $value) {
                 $result[] = $this->gameAccount->join('users', 'game_accounts.users_id', '=', 'users.id')
                 ->select('game_accounts.*','users.name', 'users.avatar', 'users.email')
-                ->where('id', $value->acc_followers_id)->first();
+                ->where('game_accounts.id', $value->acc_followers_id)->first();
             }
             return response()->json([
                 'status' => 'success',
