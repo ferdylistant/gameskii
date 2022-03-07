@@ -4,6 +4,7 @@ namespace App\Http\Controllers\EndUser;
 
 use App\Models\Rank;
 use App\Models\Team;
+use App\Models\Game;
 use App\Models\User;
 use Ramsey\Uuid\Uuid;
 use App\Models\TeamPlayer;
@@ -25,6 +26,7 @@ class TeamController extends Controller
         $this->gameAccount = new GameAccount();
         $this->rank = new Rank();
         $this->user = new User();
+        $this->game = new Game();
     }
     public function getAllTeams(Request $request)
     {
@@ -338,6 +340,7 @@ class TeamController extends Controller
                 'message' => 'Team not found!'
             ], 404);
         }
+        $dataGame = $this->game->where('id', $dataTeam->games_id)->first();
         $dataTeamPlayer = $this->teamPlayer->where('teams_id', '=', $idTeam)
         ->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
         ->where('role_team', '=', 'Master')
@@ -359,7 +362,7 @@ class TeamController extends Controller
         try {
             $details = [
                 'id' => $idTeam,
-                'games_id' => $sessGame['game']['id'],
+                'games_id' => $dataTeam->games_id,
                 'name' => $dataTeam->name,
                 'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
                 'ranks_id' => $dataTeam->ranks_id,
@@ -378,9 +381,9 @@ class TeamController extends Controller
                 'created_at' => $dataTeam->created_at,
                 'message' => $dataMaster->nickname.' invited you to join '.$dataTeam->name.' team!',
                 'game' => [
-                    'id' => $sessGame['game']['id'],
-                    'name' => $sessGame['game']['name'],
-                    'logo' => $sessGame['game']['picture'],
+                    'id' => $dataGame->id,
+                    'name' => $dataGame->name,
+                    'logo' => URL::to('/api/picture-game/'.$dataGame->picture),
                 ],
                 'member-team' => $resultDataPlayers,
             ];
@@ -429,6 +432,7 @@ class TeamController extends Controller
                 'message' => 'Team not found!'
             ], 404);
         }
+        $dataGame = $this->game->where('id', $dataTeam->games_id)->first();
         $dataMaster = $this->teamPlayer->where('teams_id', '=', $idTeam)->where('status','=','1')
         ->where('role_team','=','Master')
         ->first();
@@ -469,7 +473,7 @@ class TeamController extends Controller
                 }
                 $details = [
                     'id' => $idTeam,
-                    'games_id' => $sessGame['game']['id'],
+                    'games_id' => $dataTeam->games_id,
                     'name' => $dataTeam->name,
                     'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
                     'ranks_id' => $dataTeam->ranks_id,
@@ -488,9 +492,9 @@ class TeamController extends Controller
                     'created_at' => $dataTeam->created_at,
                     'message' => $sessGameAccount->nickname.' accepted your invitation to join '.$dataTeam->name.' team!',
                     'game' => [
-                        'id' => $sessGame['game']['id'],
-                        'name' => $sessGame['game']['name'],
-                        'logo' => $sessGame['game']['picture'],
+                        'id' => $dataGame->id,
+                        'name' => $dataGame->name,
+                        'logo' => URL::to('/api/picture-game/'.$dataGame->picture),
                     ],
                     'member-team' => $resultDataPlayers,
                 ];
@@ -533,6 +537,7 @@ class TeamController extends Controller
                 'message' => 'Team not found!'
             ], 404);
         }
+        $dataGame = $this->game->where('id', $dataTeam->games_id)->first();
         $dataMaster = $this->teamPlayer->where('teams_id', '=', $idTeam)->where('status', '=', '1')
         ->where('role_team', '=', 'Master')
         ->first();
@@ -564,7 +569,7 @@ class TeamController extends Controller
                 }
                 $details = [
                     'id' => $idTeam,
-                    'games_id' => $sessGame['game']['id'],
+                    'games_id' => $dataGame->games_id,
                     'name' => $dataTeam->name,
                     'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
                     'ranks_id' => $dataTeam->ranks_id,
@@ -583,9 +588,9 @@ class TeamController extends Controller
                     'created_at' => $dataTeam->created_at,
                     'message' => $sessGameAccount->nickname.' rejected your invitation to join '.$dataTeam->name.' team!',
                     'game' => [
-                        'id' => $sessGame['game']['id'],
-                        'name' => $sessGame['game']['name'],
-                        'logo' => $sessGame['game']['picture'],
+                        'id' => $dataGame->id,
+                        'name' => $dataGame->name,
+                        'logo' => URL::to('/api/picture-game/'.$dataGame->picture),
                     ],
                     'member-team' => $resultDataPlayers,
                 ];
@@ -627,6 +632,7 @@ class TeamController extends Controller
                 'message' => 'Team not found!'
             ], 404);
         }
+        $dataGame = $this->game->where('id', $dataTeam->games_id)->first();
         $dataMaster = $this->teamPlayer->where('teams_id', '=', $idTeam)->where('status', '=', '1')
         ->where('role_team', '=', 'Master')
         ->first();
@@ -673,7 +679,7 @@ class TeamController extends Controller
             if ($this->teamPlayer->save()) {
                 $details = [
                     'id' => $idTeam,
-                    'games_id' => $sessGame['game']['id'],
+                    'games_id' => $dataGame->games_id,
                     'name' => $dataTeam->name,
                     'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
                     'ranks_id' => $dataTeam->ranks_id,
@@ -692,9 +698,9 @@ class TeamController extends Controller
                     'created_at' => $dataTeam->created_at,
                     'message' => $sessGameAccount->nickname.' want to join '.$dataTeam->name.' team!',
                     'game' => [
-                        'id' => $sessGame['game']['id'],
-                        'name' => $sessGame['game']['name'],
-                        'logo' => $sessGame['game']['picture'],
+                        'id' => $dataGame->id,
+                        'name' => $dataGame->name,
+                        'logo' => URL::to('/api/picture-game/'.$dataGame->picture),
                     ],
                     'member-team' => $resultDataPlayers,
                 ];
@@ -722,6 +728,12 @@ class TeamController extends Controller
             ], 401);
         }
         $sessGameAccount = $request->session()->get('game_account');
+        if ($sessGameAccount == null) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         // $gameAccount = $this->gameAccount->where('id_game_account',$idGameAccount)->first();
         $dataTeam = $this->team->where('id', $idTeam)->first();
         if (!$dataTeam) {
