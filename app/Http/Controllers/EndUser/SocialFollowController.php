@@ -33,12 +33,12 @@ class SocialFollowController extends Controller
                 ], 404);
             }
             foreach ($listFriendRequest as $value) {
-                $listFriendRequest[] = $this->gameAccount->where('id', $value->acc_followers_id)->first();
+                $result[] = $this->gameAccount->where('id', $value->acc_followers_id)->first();
             }
             return response()->json([
                 'status' => 'success',
                 'message' => 'List friend request',
-                'data' => $listFriendRequest
+                'data' => $result
             ],200);
 
         } catch (\Exception $e) {
