@@ -59,6 +59,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         });
         //Auth
         $router->post('/change-password', 'Admin\Auth@changePassword');
+        $router->get('/all-ranks', 'RankController@getAllRanks');
         $router->get('/games-data', 'GameController@getGameData');
         //post
         //Put

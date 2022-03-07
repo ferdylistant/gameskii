@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rank;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
 class RankController extends Controller
@@ -47,6 +48,30 @@ class RankController extends Controller
                     'message' => 'Rank created successfully!'
                 ], 201);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getAllRanks()
+    {
+        try {
+            $dataRanks = $this->rank->get();
+            foreach ($dataRanks as $rank) {
+                $data[] = [
+                    'id' => $rank->id,
+                    'class' => $rank->class,
+                    'min_rp' => $rank->min_rp,
+                    'max_rp' => $rank->max_rp,
+                    'logo' => URL::to('/api/logo-rank/'. $rank->logo),
+                ];
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $data
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
