@@ -26,20 +26,21 @@ class SocialFollowController extends Controller
             $listFriendRequest = $this->follow->where('game_accounts_id', $idGameAccount->id)
             ->where('acc_following_id', '=', NULL)
             ->where('status_follow', '=', '0')->get();
+            if ($listFriendRequest->count() < '1') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'List friend request not found'
+                ], 404);
+            }
             foreach ($listFriendRequest as $value) {
                 $listFriendRequest[] = $this->gameAccount->where('id', $value->acc_followers_id)->first();
             }
-            if ($listFriendRequest) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'List friend request',
-                    'data' => $listFriendRequest
-                ],200);
-            }
             return response()->json([
-                'status' => 'error',
-                'message' => 'List friend request not found'
-            ], 404);
+                'status' => 'success',
+                'message' => 'List friend request',
+                'data' => $listFriendRequest
+            ],200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
