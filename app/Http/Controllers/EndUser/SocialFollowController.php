@@ -24,7 +24,7 @@ class SocialFollowController extends Controller
         try {
             $user = auth('user')->user();
             $idGameAccount = $this->gameAccount->where('users_id', $user->id)->first();
-            $listFriendRequest = $this->follow->where('game_accounts_id', $idGameAccount->id_game_account)
+            $listFriendRequest = $this->follow->where('game_accounts_id', '=', $idGameAccount->id_game_account)
             ->where('acc_following_id', '=', NULL)
             ->where('status_follow', '=', '0')->get();
             if ($listFriendRequest->count() < '1') {
@@ -309,6 +309,16 @@ class SocialFollowController extends Controller
                     'message' => "You are friend with this account"
                 ], 404);
             }
+            $alreadyRejected = $this->follow->where('acc_followers_id', '=', $dataFollowing->id)
+            ->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
+            ->where('status_follow', '=', '2')
+            ->first();
+            if ($alreadyRejected) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "You already rejected this account"
+                ], 409);
+            }
             $user = $this->user->where('id', '=', $dataFollowing->users_id)->first();
             $details = [
                 'id' => $sessGameAccount->id,
@@ -324,10 +334,10 @@ class SocialFollowController extends Controller
                 'message' => $sessGameAccount->nickname . ' rejected your friend request',
             ];
             $this->follow->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
-            ->where('acc_following_id', '=', $dataFollowing->id)
+            ->where('acc_followers_id', '=', $dataFollowing->id)
             ->update(['status_follow' => '2']);
             $this->follow->where('game_accounts_id', '=', $dataFollowing->id_game_account)
-            ->where('acc_followers_id', '=', $sessGameAccount->id)
+            ->where('acc_following_id', '=', $sessGameAccount->id)
             ->update(['status_follow' => '2']);
             $user->notify(new SocialRejectFriendNotification($details));
             return response()->json([
