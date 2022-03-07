@@ -7,6 +7,7 @@ use App\Models\User;
 use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\GameAccount;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
@@ -19,6 +20,7 @@ class Auth extends Controller
     public function __construct()
     {
         $this->endUser = new User();
+        $this->gameAccount = new GameAccount();
     }
     public function register(Request $request)
     {
@@ -203,6 +205,10 @@ class Auth extends Controller
     public function logout(Request $request)
     {
         try {
+            $dataAccount = $request->session()->get('game_account');
+            $this->gameAccount->where('id', $dataAccount->id)->update([
+                'is_login' => '0'
+            ]);
             $request->session()->remove('game_account');
             $request->session()->remove('gamedata');
             auth('user')->user()->tokens()->each(function ($token) {

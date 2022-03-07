@@ -47,7 +47,7 @@ class GameAccountController extends Controller
             $this->gameAccount->nickname = $request->nickname;
             $this->gameAccount->users_id = auth('user')->user()->id;
             $this->gameAccount->games_id = $sessGame['game']['id'];
-            $this->gameAccount->is_online = '0';
+            $this->gameAccount->is_online = '1';
             if ($this->gameAccount->save()) {
                 $data = [
                     'game-account-data' => $this->gameAccount,

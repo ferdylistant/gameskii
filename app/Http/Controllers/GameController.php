@@ -100,6 +100,9 @@ class GameController extends Controller
 
         if ($this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=', $idGame)->count() != 0) {
             try {
+                $this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=', $idGame)->update([
+                    'is_online' => '1'
+                ]);
                 $dataGameAccount = $this->gameAccount->where('users_id', '=', auth('user')->user()->id)->where('games_id', '=', $idGame)->first();
                 $request->session()->put('gamedata', $data);
                 $request->session()->put('game_account', $dataGameAccount);
