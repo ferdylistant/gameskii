@@ -140,7 +140,7 @@ class SocialFollowController extends Controller
                 ], 404);
             }
             foreach ($data as $value) {
-                $result[] = $this->gameAccount->where('id', '=', $value->acc_following_id)->get();
+                $result[] = $this->gameAccount->where('id', '=', $value->acc_following_id)->first();
             }
             return response()->json([
                 'status' => 'success',
