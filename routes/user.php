@@ -38,6 +38,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/notifications', 'EndUser\NotificationController@getNotif');
             $router->get('/notifications-count', 'EndUser\NotificationController@getCount');
             $router->post('/mark-as-read-notification/{idNotification}', 'EndUser\NotificationController@markAsReadOneNotification');
+            $router->post('/mark-all-as-read-notification', 'EndUser\NotificationController@markAsReadAllNotifications');
             $router->post('/create-team', 'EndUser\TeamController@createTeam');
             $router->post('/add-player-team/{idTeam}/{idGameAccount}', 'EndUser\TeamController@addMembers');
             $router->post('/join-team/{idTeam}', 'EndUser\TeamController@joinTeam');
