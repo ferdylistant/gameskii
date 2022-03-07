@@ -34,7 +34,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/reject-friend/{idGameAccount}', 'EndUser\SocialFollowController@rejectFriend');
             $router->post('/remove-friend/{idGameAccount}', 'EndUser\SocialFollowController@unfollow');
             $router->get('/get-friends', 'EndUser\SocialFollowController@getFriends');
-            $router->get('/get-friend-request', 'EndUser\SocialFollowController@getFriendRequest');
+            $router->get('/get-friend-request', 'EndUser\SocialFollowController@getListFriendRequest');
             $router->get('/notifications', 'EndUser\NotificationController@getNotif');
             $router->get('/notifications-count', 'EndUser\NotificationController@getCount');
             $router->post('/mark-as-read-notification/{idNotification}', 'EndUser\NotificationController@markAsReadOneNotification');
