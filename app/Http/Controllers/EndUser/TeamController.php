@@ -52,7 +52,6 @@ class TeamController extends Controller
             ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
             ->join('users','users.id','=','game_accounts.users_id')
             ->join('games','games.id','=','teams.games_id')
-            ->join('ranks','teams.ranks_id','=','ranks.id')
             ->where('teams.games_id',$sessGame['game']['id'])->get();
             // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
@@ -86,11 +85,6 @@ class TeamController extends Controller
                             'id_game' => $value->id_game,
                             'name' => $value->name,
                             'logo' => URL::to('/api/picture-game/'.$value->logo_game),
-                        ],
-                        'rank' => [
-                            'id_rank' => $value->ranks_id,
-                            'class' => $value->class,
-                            'logo' => URL::to('/api/logo-rank/'.$value->logo_rank),
                         ],
                     ];
             }
