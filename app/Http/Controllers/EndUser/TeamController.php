@@ -53,7 +53,7 @@ class TeamController extends Controller
             ->join('team_players','team_players.teams_id','=','teams.id')
             ->crossJoin('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
             ->crossJoin('users','users.id','=','game_accounts.users_id')
-            ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
+            // ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
             ->where('teams.games_id',$sessGame['game']['id'])
             ->get();
             // return response()->json($sessGame);
