@@ -48,12 +48,7 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = $this->team->join('team_players','teams.id','=','team_players.teams_id')
-            ->leftJoin('game_accounts','team_players.game_accounts_id','=','game_accounts.id_game_account')
-            ->rightJoin('users','game_accounts.users_id','=','users.id')
-            ->join('games','teams.games_id','=','games.id')
-            ->join('ranks','teams.ranks_id','=','ranks.id')
-            ->where('teams.games_id',$sessGame['game']['id'])->get();
+            $dataTeam = $this->team->where('teams.games_id',$sessGame['game']['id'])->get();
             // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
                 return response()->json([
@@ -63,7 +58,6 @@ class TeamController extends Controller
             }
             foreach ($dataTeam as $value) {
                 $resultTeam[] = [
-                    'team' => [
                         'id' => $value->id,
                         'name' => $value->name,
                         'logo' => URL::to('/api/picture-team/'.$value->logo),
@@ -74,19 +68,7 @@ class TeamController extends Controller
                         'point' => $value->point,
                         'created_at' => $value->created_at,
                         'updated_at' => $value->updated_at
-                    ],
-                    'team-player' => [
-                        'game_account_id' => $value->game_account_id,
-                        'nickname' => $value->nickname,
-                        'email' => $value->email,
-                        'avatar' => URL::to('/api/avatar/'.$value->avatar),
-                        'role_team' => $value->role_team,
-                    ],
-                    'rank' => [
-                        'class' => $value->class,
-                        'logo' => URL::to('/api/logo-rank/'.$value->logo)
-                    ],
-                ];
+                    ];
             }
 
             // $dataFollow = $this->follow->where('game_accounts_id', '=',$sessGameAccount->game_accounts_id)
