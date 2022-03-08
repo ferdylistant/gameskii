@@ -66,6 +66,7 @@ class TeamController extends Controller
                         'total_match_scrim' => $value->total_match_scrim,
                         'total_match_tournament' => $value->total_match_tournament,
                         'point' => $value->point,
+                        'total_member' => $this->teamPlayer->where('teams_id',$value->id)->count(),
                         'created_at' => $value->created_at,
                         'updated_at' => $value->updated_at
                     ];
@@ -109,7 +110,10 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Get all teams success',
-                'data' => $resultTeam
+                'data' => [
+                    'teams' => $resultTeam,
+                    'total_team' => $dataTeam->count()
+                ]
             ],200);
         } catch (\Exception $e) {
             return response()->json([
