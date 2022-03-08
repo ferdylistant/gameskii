@@ -7,7 +7,7 @@
  */
 return [
     'driver' => env('SESSION_DRIVER', 'file'),//The file driver is used by default, you can configure it in .env
-    'lifetime' => 525600,//Cache expiration time
+    'lifetime' => 31535999,//Cache expiration time
     'expire_on_close' => false,
     'encrypt' => false,
     'files' => storage_path('framework/session'),//file cache save path

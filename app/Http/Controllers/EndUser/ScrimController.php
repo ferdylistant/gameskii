@@ -23,51 +23,69 @@ class ScrimController extends Controller
     }
     public function getAllScrims(Request $request)
     {
+        $sessGame = $request->session()->get('gamedata');
+        if ($sessGame == null) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
         $dataScrim = $this->scrim->join('games','scrims.games_id','=','games.id')
         ->join('top_banner_games','games.id','=','top_banner_games.games_id')
         ->join('bottom_banner_games','games.id','=','bottom_banner_games.games_id')
         ->join('game_accounts','scrims.game_accounts_id','=','game_accounts.id')
         ->join('ranks', 'scrims.ranks_id', '=', 'ranks.id')
         ->join('users','game_accounts.users_id','=','users.id')
+        ->where('scrims.games_id',$sessGame['game']['id'])
         ->select('scrims.*','games.name as game_name', 'games.picture','game_accounts.nickname','top_banner_games.path as top_banner_url','bottom_banner_games.path as bottom_banner_url','users.name as user_name',
         'users.avatar as user_avatar','ranks.class','ranks.logo')
         ->get();
+        if ($dataScrim->count() < 1) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Data not found'
+            ], 404);
+        }
         try {
+            foreach ($dataScrim as $value) {
+                $data[] = [
+                    'scrims' => [
+                        'id' => $value->id,
+                        'name_scrim' => $value->name_party,
+                        'image' => URL::to('/api/picture-scrim/'.$value->image),
+                        'team_play' => $this->scrimMatch->where('scrims_id',$value->id)->count(),
+                        'quota' => $value->quota,
+                        'scrim_system' => $value->scrim_system,
+                        'scrim_date' => $value->scrim_date,
+                        'status' => $value->status,
+                        'result' => $value->result,
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at,
+                    ],
+                    'scrim-master' => [
+                        'id_game_account' => $value->game_accounts_id,
+                        'nickname' => $value->nickname,
+                        'name' => $value->user_name,
+                        'picture' => URL::to('/api/avatar/'.$value->avatar),
+                    ],
+                    'scrim-game' => [
+                        'id_game' => $value->games_id,
+                        'name' => $value->game_name,
+                        'picture' => URL::to('/api/picture-game/'.$value->picture),
+                        'top_banner' => URL::to('/api/banner-game/top/'.$value->top_banner_url),
+                        'bottom_banner' => URL::to('/api/banner-game/bottom'.$value->bottom_banner_url),
+                    ],
+                    'scrim-rank' => [
+                        'id_rank' => $value->ranks_id,
+                        'class' => $value->class,
+                        'logo' => URL::to('/api/logo-rank/'.$value->logo),
+                    ],
+                ];
+            }
             $arrayData = [
                 'status' => 'success',
                 'message' => 'Data Scrim',
-                'data' => [
-                    'scrims' => [
-                        'id' => $dataScrim[0]->id,
-                        'name_scrim' => $dataScrim[0]->name_party,
-                        'image' => URL::to('/api/picture-scrim/'.$dataScrim[0]->image),
-                        'quota' => $dataScrim[0]->quota,
-                        'scrim_system' => $dataScrim[0]->scrim_system,
-                        'scrim_date' => $dataScrim[0]->scrim_date,
-                        'status' => $dataScrim[0]->status,
-                        'result' => $dataScrim[0]->result,
-                        'created_at' => $dataScrim[0]->created_at,
-                        'updated_at' => $dataScrim[0]->updated_at,
-                    ],
-                    'scrim-master' => [
-                        'id_game_account' => $dataScrim[0]->game_accounts_id,
-                        'nickname' => $dataScrim[0]->nickname,
-                        'name' => $dataScrim[0]->user_name,
-                        'picture' => URL::to('/api/avatar/'.$dataScrim[0]->avatar),
-                    ],
-                    'scrim-game' => [
-                        'id_game' => $dataScrim[0]->games_id,
-                        'name' => $dataScrim[0]->game_name,
-                        'picture' => URL::to('/api/picture-game/'.$dataScrim[0]->picture),
-                        'top_banner' => URL::to('/api/banner-game/top/'.$dataScrim[0]->top_banner_url),
-                        'bottom_banner' => URL::to('/api/banner-game/bottom'.$dataScrim[0]->bottom_banner_url),
-                    ],
-                    'scrim-rank' => [
-                        'id_rank' => $dataScrim[0]->ranks_id,
-                        'class' => $dataScrim[0]->class,
-                        'logo' => URL::to('/api/logo-rank/'.$dataScrim[0]->logo),
-                    ],
-                ]
+                'data' => $data
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
@@ -144,7 +162,8 @@ class ScrimController extends Controller
             ]);
         }
     }
-    public function getMyScrimId(Request $request, $idScrim){
+    public function getMyScrimId(Request $request, $idScrim)
+    {
         $roles_id = auth('user')->user()->roles_id;
         if ($roles_id != '3') {
             return response()->json([
@@ -180,6 +199,7 @@ class ScrimController extends Controller
                     'ranks_id' => $scrim->ranks_id,
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
+                    'team_play' => $this->scrimMatch->where('scrims_id','=', $scrim->id)->get()->count(),
                     'quota' => $scrim->quota,
                     'scrim_system' => $scrim->scrim_system,
                     'scrim_date' => $scrim->scrim_date,
@@ -275,6 +295,7 @@ class ScrimController extends Controller
                                 'id' => $dataScrim->id,
                                 'name_party' => $dataScrim->name_party,
                                 'image' => URL::to('/api/picture-scrim/'.$dataScrim->image),
+                                'team_play' => $this->scrimMatch->where('scrims_id','=', $dataScrim->id)->get()->count(),
                                 'quota' => $dataScrim->quota,
                                 'scrim_system' => $dataScrim->scrim_system,
                                 'scrim_date' => $dataScrim->scrim_date,
