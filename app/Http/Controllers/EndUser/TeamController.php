@@ -52,8 +52,9 @@ class TeamController extends Controller
             ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
             ->join('users','users.id','=','game_accounts.users_id')
             ->join('games','games.id','=','teams.games_id')
+            ->join('ranks','teams.ranks_id','=','ranks.id')
             ->where('teams.games_id',$sessGame['game']['id'])->get();
-            return response()->json($dataTeam);
+            // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
                 return response()->json([
                     'status' => 'error',
@@ -62,20 +63,35 @@ class TeamController extends Controller
             }
             foreach ($dataTeam as $value) {
                 $resultTeam[] = [
-                        'id' => $value->id,
-                        'name' => $value->name,
-                        'logo' => URL::to('/api/picture-team/'.$value->logo),
-                        'won' => $value->won,
-                        'lose' => $value->lose,
-                        'total_match_scrim' => $value->total_match_scrim,
-                        'total_match_tournament' => $value->total_match_tournament,
-                        'point' => $value->point,
-                        'created_at' => $value->created_at,
-                        'updated_at' => $value->updated_at,
-                        'member-team' => $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
-                        ->join('teams', 'team_players.teams_id', '=', 'teams.id')
-                        ->where('team_players.teams_id', $value->id)
-                        ->get(),
+                        'team' => [
+                            'id' => $value->id,
+                            'name' => $value->name,
+                            'logo' => URL::to('/api/picture-team/'.$value->logo),
+                            'won' => $value->won,
+                            'lose' => $value->lose,
+                            'total_match_scrim' => $value->total_match_scrim,
+                            'total_match_tournament' => $value->total_match_tournament,
+                            'point' => $value->point,
+                            'created_at' => $value->created_at,
+                            'updated_at' => $value->updated_at,
+                        ],
+                        'member-team' => [
+                            'id_game_account' => $value->id_game_account,
+                            'nickname' => $value->nickname,
+                            'email' => $value->email,
+                            'avatar' => $value->avatar,
+                            'role_team' => $value->role_team,
+                        ],
+                        'game' => [
+                            'id_game' => $value->id_game,
+                            'name' => $value->name,
+                            'logo' => URL::to('/api/picture-game/'.$value->logo_game),
+                        ],
+                        'rank' => [
+                            'id_rank' => $value->ranks_id,
+                            'class' => $value->class,
+                            'logo' => URL::to('/api/logo-rank/'.$value->logo_rank),
+                        ],
                     ];
             }
             return response()->json([
