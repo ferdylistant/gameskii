@@ -46,26 +46,61 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataFollow = $this->follow->where('game_accounts_id', '=',$sessGameAccount->game_accounts_id)
-            ->where('status_follow','=', '1')
+            $dataTeam = $this->team->join('teams_players','teams_players.teams_id','=','teams.id')
+            ->join('game_accounts','game_accounts.id_game_account','=','teams_players.game_accounts_id')
+            ->join('users','users.id','=','game_accounts.users_id')
+            ->join('games','games.id','=','teams.games_id')
+            ->join('ranks','ranks.id','=','teams.ranks_id')
+            ->where('teams.games_id','=',$sessGame['game']['id'])
+            ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
             ->get();
-            if ($dataFollow->count() == '0') {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'You dont follow any team'
-                ],404);
+            foreach ($dataTeam as $value) {
+                $resultTeam[] = [
+                    'team' => [
+                        'id' => $value->id,
+                        'name' => $value->name,
+                        'logo' => URL::to('/api/picture-team/'.$value->logo),
+                        'won' => $value->won,
+                        'lose' => $value->lose,
+                        'total_match_scrim' => $value->total_match_scrim,
+                        'total_match_tournament' => $value->total_match_tournament,
+                        'point' => $value->point,
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at
+                    ],
+                    'team-player' => [
+                        'game_account_id' => $value->game_account_id,
+                        'nickname' => $value->nickname,
+                        'email' => $value->email,
+                        'avatar' => URL::to('/api/avatar/'.$value->avatar),
+                        'role_team' => $value->role_team,
+                    ],
+                    'rank' => [
+                        'class' => $value->class,
+                        'logo' => URL::to('/api/logo-rank/'.$value->logo)
+                    ],
+                ];
             }
-            foreach ($dataFollow as $value) {
-                $resultFollow[] = $this->gameAccount->where('id', $value->acc_following_id)->first();
-            }
-            foreach ($resultFollow as $value) {
-                $result[] = $this->teamPlayer->where('game_accounts_id','=', $value->id_game_account)
-                ->where('role_team','=', 'Master')
-                ->first();
-            }
-            foreach ($result as $value) {
-                $resultTeam[] = $this->team->where('id','=', $value->teams_id)->get();
-            }
+            // $dataFollow = $this->follow->where('game_accounts_id', '=',$sessGameAccount->game_accounts_id)
+            // ->where('status_follow','=', '1')
+            // ->get();
+            // if ($dataFollow->count() == '0') {
+            //     return response()->json([
+            //         'status' => 'error',
+            //         'message' => 'You dont follow any team'
+            //     ],404);
+            // }
+            // foreach ($dataFollow as $value) {
+            //     $resultFollow[] = $this->gameAccount->where('id', $value->acc_following_id)->first();
+            // }
+            // foreach ($resultFollow as $value) {
+            //     $result[] = $this->teamPlayer->where('game_accounts_id','=', $value->id_game_account)
+            //     ->where('role_team','=', 'Master')
+            //     ->first();
+            // }
+            // foreach ($result as $value) {
+            //     $resultTeam[] = $this->team->where('id','=', $value->teams_id)->get();
+            // }
             // $dataFollow = $this->team->join('team_players', 'teams.id', '=', 'team_players.teams_id')
             // ->join('games', 'games.id', '=', 'teams.games_id')
             // ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')

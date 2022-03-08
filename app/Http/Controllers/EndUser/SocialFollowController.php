@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\EndUser;
 
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\GameAccount;
 use App\Models\SocialFollow;
@@ -78,8 +79,22 @@ class SocialFollowController extends Controller
                     'message' => "Game account data not found"
                 ], 404);
             }
-            $userFollowing = $this->user->where('id', '=', $dataFollowing->users_id)->first();
             $sessGameAccount = $request->session()->get('game_account');
+            $dataFollow = $this->follow->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
+            ->where('acc_following_id', '=', $idGameAccount)
+            ->where('status_follow', '=', '2')
+            ->first();
+            if ($dataFollow) {
+                $dateCreated = new Carbon($dataFollow->updated_at, 'Asia/Jakarta');
+                $diffDays = $dateCreated->isToday();
+                if ($diffDays) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'You have rejected this friend request, please wait for 24 hours to send another request',
+                    ], 403);
+                }
+            }
+            $userFollowing = $this->user->where('id', '=', $dataFollowing->users_id)->first();
 
             // return response()->json($sessGameAccount->id);
             $details = [
