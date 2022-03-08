@@ -48,8 +48,9 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = $this->team->where('teams.games_id',$sessGame['game']['id'])->get();
-            // return response()->json($dataTeam);
+            $dataTeam = $this->team->join('team_players','team_player.teams_id','=','teams.id')
+            ->where('teams.games_id',$sessGame['game']['id'])->get();
+            return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
                 return response()->json([
                     'status' => 'error',
