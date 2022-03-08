@@ -121,7 +121,7 @@ class ScrimController extends Controller
                     'ranks_id' => $scrim->ranks_id,
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
-                    'team_play' => $this->scrimMatch->where('scrims_id','=', $scrims->id)->get()->count(),
+                    'team_play' => $this->scrimMatch->where('scrims_id','=', $scrim->id)->get()->count(),
                     'quota' => $scrim->quota,
                     'scrim_system' => $scrim->scrim_system,
                     'scrim_date' => $scrim->scrim_date,
