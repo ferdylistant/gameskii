@@ -48,16 +48,9 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = DB::table('teams')->join('games','games.id','=','teams.games_id')
-            ->join('ranks','ranks.id','=','teams.ranks_id')
-            ->join('team_players','team_players.teams_id','=','teams.id')
-            ->crossJoin('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
-            ->crossJoin('users','users.id','=','game_accounts.users_id')
-            // ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
-            ->where('teams.games_id',$sessGame['game']['id'])
-            ->get();
-            // return response()->json($sessGame);
-            if ($dataTeam->count() == 0) {
+            $dataTeam = $this->team->where('teams.games_id',$sessGame['game']['id'])->get();
+            return response()->json($dataTeam);
+            if ($dataTeam->count() == '0') {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Data not found'
@@ -90,6 +83,7 @@ class TeamController extends Controller
                     ],
                 ];
             }
+
             // $dataFollow = $this->follow->where('game_accounts_id', '=',$sessGameAccount->game_accounts_id)
             // ->where('status_follow','=', '1')
             // ->get();
@@ -128,7 +122,10 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Get all teams success',
-                'data' => $resultTeam
+                'data' => [
+                    'teams' => $resultTeam,
+                    'member' => $dataMember
+                ]
             ],200);
         } catch (\Exception $e) {
             return response()->json([
