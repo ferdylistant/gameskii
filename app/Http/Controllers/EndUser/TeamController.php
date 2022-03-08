@@ -48,9 +48,10 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = $this->team->join('team_players','team_players.teams_id','=','teams.id')
-            ->join('games','games.id','=','teams.games_id')
-            ->where('teams.games_id',$sessGame['game']['id'])->get();
+            $dataTeam = $this->team->join('games','games.id','=','teams.games_id')
+            ->where('teams.games_id',$sessGame['game']['id'])
+            ->select('teams.*','games.*')
+            ->get();
             // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
                 return response()->json([
@@ -74,7 +75,7 @@ class TeamController extends Controller
                         ],
                         'member-team' => $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
                         ->join('teams', 'team_players.teams_id', '=', 'teams.id')
-                        // ->where('team_players.status', '1')
+                        ->where('team_players.status', '1')
                         ->where('team_players.teams_id', $value->id)
                         ->get(),
                         'game' => [
