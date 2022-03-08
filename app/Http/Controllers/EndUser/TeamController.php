@@ -263,6 +263,19 @@ class TeamController extends Controller
                     'message' => 'Session timeout'
                 ], 408);
             }
+            $alreadyHaveTeam = $this->team->join('team_players', 'team_players.teams_id', '=', 'teams.id')
+            ->where('teams.games_id', $sessGame['game']['id'])
+            ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
+            ->where('team_players.role_team', 'Master')
+            ->where('team_players.status', '1')
+            ->first();
+            return response()->json($alreadyHaveTeam);
+            if ($alreadyHaveTeam) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You already have a team'
+                ], 403);
+            }
             if ($request->hasFile('logo')) {
                 $dataFile = $request->file('logo');
                 $imageName = date('mdYHis') . $dataFile->hashName();
