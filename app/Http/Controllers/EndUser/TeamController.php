@@ -269,7 +269,7 @@ class TeamController extends Controller
             ->where('team_players.role_team', 'Master')
             ->where('team_players.status', '1')
             ->first();
-            return response()->json($alreadyHaveTeam);
+            // return response()->json($alreadyHaveTeam);
             if ($alreadyHaveTeam) {
                 return response()->json([
                     'status' => 'error',
