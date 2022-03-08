@@ -30,7 +30,7 @@ class ScrimController extends Controller
                 'message' => 'Session timeout'
             ], 408);
         }
-        $dataScrim = $this->scrim->join('games','scrims.games_id','=','games.id')
+        $dataScrim = $this->scrim->join('games','games.id','=','scrims.games_id')
         ->join('top_banner_games','games.id','=','top_banner_games.games_id')
         ->join('bottom_banner_games','games.id','=','bottom_banner_games.games_id')
         ->join('game_accounts','scrims.game_accounts_id','=','game_accounts.id')
