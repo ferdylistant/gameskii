@@ -82,9 +82,9 @@ class TeamController extends Controller
                             'role_team' => $value->role_team,
                         ],
                         'game' => [
-                            'id_game' => $value->id_game,
+                            'id_game' => $value->games_id,
                             'name' => $value->name,
-                            'logo' => URL::to('/api/picture-game/'.$value->logo_game),
+                            'picture' => URL::to('/api/picture-game/'.$value->picture),
                         ],
                     ];
             }
