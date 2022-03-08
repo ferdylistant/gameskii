@@ -50,7 +50,7 @@ class TeamController extends Controller
         try{
             $dataTeam = $this->team->join('games','games.id','=','teams.games_id')
             ->where('teams.games_id',$sessGame['game']['id'])
-            ->select('teams.*','games.*')
+            ->select('teams.*','games.name','games.picture')
             ->get();
             // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
