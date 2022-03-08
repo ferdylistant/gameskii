@@ -73,7 +73,8 @@ class TeamController extends Controller
                             'updated_at' => $value->updated_at,
                         ],
                         'member-team' => $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
-                        ->where('team_players.status', '1')
+                        ->join('teams', 'team_players.teams_id', '=', 'teams.id')
+                        // ->where('team_players.status', '1')
                         ->where('team_players.teams_id', $value->id)
                         ->get(),
                         'game' => [
