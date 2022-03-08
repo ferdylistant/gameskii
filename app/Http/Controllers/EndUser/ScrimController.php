@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EndUser;
 use Carbon\Carbon;
 use App\Models\Scrim;
 use Ramsey\Uuid\Uuid;
+use App\Models\ScrimMatch;
 use Illuminate\Http\Request;
 use App\Models\GameAccount;
 use Illuminate\Support\Facades\URL;
@@ -16,6 +17,7 @@ class ScrimController extends Controller
     public function __construct()
     {
         $this->scrim = new Scrim();
+        $this->scrimMatch = new ScrimMatch();
         $this->gameAccount = new GameAccount();
 
     }
@@ -110,6 +112,7 @@ class ScrimController extends Controller
                 'message' => "You don't have any scrims"
             ], 404);
         }
+
         try {
             foreach ($scrims as $scrim) {
                 $loopScrims[] = [
@@ -118,6 +121,7 @@ class ScrimController extends Controller
                     'ranks_id' => $scrim->ranks_id,
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
+                    'team_play' => $this->scrimMatch->where('scrims_id','=', $scrims->id)->get()->count(),
                     'quota' => $scrim->quota,
                     'scrim_system' => $scrim->scrim_system,
                     'scrim_date' => $scrim->scrim_date,
