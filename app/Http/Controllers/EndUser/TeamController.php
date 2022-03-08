@@ -66,9 +66,13 @@ class TeamController extends Controller
                         'total_match_scrim' => $value->total_match_scrim,
                         'total_match_tournament' => $value->total_match_tournament,
                         'point' => $value->point,
-                        'total_member' => $this->teamPlayer->where('teams_id',$value->id)->count(),
                         'created_at' => $value->created_at,
-                        'updated_at' => $value->updated_at
+                        'updated_at' => $value->updated_at,
+                        'total_member' => $this->teamPlayer->where('teams_id',$value->id)->count(),
+                        'member-team' => $this->teamPlayer->where('teams_id',$value->id)->join('game_accounts','game_accounts.id','=','team_players.game_accounts_id')
+                        ->join('users','users.id','=','game_accounts.users_id')
+                        ->select('game_accounts.id_game_account','game_accounts.nickname','users.email',URL::to("/api/avatar/'.'users.avatar'"),'team_players.role_team')
+                        ->get()
                     ];
             }
 
@@ -110,10 +114,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Get all teams success',
-                'data' => [
-                    'teams' => $resultTeam,
-                    'total_team' => $dataTeam->count()
-                ]
+                'data' => $resultTeam
             ],200);
         } catch (\Exception $e) {
             return response()->json([
