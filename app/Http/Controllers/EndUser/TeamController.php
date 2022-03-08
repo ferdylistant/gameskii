@@ -48,8 +48,8 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = $this->team->join('teams_players','teams.id','=','teams_players.teams_id')
-            ->join('game_accounts','teams_players.game_accounts_id','=','game_accounts.id_game_account')
+            $dataTeam = $this->team->join('team_players','teams.id','=','team_players.teams_id')
+            ->join('game_accounts','team_players.game_accounts_id','=','game_accounts.id_game_account')
             ->join('users','game_accounts.users_id','=','users.id')
             ->join('games','teams.games_id','=','games.id')
             ->join('ranks','teams.ranks_id','=','ranks.id')
