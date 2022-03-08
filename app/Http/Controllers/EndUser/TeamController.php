@@ -50,7 +50,7 @@ class TeamController extends Controller
         try{
             $dataTeam = $this->team->join('games','games.id','=','teams.games_id')
             ->where('teams.games_id',$sessGame['game']['id'])
-            ->select('teams.*','games.name','games.picture')
+            ->select('teams.*','games.name as name_game','games.picture')
             ->get();
             // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
@@ -77,11 +77,11 @@ class TeamController extends Controller
                         ->join('users', 'users.id', '=', 'game_accounts.users_id')
                         ->where('team_players.status', '1')
                         ->where('team_players.teams_id', $value->id)
-                        ->select('game_accounts.id_game_account','game_accounts.nickname','users.avatar','users.email','users.phone')
+                        ->select('game_accounts.id_game_account','game_accounts.nickname','users.email','users.phone','users.avatar')
                         ->get(),
                         'game' => [
                             'id_game' => $value->games_id,
-                            'name' => $value->name,
+                            'name_game' => $value->name_game,
                             'picture' => URL::to('/api/picture-game/'.$value->picture),
                         ],
                     ];
