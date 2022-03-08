@@ -36,7 +36,7 @@ class ScrimController extends Controller
         ->join('game_accounts','game_accounts.id_game_account','=','scrims.game_accounts_id')
         ->join('users','game_accounts.users_id','=','users.id')
         ->select('scrims.*','games.name as game_name', 'games.picture','game_accounts.nickname','top_banner_games.path as top_banner_url','bottom_banner_games.path as bottom_banner_url','users.name as user_name',
-        'users.avatar as user_avatar')
+        'users.avatar')
         ->where('scrims.games_id','=',$sessGame['game']['id'])
         ->get();
         if ($dataScrim->count() < '1') {
