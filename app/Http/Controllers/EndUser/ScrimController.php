@@ -34,10 +34,9 @@ class ScrimController extends Controller
         ->join('top_banner_games','games.id','=','top_banner_games.games_id')
         ->join('bottom_banner_games','games.id','=','bottom_banner_games.games_id')
         ->join('game_accounts','scrims.game_accounts_id','=','game_accounts.id')
-        ->join('ranks', 'scrims.ranks_id', '=', 'ranks.id')
         ->join('users','game_accounts.users_id','=','users.id')
         ->select('scrims.*','games.name as game_name', 'games.picture','game_accounts.nickname','top_banner_games.path as top_banner_url','bottom_banner_games.path as bottom_banner_url','users.name as user_name',
-        'users.avatar as user_avatar','ranks.class','ranks.logo')
+        'users.avatar as user_avatar')
         ->where('scrims.games_id','=',$sessGame['game']['id'])
         ->get();
         if ($dataScrim->count() < '1') {
@@ -74,11 +73,6 @@ class ScrimController extends Controller
                         'picture' => URL::to('/api/picture-game/'.$value->picture),
                         'top_banner' => URL::to('/api/banner-game/top/'.$value->top_banner_url),
                         'bottom_banner' => URL::to('/api/banner-game/bottom'.$value->bottom_banner_url),
-                    ],
-                    'scrim-rank' => [
-                        'id_rank' => $value->ranks_id,
-                        'class' => $value->class,
-                        'logo' => URL::to('/api/logo-rank/'.$value->logo),
                     ],
                 ];
             }
