@@ -18,9 +18,84 @@ use GuzzleHttp\Exception\BadResponseException;
 
 class SocialAccountController extends Controller
 {
-    public function __construct() 
+    public function __construct()
     {
         $this->endUser = new User();
+    }
+    public function requestIdToken(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_token' => 'required|string',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Bad Request',
+                'errors' => $validator->errors()
+            ], 400);
+        }
+        $idToken = $request->input('id_token');
+        try {
+            $accessTokenResponse= Socialite::driver('google')->getAccessTokenResponse($idToken);
+            $accessToken = $accessTokenResponse['access_token'];
+            $client = new Client();
+            $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='.$idToken, [
+                'headers' => [
+                    'Authorization' => 'Bearer '.$accessToken,
+                ]
+            ]);
+            return json_decode($response->getBody()->getContents(), true);
+            $user = $this->endUser->where('email',$data['email'])->first();
+            if ($user == null) {
+                $user = $this->endUser->create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'password' => Crypt::encryptString('123456'),
+                    'picture' => $data['picture'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ]);
+
+            }
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+        // $client = new Client();
+        // $response = $client->request('POST', 'https://www.googleapis.com/oauth2/v3/tokeninfo', [
+        //     'form_params' => [
+        //         'id_token' => $idToken,
+        //     ]
+        // ]);
+        // $data = json_decode($response->getBody()->getContents(), true);
+        // if (isset($data['error'])) {
+        //     return response()->json([
+        //         'code' => 400,
+        //         'status' => 'error',
+        //         'message' => 'Bad Request',
+        //         'errors' => $data['error']
+        //     ], 400);
+        // }
+        // $user = $this->endUser->where('email', $data['email'])->first();
+        // if ($user == null) {
+        //     $user = $this->endUser->create([
+        //         'email' => $data['email'],
+        //         'name' => $data['name'],
+        //         'password' => Crypt::encryptString(str_random(8)),
+        //         'created_at' => Carbon::now(),
+        //         'updated_at' => Carbon::now(),
+        //     ]);
+        // }
+        // $request->session()->put('user', $user);
+        // return response()->json([
+        //     'code' => 200,
+        //     'status' => 'success',
+        //     'message' => 'Success',
+        //     'data' => $user
+        // ], 200);
     }
     public function redirectToGoogle()
     {
