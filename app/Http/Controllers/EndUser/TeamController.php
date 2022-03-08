@@ -49,8 +49,6 @@ class TeamController extends Controller
         }
         try{
             $dataTeam = $this->team->join('team_players','team_players.teams_id','=','teams.id')
-            ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
-            ->join('users','users.id','=','game_accounts.users_id')
             ->join('games','games.id','=','teams.games_id')
             ->where('teams.games_id',$sessGame['game']['id'])->get();
             // return response()->json($dataTeam);
@@ -75,6 +73,7 @@ class TeamController extends Controller
                             'updated_at' => $value->updated_at,
                         ],
                         'member-team' => $this->teamPlayer->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
+                        ->join('teams','teams.id','=','team_players.teams_id')
                         ->join('users','users.id','=','game_accounts.users_id')
                         ->where('team_players.teams_id',$value->id)
                         ->select('game_accounts.id_game_account','game_accounts.nickname','users.email','users.avatar','team_players.role_team')
