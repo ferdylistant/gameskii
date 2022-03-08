@@ -72,12 +72,10 @@ class TeamController extends Controller
                             'created_at' => $value->created_at,
                             'updated_at' => $value->updated_at,
                         ],
-                        'member-team' => $this->teamPlayer->join('teams','teams.id','=','team_players.teams_id')
-                        ->join('game_accounts','team_players.game_accounts_id','=','game_accounts.id_game_account')
-                        ->join('users','game_accounts.users_id','=','users.id')
+                        'member-team' => $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+                        ->join('teams', 'team_players.teams_id', '=', 'teams.id')
                         ->where('team_players.status', '1')
-                        ->where('team_players.teams_id',$value->id)
-                        ->select('game_accounts.id_game_account','game_accounts.nickname','users.email','users.avatar','team_players.role_team')
+                        ->where('team_players.teams_id', $value->id)
                         ->get(),
                         'game' => [
                             'id_game' => $value->games_id,
