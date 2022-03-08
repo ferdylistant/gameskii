@@ -11,9 +11,11 @@ use App\Models\TeamPlayer;
 use App\Models\GameAccount;
 use App\Models\SocialFollow;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Notifications\TeamNotification;
+
 use Illuminate\Support\Facades\Validator;
 
 class TeamController extends Controller
@@ -46,13 +48,13 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = $this->team->join('games','games.id','=','teams.games_id')
+            $dataTeam = DB::table('teams')->join('games','games.id','=','teams.games_id')
             ->join('team_players','team_players.teams_id','=','teams.id')
             ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
             ->join('users','users.id','=','game_accounts.users_id')
             ->join('ranks','ranks.id','=','teams.ranks_id')
-            ->where('teams.games_id',$sessGame['game']['id'])
             ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
+            ->where('teams.games_id',$sessGame['game']['id'])
             ->get();
             // return response()->json($sessGame);
             if ($dataTeam->count() == 0) {
