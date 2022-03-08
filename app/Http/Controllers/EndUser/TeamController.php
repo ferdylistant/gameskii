@@ -48,8 +48,13 @@ class TeamController extends Controller
             ],408);
         }
         try{
-            $dataTeam = $this->team->where('teams.games_id',$sessGame['game']['id'])->get();
-            return response()->json($dataTeam);
+            $dataTeam = $this->team->join('teams_players','teams.id','=','teams_players.teams_id')
+            ->join('game_accounts','teams_players.game_accounts_id','=','game_accounts.id_game_account')
+            ->join('users','game_accounts.users_id','=','users.id')
+            ->join('games','teams.games_id','=','games.id')
+            ->join('ranks','teams.ranks_id','=','ranks.id')
+            ->where('teams.games_id',$sessGame['game']['id'])->get();
+            // return response()->json($dataTeam);
             if ($dataTeam->count() == '0') {
                 return response()->json([
                     'status' => 'error',
@@ -122,10 +127,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Get all teams success',
-                'data' => [
-                    'teams' => $resultTeam,
-                    'member' => $dataMember
-                ]
+                'data' => $resultTeam
             ],200);
         } catch (\Exception $e) {
             return response()->json([
