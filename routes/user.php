@@ -6,6 +6,7 @@ $router->get('/', function () use ($router) {
 
 $router->group(['prefix' => 'api'], function () use ($router) {
     //Auth
+    $router->post('/auth/login-with-google', 'SocialAuth\SocialAccountController@requestIdToken');
     $router->post('/register', 'EndUser\Auth@register');
     $router->post('/login', 'EndUser\Auth@login');
     $router->post('/forgot-password', 'Api\NewPasswordController@forgotPassword');
