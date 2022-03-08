@@ -49,10 +49,10 @@ class TeamController extends Controller
         }
         try{
             $dataTeam = DB::table('teams')->join('games','games.id','=','teams.games_id')
-            ->join('team_players','team_players.teams_id','=','teams.id')
-            ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
-            ->join('users','users.id','=','game_accounts.users_id')
             ->join('ranks','ranks.id','=','teams.ranks_id')
+            ->join('team_players','team_players.teams_id','=','teams.id')
+            ->crossJoin('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
+            ->crossJoin('users','users.id','=','game_accounts.users_id')
             ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
             ->where('teams.games_id',$sessGame['game']['id'])
             ->get();
