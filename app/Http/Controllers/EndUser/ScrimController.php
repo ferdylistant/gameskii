@@ -36,11 +36,11 @@ class ScrimController extends Controller
         ->join('game_accounts','scrims.game_accounts_id','=','game_accounts.id')
         ->join('ranks', 'scrims.ranks_id', '=', 'ranks.id')
         ->join('users','game_accounts.users_id','=','users.id')
-        ->where('scrims.games_id','=',$sessGame['game']['id'])
         ->select('scrims.*','games.name as game_name', 'games.picture','game_accounts.nickname','top_banner_games.path as top_banner_url','bottom_banner_games.path as bottom_banner_url','users.name as user_name',
         'users.avatar as user_avatar','ranks.class','ranks.logo')
+        ->where('scrims.games_id','=',$sessGame['game']['id'])
         ->get();
-        if ($dataScrim->count() < 1) {
+        if ($dataScrim->count() < '1') {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Data not found'
