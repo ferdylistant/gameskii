@@ -65,7 +65,7 @@ class ScrimController extends Controller
                         'id_game_account' => $value->game_accounts_id,
                         'nickname' => $value->nickname,
                         'name' => $value->user_name,
-                        'picture' => URL::to('/api/avatar/'.$value->avatar),
+                        'picture' => $value->avatar,
                     ],
                     'scrim-game' => [
                         'id_game' => $value->games_id,
