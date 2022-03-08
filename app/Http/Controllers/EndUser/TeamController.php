@@ -72,7 +72,7 @@ class TeamController extends Controller
                         'member-team' => $this->teamPlayer->join('game_accounts','game_accounts.id','=','team_players.game_accounts_id')
                         ->where('team_players.teams_id',$value->id)
                         ->select('game_accounts.id_game_account','game_accounts.nickname','team_players.role_team')
-                        ->get()
+                        ->first()
                     ];
             }
 
