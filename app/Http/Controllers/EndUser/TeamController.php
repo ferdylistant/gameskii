@@ -54,7 +54,7 @@ class TeamController extends Controller
             ->where('teams.games_id','=',$sessGame['game']['id'])
             ->select('teams.*','users.email','users.avatar','game_accounts.id_game_account as game_account_id','game_accounts.nickname','ranks.*')
             ->get();
-            return response()->json($dataTeam);
+            return response()->json($sessGame);
             if ($dataTeam->count() == 0) {
                 return response()->json([
                     'status' => 'error',
@@ -261,7 +261,7 @@ class TeamController extends Controller
                         ->select('game_accounts.id_game_account', 'game_accounts.nickname')
                         ->first(),
                     ],
-                    'team_player' => $dataTeamPlayer,
+                    'member-team' => $dataTeamPlayer,
                 ]
             ], 200);
         } catch (\Exception $e) {
