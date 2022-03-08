@@ -18,9 +18,9 @@ class Team extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $keyType = 'string';
     public $incrementing = false;
     protected $fillable = [
-        'id','games_id', 'name', 'logo', 'won', 'lost', 'point', 'total_match_scrim', 'total_match_tournament'
+        'id','games_id', 'ranks_id','name', 'logo', 'won', 'lost', 'point', 'total_match_scrim', 'total_match_tournament'
     ];
     protected $hidden = [
-        'ranks_id', 'updated_at'
+        'updated_at'
     ];
 }
