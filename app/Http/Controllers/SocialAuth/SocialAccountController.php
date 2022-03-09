@@ -24,6 +24,8 @@ class SocialAccountController extends Controller
     }
     public function requestIdToken(Request $request)
     {
+        //BELUM BERES
+
         $validator = Validator::make($request->all(), [
             'id_token' => 'required|string',
         ]);
@@ -42,7 +44,7 @@ class SocialAccountController extends Controller
                 'status' => 'success',
                 'message' => 'Success',
                 'data' => [
-                    'access_token' => $accessToken
+                    'access_token' => $accessTokenResponse
                 ]
             ], 200);
             $client = new Client();
