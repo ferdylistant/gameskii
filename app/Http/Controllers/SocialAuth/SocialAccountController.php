@@ -46,12 +46,17 @@ class SocialAccountController extends Controller
                 ]);
             $data = json_decode($response->getBody()->getContents(), true);
             $user = $this->endUser->where('email',$data['email'])->first();
+            $current = Carbon::now('Asia/Jakarta');
             if ($user == null) {
                 $user = $this->endUser->create([
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'picture' => $data['picture'],
                     'roles_id' => '3',
+                    'is_verified' => '1',
+                    'email_verified_at' => $current->toDateTimeString(),
+                    'last_login' => $current->toDateTimeString(),
+                    'ip_address' => $request->getClientIp()
                 ]);
                 $accessToken = $user->createToken('authToken')->accessToken;
                 return response()->json([
@@ -61,6 +66,10 @@ class SocialAccountController extends Controller
                     'data' => $user
                 ], 250);
             }
+            $user->forceFill([
+                'last_login' => $current->toDateTimeString(),
+                'ip_address' => $request->getClientIp()
+            ])->save();
             $accessToken = $user->createToken('authToken')->accessToken;
             return response()->json([
                 'token_type' => "Bearer",
@@ -157,7 +166,7 @@ class SocialAccountController extends Controller
                 'access_token' => $response,
                 'data' => $this->endUser
             ]);
-        } catch (\Exception $e) {
+        } catch (BadResponseException $e) {
             // You should show something simple fail message
             return response()->json([
                 'status'  => 'error',
