@@ -53,7 +53,7 @@ class SocialAccountController extends Controller
             //         'Authorization' => 'Bearer '.$accessToken,
             //     ]
             // ]);
-            $response = $client->request('POST', 'https://www.googleapis.com/oauth2/v3/tokeninfo', [
+            $response = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/tokeninfo', [
                     'form_params' => [
                         'id_token' => $idToken,
                     ]
