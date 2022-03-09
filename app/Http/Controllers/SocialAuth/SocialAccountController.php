@@ -32,8 +32,7 @@ class SocialAccountController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Bad Request',
-                'errors' => $validator->errors()
+                'message' => $validator->errors()
             ], 400);
         }
         $idToken = $request->input('id_token');
@@ -63,7 +62,6 @@ class SocialAccountController extends Controller
                     'token_type' => "Bearer",
                     'expires_in' => 31535999,
                     'access_token' => $accessToken,
-                    'data' => $user
                 ], 250);
             }
             $user->forceFill([
@@ -75,7 +73,6 @@ class SocialAccountController extends Controller
                 'token_type' => "Bearer",
                 'expires_in' => 31535999,
                 'access_token' => $accessToken,
-                'data' => $user
             ], 200);
 
         } catch (\Exception $e) {
@@ -84,38 +81,6 @@ class SocialAccountController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
-        // $client = new Client();
-        // $response = $client->request('POST', 'https://www.googleapis.com/oauth2/v3/tokeninfo', [
-        //     'form_params' => [
-        //         'id_token' => $idToken,
-        //     ]
-        // ]);
-        // $data = json_decode($response->getBody()->getContents(), true);
-        // if (isset($data['error'])) {
-        //     return response()->json([
-        //         'code' => 400,
-        //         'status' => 'error',
-        //         'message' => 'Bad Request',
-        //         'errors' => $data['error']
-        //     ], 400);
-        // }
-        // $user = $this->endUser->where('email', $data['email'])->first();
-        // if ($user == null) {
-        //     $user = $this->endUser->create([
-        //         'email' => $data['email'],
-        //         'name' => $data['name'],
-        //         'password' => Crypt::encryptString(str_random(8)),
-        //         'created_at' => Carbon::now(),
-        //         'updated_at' => Carbon::now(),
-        //     ]);
-        // }
-        // $request->session()->put('user', $user);
-        // return response()->json([
-        //     'code' => 200,
-        //     'status' => 'success',
-        //     'message' => 'Success',
-        //     'data' => $user
-        // ], 200);
     }
     public function redirectToGoogle()
     {
