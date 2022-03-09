@@ -38,39 +38,36 @@ class SocialAccountController extends Controller
         }
         $idToken = $request->input('id_token');
         try {
-            // $accessTokenResponse= Socialite::driver('google')->getAccessTokenResponse($idToken);
-            // $accessToken = $accessTokenResponse['access_token'];
-            // return response()->json([
-            //     'status' => 'success',
-            //     'message' => 'Success',
-            //     'data' => [
-            //         'access_token' => $accessTokenResponse
-            //     ]
-            // ], 200);
             $client = new Client();
-            // $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='.$idToken, [
-            //     'headers' => [
-            //         'Authorization' => 'Bearer '.$accessToken,
-            //     ]
-            // ]);
             $response = $client->request('POST', 'https://www.googleapis.com/oauth2/v3/tokeninfo', [
                     'form_params' => [
                         'id_token' => $idToken,
                     ]
                 ]);
-            return json_decode($response->getBody()->getContents(), true);
+            $data = json_decode($response->getBody()->getContents(), true);
             $user = $this->endUser->where('email',$data['email'])->first();
             if ($user == null) {
                 $user = $this->endUser->create([
                     'name' => $data['name'],
                     'email' => $data['email'],
-                    'password' => Crypt::encryptString('123456'),
                     'picture' => $data['picture'],
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
+                    'roles_id' => '3',
                 ]);
-
+                $accessToken = $user->createToken('authToken')->accessToken;
+                return response()->json([
+                    'token_type' => "Bearer",
+                    'expires_in' => 31535999,
+                    'access_token' => $accessToken,
+                    'data' => $user
+                ], 250);
             }
+            $accessToken = $user->createToken('authToken')->accessToken;
+            return response()->json([
+                'token_type' => "Bearer",
+                'expires_in' => 31535999,
+                'access_token' => $accessToken,
+                'data' => $user
+            ], 200);
 
         } catch (\Exception $e) {
             return response()->json([
