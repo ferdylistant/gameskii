@@ -265,7 +265,6 @@ class TeamController extends Controller
             $alreadyHaveTeam = $this->team->join('team_players', 'team_players.teams_id', '=', 'teams.id')
             ->where('teams.games_id', $sessGame['game']['id'])
             ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
-            ->where('team_players.role_team', 'Master')
             ->where('team_players.status', '1')
             ->first();
             // return response()->json($alreadyHaveTeam);
