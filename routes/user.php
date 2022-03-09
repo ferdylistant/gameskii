@@ -28,7 +28,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/search-game-account', 'EndUser\GameAccountController@searchAccount');
             // $router->post('/login-game-account', 'EndUser\GameAccountController@login');
             $router->post('/choose-game/{idGame}', 'GameController@postGame');
-            $router->get('/profile', 'EndUser\ProfileController@getProfile');
+            $router->get('/get-profile', 'EndUser\ProfileController@getProfile');
             $router->get('/dashboard', 'EndUser\DashboardGame@getDashboard');
             $router->post('/add-friend/{idGameAccount}', 'EndUser\SocialFollowController@addFriend');
             $router->post('/accept-friend/{idGameAccount}', 'EndUser\SocialFollowController@acceptFriend');
