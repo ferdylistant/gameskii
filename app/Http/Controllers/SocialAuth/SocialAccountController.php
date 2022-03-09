@@ -38,15 +38,15 @@ class SocialAccountController extends Controller
         }
         $idToken = $request->input('id_token');
         try {
-            $accessTokenResponse= Socialite::driver('google')->getAccessTokenResponse($idToken);
-            $accessToken = $accessTokenResponse['access_token'];
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Success',
-                'data' => [
-                    'access_token' => $accessTokenResponse
-                ]
-            ], 200);
+            // $accessTokenResponse= Socialite::driver('google')->getAccessTokenResponse($idToken);
+            // $accessToken = $accessTokenResponse['access_token'];
+            // return response()->json([
+            //     'status' => 'success',
+            //     'message' => 'Success',
+            //     'data' => [
+            //         'access_token' => $accessTokenResponse
+            //     ]
+            // ], 200);
             $client = new Client();
             $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='.$idToken, [
                 'headers' => [
