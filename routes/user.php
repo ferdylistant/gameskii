@@ -30,6 +30,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/choose-game/{idGame}', 'GameController@postGame');
             $router->get('/get-profile', 'EndUser\ProfileController@getProfile');
             $router->post('/update-profile', 'EndUser\ProfileController@updateProfile');
+            $router->post('/change-password', 'EndUser\ProfileController@changePassword');
             $router->get('/dashboard', 'EndUser\DashboardGame@getDashboard');
             $router->post('/add-friend/{idGameAccount}', 'EndUser\SocialFollowController@addFriend');
             $router->post('/accept-friend/{idGameAccount}', 'EndUser\SocialFollowController@acceptFriend');
@@ -61,7 +62,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth
-        $router->post('/change-password', 'Admin\Auth@changePassword');
         $router->get('/all-ranks', 'RankController@getAllRanks');
         $router->get('/games-data', 'GameController@getGameData');
         //post
