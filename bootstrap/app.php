@@ -64,6 +64,8 @@ $app->configure('auth');
 $app->configure('service');
 $app->configure('mail');
 $app->configure('session');
+$app->configure('broadcasting');
+$app->configure('websockets');
 
 $app->alias('mail.manager', Illuminate\Mail\MailManager::class);
 $app->alias('mail.manager', Illuminate\Contracts\Mail\Factory::class);
