@@ -48,11 +48,16 @@ class SocialAccountController extends Controller
             //     ]
             // ], 200);
             $client = new Client();
-            $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='.$idToken, [
-                'headers' => [
-                    'Authorization' => 'Bearer '.$accessToken,
-                ]
-            ]);
+            // $response = $client->request('GET', 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='.$idToken, [
+            //     'headers' => [
+            //         'Authorization' => 'Bearer '.$accessToken,
+            //     ]
+            // ]);
+            $response = $client->request('POST', 'https://www.googleapis.com/oauth2/v3/tokeninfo', [
+                    'form_params' => [
+                        'id_token' => $idToken,
+                    ]
+                ]);
             return json_decode($response->getBody()->getContents(), true);
             $user = $this->endUser->where('email',$data['email'])->first();
             if ($user == null) {
