@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Notifications\TeamNotification;
-
 use Illuminate\Support\Facades\Validator;
 
 class TeamController extends Controller

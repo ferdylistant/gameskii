@@ -7,6 +7,8 @@ use App\Models\GameAccount;
 use App\Models\SocialFollow;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends Controller
 {
@@ -80,6 +82,145 @@ class ProfileController extends Controller
                 'status' => 'success',
                 'data' => $dataUser,
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function updateProfile(Request $request)
+    {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
+        $sessGameAccount = $request->session()->get('game_account');
+        $sessGame = $request->session()->get('gamedata');
+        if (($sessGameAccount == null) || ($sessGame == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|min:3|max:30',
+            'phone'   => 'required|min:11|string',
+            'fb'   => 'required|min:3|string',
+            'ig'   => 'required|min:3|string',
+            'provinsi'   => 'required|min:4|string',
+            'kabupaten'   => 'required|min:4|string',
+            'kecamatan'   => 'required|min:4|string',
+            'tgl_lahir'   => 'required',
+            'avatar' => 'file|max:2048|image',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()
+            ], 400);
+        }
+        try {
+            $user = $this->user->join('game_accounts', 'users.id', '=', 'game_accounts.users_id')
+                ->join('games', 'game_accounts.games_id', '=', 'games.id')
+                ->where('users.id', auth('user')->user()->id)
+                ->where('game_accounts.id_game_account', $sessGameAccount->id_game_account)
+                ->where('games.id', $sessGame['game']['id'])
+                ->select('users.*')
+                ->first();
+            if ($request->hasFile('avatar')) {
+                $dataFile = $request->file('avatar');
+                $imageName = date('mdYHis') . $dataFile->hashName();
+                $imageUrl = URL::to('/api/avatar/'.$imageName);
+                $dataFile->move(storage_path('uploads/avatar'), $imageName);
+                $user->avatar         = $imageUrl;
+            }
+            $user->name = $request->name;
+            $user->phone = $request->phone;
+            $user->fb = $request->fb;
+            $user->ig = $request->ig;
+            $user->provinsi = $request->provinsi;
+            $user->kabupaten = $request->kabupaten;
+            $user->kecamatan = $request->kecamatan;
+            $user->tgl_lahir = $request->tgl_lahir;
+            $user->ip_address = $request->getClientIp();
+            if ($user->save()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Profile updated successfully'
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function changePassword(Request $request)
+    {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id != '3') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this resource'
+            ], 401);
+        }
+        $sessGameAccount = $request->session()->get('game_account');
+        $sessGame = $request->session()->get('gamedata');
+        if (($sessGameAccount == null) || ($sessGame == null)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session timeout'
+            ], 408);
+        }
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => ['required',Password::min(8)
+            ->letters()
+            ->mixedCase()
+            ->numbers()
+            ->symbols()],
+            'confirm_password' => 'required|same:new_password',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()
+            ], 400);
+        }
+        $dataUser = $this->user->join('game_accounts', 'users.id', '=', 'game_accounts.users_id')
+            ->join('games', 'game_accounts.games_id', '=', 'games.id')
+            ->where('users.id', auth('user')->user()->id)
+            ->where('game_accounts.id_game_account', $sessGameAccount->id_game_account)
+            ->where('games.id', $sessGame['game']['id'])
+            ->select('users.*')
+            ->first();
+        try {
+            if (!$dataUser || !Hash::check($request->old_password, $dataUser->password)) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Check your old password.",
+                ],400);
+            } else if (Hash::check($request->new_password, $dataUser->password)) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Please enter a password which is not similar then current password.",
+                ],400);
+            } else {
+                $dataUser->password = app('hash')->make($request->new_password);
+                $dataUser->ip_address = $request->getClientIp();
+                if ($dataUser->save())
+                {
+                    return response()->json([
+                        "status" => "success",
+                        "message" => "Password updated successfully."
+                    ],201);
+                }
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

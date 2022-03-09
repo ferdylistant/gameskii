@@ -97,7 +97,6 @@ class Auth extends Controller
                 ];
                 $this->endUser->notify(new MailVerifyNotification($details));
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'Registration successfully! A verification link has been sent to your email account!'
                 ], 201);
@@ -126,14 +125,12 @@ class Auth extends Controller
         $data = $this->endUser->where('email', $request->email)->first();
         if (!$data) {
             return response()->json([
-                'code' => 404,
                 'status'  => 'error',
                 'message' => 'Email not registered!'
             ],404);
         }
         if ($data->roles_id != '3')  {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -143,7 +140,6 @@ class Auth extends Controller
         }
         if (!$data || !app('hash')->check($request->password, $data->password)) {
             return response()->json([
-                'code' => 404,
                 'status' => 'error',
                 'message' => 'Your email or password incorrect!',
             ], 404);
@@ -191,7 +187,6 @@ class Auth extends Controller
             $data->notify(new MailVerifyNotification($details));
 
             return response()->json([
-                'code' => 403,
                 'status' => 'forbidden',
                 'message' => 'Your account is not active, we have sent you a link to verify your email'
             ], 403);
@@ -215,7 +210,6 @@ class Auth extends Controller
                 $token->delete();
             });
             return response()->json([
-                'code' => 200,
                 'status'  => 'success',
                 'message' => 'Logged out successfully',
             ], 200);
