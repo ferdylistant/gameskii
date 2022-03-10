@@ -98,7 +98,7 @@ class ProfileController extends Controller
                 'message' => 'You are not authorized to access this resource'
             ], 401);
         }
-        // return auth('user')->user();
+        return auth('user')->user();
         $sessGameAccount = $request->session()->get('game_account');
         $sessGame = $request->session()->get('gamedata');
         if (($sessGameAccount == null) || ($sessGame == null)) {
@@ -132,10 +132,10 @@ class ProfileController extends Controller
                 ->where('games.id', $sessGame['game']['id'])
                 ->select('users.*')
                 ->first();
-                return response()->json([
-                    'status' => 'success',
-                    'data' => $user,
-                ], 200);
+                // return response()->json([
+                //     'status' => 'success',
+                //     'data' => $user,
+                // ], 200);
             if ($user == null) {
                 return response()->json([
                     'status' => 'error',

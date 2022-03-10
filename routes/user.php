@@ -23,7 +23,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/banner-game/bottom/{imageName}', 'Api\ImageController@getBannerBottom');
 
     $router->group(['middleware' => 'auth:user'], function () use ($router) {
-        $router->put('/update-profile', 'EndUser\ProfileController@updateProfile');
+        $router->post('/update-profile', 'EndUser\ProfileController@updateProfile');
         $router->group(['middleware' => 'session'], function () use ($router) {
             $router->post('/create-game-account', 'EndUser\GameAccountController@create');
             $router->get('/search-game-account', 'EndUser\GameAccountController@searchAccount');
