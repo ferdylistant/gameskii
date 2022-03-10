@@ -131,6 +131,10 @@ class ProfileController extends Controller
                 ->where('games.id', $sessGame['game']['id'])
                 ->select('users.*')
                 ->first();
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $user,
+                ], 200);
             if ($user == null) {
                 return response()->json([
                     'status' => 'error',
