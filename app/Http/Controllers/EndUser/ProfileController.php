@@ -89,7 +89,7 @@ class ProfileController extends Controller
             ]);
         }
     }
-    public function updateProfile(Request $request,$idUser)
+    public function updateProfile(Request $request)
     {
         $roles_id = auth('user')->user()->roles_id;
         if ($roles_id != '3') {
@@ -127,7 +127,7 @@ class ProfileController extends Controller
         try {
             $user = $this->user->join('game_accounts', 'users.id', '=', 'game_accounts.users_id')
                 ->join('games', 'game_accounts.games_id', '=', 'games.id')
-                ->where('users.id', $idUser)
+                ->where('users.id', auth('user')->user()->id)
                 ->where('game_accounts.id_game_account', $sessGameAccount->id_game_account)
                 ->where('games.id', $sessGame['game']['id'])
                 ->select('users.*')

@@ -66,8 +66,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
         $router->get('/games-data', 'GameController@getGameData');
         //post
         //Put
-        $router->post('/update-profile', 'Client\Put\UpdateProfileController@update');
-        $router->post('/update-profile-image', 'Client\Put\UpdateImageProfileController@update');
+        // $router->post('/update-profile', 'Client\Put\UpdateProfileController@update');
+        // $router->post('/update-profile-image', 'Client\Put\UpdateImageProfileController@update');
         //Del
         $router->delete('/delete/{id}', 'Customers\CustomerController@destroy');
     });
