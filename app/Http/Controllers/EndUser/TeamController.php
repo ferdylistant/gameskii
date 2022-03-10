@@ -29,6 +29,49 @@ class TeamController extends Controller
         $this->user = new User();
         $this->game = new Game();
     }
+    public function getListInvitationFromMaster(Request $request)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == null) || ($sessGameAccount == null)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            $teamPlayer = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+                ->join('game_accounts', 'team_players.game_accounts_id', '=', 'game_accounts.id_game_account')
+                ->join('users', 'game_accounts.users_id', '=', 'users.id')
+                ->where('team_players.status', '1')
+                ->where('team_players.role_team','Master')
+                ->where('teams.games_id', $sessGame['game']['id'])
+                ->select('team_players.role_team', 'teams.*', 'game_accounts.nickname', 'users.phone', 'users.avatar', 'users.email')
+                ->get();
+                return response()->json([
+                    'status' => 'success',
+                    'data' => $teamPlayer
+                ], 200);
+                if ($teamPlayer->count() < '1') {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'No data found'
+                    ], 404);
+                }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
     public function getAllTeams(Request $request)
     {
         $roles_id = auth('user')->user()->roles_id;

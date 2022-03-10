@@ -91,40 +91,41 @@ class ProfileController extends Controller
     }
     public function updateProfile(Request $request)
     {
-        $roles_id = auth('user')->user()->roles_id;
-        if ($roles_id != '3') {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to access this resource'
-            ], 401);
-        }
-        // return auth('user')->user();
-        $sessGameAccount = $request->session()->get('game_account');
-        $sessGame = $request->session()->get('gamedata');
-        if (($sessGameAccount == null) || ($sessGame == null)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Session timeout'
-            ], 408);
-        }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3|max:30',
-            'phone'   => 'required|min:11|string',
-            'fb'   => 'required|min:3|string',
-            'ig'   => 'required|min:3|string',
-            'provinsi'   => 'required|min:4|string',
-            'kabupaten'   => 'required|min:4|string',
-            'kecamatan'   => 'required|min:4|string',
-            'tgl_lahir'   => 'required',
-            'avatar' => 'file|max:2048|image',
-        ]);
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => 'error',
-                'message' => $validator->errors()
-            ], 400);
-        }
         try {
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource'
+                ], 401);
+            }
+            // return auth('user')->user();
+            $sessGameAccount = $request->session()->get('game_account');
+            $sessGame = $request->session()->get('gamedata');
+            if (($sessGameAccount == null) || ($sessGame == null)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|min:3|max:30',
+                'phone'   => 'required|min:11|string',
+                'fb'   => 'required|min:3|string',
+                'ig'   => 'required|min:3|string',
+                'provinsi'   => 'required|min:4|string',
+                'kabupaten'   => 'required|min:4|string',
+                'kecamatan'   => 'required|min:4|string',
+                'tgl_lahir'   => 'required',
+                'avatar' => 'file|max:2048|image',
+            ]);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $validator->errors()
+                ], 400);
+            }
+
             $user = $this->user->join('game_accounts', 'users.id', '=', 'game_accounts.users_id')
                 ->join('games', 'game_accounts.games_id', '=', 'games.id')
                 ->where('users.id', auth('user')->user()->id)
