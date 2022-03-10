@@ -23,13 +23,13 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/banner-game/bottom/{imageName}', 'Api\ImageController@getBannerBottom');
 
     $router->group(['middleware' => 'auth:user'], function () use ($router) {
+        $router->post('/update-profile', 'EndUser\ProfileController@updateProfile');
         $router->group(['middleware' => 'session'], function () use ($router) {
             $router->post('/create-game-account', 'EndUser\GameAccountController@create');
             $router->get('/search-game-account', 'EndUser\GameAccountController@searchAccount');
             // $router->post('/login-game-account', 'EndUser\GameAccountController@login');
             $router->post('/choose-game/{idGame}', 'GameController@postGame');
             $router->get('/get-profile', 'EndUser\ProfileController@getProfile');
-            $router->post('/update-profile', 'EndUser\ProfileController@updateProfile');
             $router->post('/change-password', 'EndUser\ProfileController@changePassword');
             $router->get('/dashboard', 'EndUser\DashboardGame@getDashboard');
             $router->post('/add-friend/{idGameAccount}', 'EndUser\SocialFollowController@addFriend');
