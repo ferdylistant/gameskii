@@ -55,7 +55,6 @@ class TeamNotification extends Notification
             'master' => $this->details['master'],
             'created_at' => $this->details['created_at'],
             'message' => $this->details['message'],
-            'game' => $this->details['game'],
             'member-team' => $this->details['member-team'],
         ];
     }
