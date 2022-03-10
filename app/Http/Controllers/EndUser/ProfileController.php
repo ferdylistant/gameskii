@@ -131,6 +131,12 @@ class ProfileController extends Controller
                 ->where('games.id', $sessGame['game']['id'])
                 ->select('users.*')
                 ->first();
+            if ($user == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'User not found'
+                ], 404);
+            }
             if ($request->hasFile('avatar')) {
                 $dataFile = $request->file('avatar');
                 $imageName = date('mdYHis') . $dataFile->hashName();
