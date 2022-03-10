@@ -48,7 +48,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/accept-join-team/{idTeam}/{idGameAccount}', 'EndUser\TeamController@acceptJoinTeam');
             $router->post('/accept-invitation-member/{idTeam}', 'EndUser\TeamController@acceptInvitationMember');
             $router->post('/accept-team/{idTeam}', 'EndUser\TeamController@acceptInvitation');
-            $router->post('/reject-team/{idTeam}', 'EndUser\TeamController@rejectInvitation');
+            $router->post('/reject-join-team/{idTeam}/{idGameAccount}', 'EndUser\TeamController@rejectJoinTeam');
+            $router->post('/reject-invitation-member/{idTeam}', 'EndUser\TeamController@rejectInvitationMember');
             $router->post('/leave-team/{idTeam}', 'EndUser\TeamController@leaveTeam');
             $router->get('/list-invitation-master', 'EndUser\TeamController@getListInvitationFromMaster');
             $router->get('/get-myteams', 'EndUser\TeamController@getMyTeams');
