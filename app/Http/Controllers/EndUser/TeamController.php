@@ -55,17 +55,57 @@ class TeamController extends Controller
                 ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
                 ->where('teams.games_id', $sessGame['game']['id'])
                 ->select('team_players.role_team', 'teams.*', 'game_accounts.nickname', 'users.phone', 'users.avatar', 'users.email')
-                ->get();
-                return response()->json([
-                    'status' => 'success',
-                    'data' => $teamPlayer
-                ], 200);
-                if ($teamPlayer->count() < '1') {
+                ->first();
+                if ($teamPlayer == null) {
                     return response()->json([
                         'status' => 'error',
                         'message' => 'No data found'
                     ], 404);
                 }
+            $teamPlayerMaster = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+                ->join('game_accounts', 'team_players.game_accounts_id', '=', 'game_accounts.id_game_account')
+                ->join('users', 'game_accounts.users_id', '=', 'users.id')
+                ->where('team_players.status', '1')
+                ->where('team_players.role_team','Master')
+                ->where('teams.games_id', $sessGame['game']['id'])
+                ->select('team_players.role_team','team_players.game_accounts_id', 'teams.*', 'game_accounts.nickname', 'users.phone', 'users.avatar', 'users.email')
+                ->get();
+            if ($teamPlayerMaster->count() < '1') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No data Master found'
+                ], 404);
+            }
+            foreach ($teamPlayerMaster as $value) {
+                $result[] = [
+                    'team' => [
+                        'id' => $value->id,
+                        'games_id' => $value->games_id,
+                        'ranks_id' => $value->ranks_id,
+                        'name' => $value->name,
+                        'logo' => URL::to('/api/picture-team/' . $value->logo),
+                        'won' => $value->won,
+                        'lose' => $value->lose,
+                        'total_match_scrim' => $value->total_match_scrim,
+                        'total_match_tournament' => $value->total_match_tournament,
+                        'point' => $value->point,
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at,
+                    ],
+                    'master' => [
+                        'game_accounts_id' => $value->game_accounts_id,
+                        'nickname' => $value->nickname,
+                        'phone' => $value->phone,
+                        'email' => $value->email,
+                        'role_team' => $value->role_team,
+                        'avatar' => URL::to('/api/avatar/' . $value->avatar),
+                    ],
+                ];
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $result
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
