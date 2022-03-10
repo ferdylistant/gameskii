@@ -98,6 +98,7 @@ class ProfileController extends Controller
                 'message' => 'You are not authorized to access this resource'
             ], 401);
         }
+        return auth('user')->user();
         $sessGameAccount = $request->session()->get('game_account');
         $sessGame = $request->session()->get('gamedata');
         if (($sessGameAccount == null) || ($sessGame == null)) {
