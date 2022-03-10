@@ -50,8 +50,9 @@ class TeamController extends Controller
             $teamPlayer = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
                 ->join('game_accounts', 'team_players.game_accounts_id', '=', 'game_accounts.id_game_account')
                 ->join('users', 'game_accounts.users_id', '=', 'users.id')
-                ->where('team_players.status', '1')
-                ->where('team_players.role_team','Master')
+                ->where('team_players.status', '0')
+                ->where('team_players.role_team','Member')
+                ->where('team_players.game_accounts_id', $sessGameAccount->id_game_account)
                 ->where('teams.games_id', $sessGame['game']['id'])
                 ->select('team_players.role_team', 'teams.*', 'game_accounts.nickname', 'users.phone', 'users.avatar', 'users.email')
                 ->get();
