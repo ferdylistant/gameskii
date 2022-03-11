@@ -218,7 +218,7 @@ class ScrimController extends Controller
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
             ->select('scrims.*', 'users.id as id_user', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
-            ->where('game_accounts.id_game_account', '=', $idGameAccount)
+            ->where('scrims.game_accounts_id', '=', $idGameAccount)
             ->get();
             if ($scrim->count() < '1') {
                 return response()->json([
