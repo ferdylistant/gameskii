@@ -79,6 +79,7 @@ class ScrimController extends Controller
     }
     public function getScrimById($idScrim)
     {
+        return $idScrim;
         try {
             $roles_id = auth('user')->user()->roles_id;
             if ($roles_id == "3" ) {
