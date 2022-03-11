@@ -22,6 +22,7 @@ $router->group(['prefix' => 'api/admin'], function () use ($router) {
         $router->get('/get-all-scrims', 'Admin\ScrimController@getScrims');
         $router->get('/get-scrim-by-id/{idScrim}', 'Admin\ScrimController@getScrimById');
         $router->get('/get-scrim-by-user/{idUser}', 'Admin\ScrimController@getScrimByIdUser');
+        $router->get('get-scrim-by-game-account/{idGameAccount}', 'Admin\ScrimController@getScrimByIdGameAccount');
         $router->get('/get-scrim-by-game/{idGame}', 'Admin\ScrimController@getScrimByIdGame');
         $router->post('/update-games/{id}', 'GameController@update');
         $router->post('/update-profile', 'Client\Put\UpdateProfileController@update');
