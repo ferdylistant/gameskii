@@ -79,7 +79,6 @@ class ScrimController extends Controller
     }
     public function getScrimById($idScrim)
     {
-        return $idScrim;
         try {
             $roles_id = auth('user')->user()->roles_id;
             if ($roles_id == "3" ) {
@@ -128,6 +127,10 @@ class ScrimController extends Controller
                     'picture' => URL::to('/api/picture-game/'.$scrim->picture),
                 ]
             ];
+            return response()->json([
+                "status" => "success",
+                "data" => $result
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "status" => "error",
