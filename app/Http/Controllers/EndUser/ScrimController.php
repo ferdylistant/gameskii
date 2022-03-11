@@ -130,12 +130,12 @@ class ScrimController extends Controller
                 'message' => "You don't have a game account"
             ], 404);
         }
-        $scrim = $this->scrim->join('ranks','ranks.id','=','scrims.ranks_id')
+        $scrims = $this->scrim->join('ranks','ranks.id','=','scrims.ranks_id')
         ->where('scrims.game_accounts_id','=', $gameAccount->id_game_account)
         ->where('scrims.games_id','=', $sessGame['game']['id'])
         ->select('scrims.*','ranks.class as rank_class')
-        ->get();
-        if ($scrim->count() == 0) {
+        ->first();
+        if ($scrims == null) {
             return response()->json([
                 'status' => 'error',
                 'message' => "You don't have any scrims"
@@ -143,10 +143,8 @@ class ScrimController extends Controller
         }
 
         try {
-            $arrayData = [
-                'status' => 'success',
-                'message' => 'My Data Scrim',
-                'data' => [
+            foreach ($scrims as $scrim){
+                $data[] = [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
                     'rank_class' => $scrim->rank_class,
@@ -160,7 +158,12 @@ class ScrimController extends Controller
                     'result' => $scrim->result,
                     'created_at' => $scrim->created_at,
                     'updated_at' => $scrim->updated_at,
-                ]
+                ];
+            }
+            $arrayData = [
+                'status' => 'success',
+                'message' => 'My Data Scrim',
+                'data' => $data
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
