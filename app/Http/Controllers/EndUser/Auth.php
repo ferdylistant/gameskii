@@ -202,7 +202,7 @@ class Auth extends Controller
         try {
             $dataAccount = $request->session()->get('game_account');
             $this->gameAccount->where('id', $dataAccount->id)->update([
-                'is_login' => '0'
+                'is_online' => '0'
             ]);
             $request->session()->remove('game_account');
             $request->session()->remove('gamedata');
