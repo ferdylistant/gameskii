@@ -145,7 +145,7 @@ class ScrimController extends Controller
                 $loopScrims[] = [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
-                    'ranks_id' => $this->rank->where('id',$scrim->ranks_id)
+                    'rank_class' => $this->rank->where('id',$scrim->ranks_id)
                     ->select('class')
                     ->first(),
                     'name_party' => $scrim->name_party,
@@ -210,7 +210,7 @@ class ScrimController extends Controller
                 'data' => [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
-                    'ranks_id' => $this->rank->where('id',$scrim->ranks_id)
+                    'rank_class' => $this->rank->where('id',$scrim->ranks_id)
                     ->select('class')
                     ->first(),
                     'name_party' => $scrim->name_party,
