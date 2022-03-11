@@ -158,7 +158,7 @@ class ScrimController extends Controller
                     'result' => $scrim->result,
                     'created_at' => $scrim->created_at,
                     'updated_at' => $scrim->updated_at,
-                ]
+                ];
             }
             $arrayData = [
                 'status' => 'success',
