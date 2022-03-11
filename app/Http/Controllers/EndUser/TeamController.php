@@ -510,66 +510,57 @@ class TeamController extends Controller
             ], 404);
         }
         $dataGame = $this->game->where('id', $dataTeam->games_id)->first();
-        $dataTeamPlayer = $this->teamPlayer->where('teams_id', '=', $idTeam)
-        ->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
-        ->where('role_team', '=', 'Master')
+        $dataMaster = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+        ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+        ->join('users', 'users.id', '=', 'game_accounts.users_id')
+        ->where('team_players.game_accounts_id', '=', $sessGameAccount->id_game_account)
+        ->where('team_players.teams_id', '=', $idTeam)
+        ->where('team_players.role_team', '=', 'Master')
+        ->select('game_accounts.id_game_account', 'game_accounts.nickname', 'users.phone', 'users.email','users.avatar')
         ->first();
-        if (!$dataTeamPlayer) {
+        if (!$dataMaster) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not master of this team!'
             ], 404);
         }
-        $dataMaster = $this->gameAccount->where('id_game_account', $dataTeamPlayer->game_accounts_id)->first();
-        // $ranks = $this->rank->where('id', '=', $dataTeam->ranks_id)->first();
         $dataPlayers = $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+        ->join('users', 'users.id', '=', 'game_accounts.users_id')
         ->where('team_players.teams_id', '=', $idTeam)
-        ->where('team_players.status','=','1')->get(['game_accounts.id_game_account', 'game_accounts.nickname','team_players.role_team']);
-        foreach ($dataPlayers as $value) {
-            $resultDataPlayers[] = $value;
-        }
+        ->where('team_players.status','=','1')
+        ->select('game_accounts.id_game_account', 'game_accounts.nickname','users.phone','users.email','team_players.role_team','users.avatar')
+        ->get();
         try {
-            $details = [
-                'id' => $idTeam,
-                'games_id' => $dataTeam->games_id,
-                'name' => $dataTeam->name,
-                'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
-                'ranks_id' => $dataTeam->ranks_id,
-                'won' => $dataTeam->won,
-                'lose' => $dataTeam->lose,
-                'total_match_scrim' => $dataTeam->total_match_scrim,
-                'total_match_tournament' => $dataTeam->total_match_tournament,
-                'point' => $dataTeam->point,
-                'master' => [
-                    'id' => $dataTeamPlayer->id,
-                    'game_accounts_id' => $dataTeamPlayer->game_accounts_id,
-                    'nickname' => $dataMaster->nickname,
-                    'role_team' => $dataTeamPlayer->role_team,
-                    'status' => $dataTeamPlayer->status,
-                ],
-                'created_at' => $dataTeam->created_at,
-                'message' => $dataMaster->nickname.' invited you to join '.$dataTeam->name.' team!',
-                'game' => [
-                    'id' => $dataGame->id,
-                    'name' => $dataGame->name,
-                    'logo' => URL::to('/api/picture-game/'.$dataGame->picture),
-                ],
-                'member-team' => $resultDataPlayers,
-            ];
-            $user = $this->user->where('id', $gameAccount->users_id)->first();
             $this->teamPlayer = new TeamPlayer();
             $this->teamPlayer->id = Uuid::uuid4()->toString();
             $this->teamPlayer->teams_id = $idTeam;
             $this->teamPlayer->game_accounts_id = $idGameAccount;
             $this->teamPlayer->role_team = 'Member';
             $this->teamPlayer->status = '0';
-            $this->teamPlayer->save();
-            $user->notify(new TeamNotification($details));
-            return response()->json([
-                'code' => 201,
-                'status' => 'success',
-                'message' => 'Member added successfully!',
-            ], 201);
+            if ($this->teamPlayer->save()){
+                $user = $this->user->where('id', $gameAccount->users_id)->first();
+                $details = [
+                    'id' => $dataTeam->id,
+                    'games_id' => $dataTeam->games_id,
+                    'name' => $dataTeam->name,
+                    'logo' => URL::to('/api/picture-team/'.$dataTeam->logo),
+                    'ranks_id' => $dataTeam->ranks_id,
+                    'won' => $dataTeam->won,
+                    'lose' => $dataTeam->lose,
+                    'total_match_scrim' => $dataTeam->total_match_scrim,
+                    'total_match_tournament' => $dataTeam->total_match_tournament,
+                    'point' => $dataTeam->point,
+                    'master' => $dataMaster,
+                    'created_at' => $dataTeam->created_at,
+                    'message' => $dataMaster->nickname.' invited you to join '.$dataTeam->name.' team!',
+                    'member-team' => $dataPlayers,
+                ];
+                $user->notify(new TeamNotification($details));
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Member added successfully!',
+                ], 201);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
