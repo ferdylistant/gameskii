@@ -91,9 +91,9 @@ class ScrimController extends Controller
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
             ->select('scrims.*', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
-            ->where('scrims.id', $idScrim)
+            ->where('scrims.id', '=', $idScrim)
             ->first();
-            if (!$scrim) {
+            if ($scrim == null) {
                 return response()->json([
                     "status" => "error",
                     "message" => "There is no scrim"
