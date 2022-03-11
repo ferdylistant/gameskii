@@ -4,6 +4,7 @@ namespace App\Http\Controllers\EndUser;
 
 use Carbon\Carbon;
 use App\Models\Scrim;
+use App\Models\Rank;
 use Ramsey\Uuid\Uuid;
 use App\Models\ScrimMatch;
 use Illuminate\Http\Request;
@@ -19,12 +20,23 @@ class ScrimController extends Controller
         $this->scrim = new Scrim();
         $this->scrimMatch = new ScrimMatch();
         $this->gameAccount = new GameAccount();
+        $this->rank = new Rank();
 
     }
     public function getAllScrims(Request $request)
     {
+        $roles_id = auth('user')->user()->roles_id;
+        if ($roles_id == '3') {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are not authorized to access this route'
+            ], 401);
+        }
         $sessGame = $request->session()->get('gamedata');
         if ($sessGame == null) {
+            $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+            $game_account->is_online = 0;
+            $game_account->save();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Session timeout'
@@ -101,6 +113,9 @@ class ScrimController extends Controller
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
+            $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+            $game_account->is_online = 0;
+            $game_account->save();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Session timeout'
@@ -130,7 +145,9 @@ class ScrimController extends Controller
                 $loopScrims[] = [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
-                    'ranks_id' => $scrim->ranks_id,
+                    'ranks_id' => $this->rank->where('id',$scrim->ranks_id)
+                    ->select('class')
+                    ->first(),
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
                     'team_play' => $this->scrimMatch->where('scrims_id','=', $scrim->id)->get()->count(),
@@ -168,6 +185,9 @@ class ScrimController extends Controller
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
+            $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+            $game_account->is_online = 0;
+            $game_account->save();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Session timeout'
@@ -190,7 +210,9 @@ class ScrimController extends Controller
                 'data' => [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
-                    'ranks_id' => $scrim->ranks_id,
+                    'ranks_id' => $this->rank->where('id',$scrim->ranks_id)
+                    ->select('class')
+                    ->first(),
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
                     'team_play' => $this->scrimMatch->where('scrims_id','=', $scrim->id)->get()->count(),
@@ -224,6 +246,9 @@ class ScrimController extends Controller
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
+            $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+            $game_account->is_online = 0;
+            $game_account->save();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Session timeout'
