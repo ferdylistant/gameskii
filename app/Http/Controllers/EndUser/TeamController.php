@@ -604,8 +604,8 @@ class TeamController extends Controller
                     'message' => 'Team not found!'
                 ], 404);
             }
-            $dataMasterAccess = $this->teamPlayer->join('teams', 'teams_players.teams_id', '=', 'teams.id')
-            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'teams_players.game_accounts_id')
+            $dataMasterAccess = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
             ->join('users', 'users.id', '=', 'game_accounts.users_id')
             ->where('team_players.game_accounts_id', '=', $sessGameAccount->id_game_account)
             ->where('team_players.teams_id', '=', $idTeam)
@@ -704,8 +704,8 @@ class TeamController extends Controller
                     'message' => 'Team not found!'
                 ], 404);
             }
-            $dataMasterAccess = $this->teamPlayer->join('teams', 'teams_players.teams_id', '=', 'teams.id')
-            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'teams_players.game_accounts_id')
+            $dataMasterAccess = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
             ->join('users', 'users.id', '=', 'game_accounts.users_id')
             ->where('team_players.teams_id', '=', $idTeam)
             ->where('team_players.role_team', '=', 'Master')
@@ -803,8 +803,8 @@ class TeamController extends Controller
                     'message' => 'Team not found!'
                 ], 404);
             }
-            $dataMasterAccess = $this->teamPlayer->join('teams', 'teams_players.teams_id', '=', 'teams.id')
-            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'teams_players.game_accounts_id')
+            $dataMasterAccess = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
             ->join('users', 'users.id', '=', 'game_accounts.users_id')
             ->where('team_players.game_accounts_id', '=', $sessGameAccount->id_game_account)
             ->where('team_players.teams_id', '=', $idTeam)
@@ -903,8 +903,8 @@ class TeamController extends Controller
                     'message' => 'Team not found!'
                 ], 404);
             }
-            $dataMasterAccess = $this->teamPlayer->join('teams', 'teams_players.teams_id', '=', 'teams.id')
-            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'teams_players.game_accounts_id')
+            $dataMasterAccess = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+            ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
             ->join('users', 'users.id', '=', 'game_accounts.users_id')
             ->where('team_players.teams_id', '=', $idTeam)
             ->where('team_players.role_team', '=', 'Master')
@@ -1000,8 +1000,8 @@ class TeamController extends Controller
             ], 404);
         }
         $dataGame = $this->game->where('id', $dataTeam->games_id)->first();
-        $dataMaster = $this->teamPlayer->join('teams', 'teams_players.teams_id', '=', 'teams.id')
-        ->join('game_accounts', 'game_accounts.id_game_account', '=', 'teams_players.game_accounts_id')
+        $dataMaster = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+        ->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
         ->join('users', 'users.id', '=', 'game_accounts.users_id')
         ->where('team_players.teams_id', '=', $idTeam)
         ->where('team_players.role_team', '=', 'Master')
