@@ -28,7 +28,7 @@ class ScrimController extends Controller
             $scrim = $this->scrim->join('game_accounts', 'scrims.game_accounts_id', '=', 'game_accounts.id_game_account')
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
-            ->select('scrims.*', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
+            ->select('scrims.*','users.id as id_user', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
             ->get();
             if ($scrim->count() < '1') {
                 return response()->json([
@@ -52,6 +52,7 @@ class ScrimController extends Controller
                         'updated_at' => $value->updated_at
                     ],
                     'master-scrim' => [
+                        'id_user' => $value->id_user,
                         'game_accounts_id' => $value->game_accounts_id,
                         'nickname' => $value->nickname,
                         'name' => $value->name,
@@ -90,7 +91,7 @@ class ScrimController extends Controller
             $scrim = $this->scrim->join('game_accounts', 'scrims.game_accounts_id', '=', 'game_accounts.id_game_account')
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
-            ->select('scrims.*', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
+            ->select('scrims.*', 'users.id as id_user', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
             ->where('scrims.id', '=', $idScrim)
             ->first();
             if ($scrim == null) {
@@ -114,6 +115,7 @@ class ScrimController extends Controller
                     'updated_at' => $scrim->updated_at
                 ],
                 'master-scrim' => [
+                    'id_user' => $scrim->id_user,
                     'game_accounts_id' => $scrim->game_accounts_id,
                     'nickname' => $scrim->nickname,
                     'name' => $scrim->name,
@@ -151,7 +153,7 @@ class ScrimController extends Controller
             $scrim = $this->scrim->join('game_accounts', 'scrims.game_accounts_id', '=', 'game_accounts.id_game_account')
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
-            ->select('scrims.*', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
+            ->select('scrims.*', 'users.id as id_user','game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
             ->where('users.id', '=', $idUser)
             ->get();
             if ($scrim->count() < '1') {
@@ -176,6 +178,7 @@ class ScrimController extends Controller
                         'updated_at' => $value->updated_at
                     ],
                     'master-scrim' => [
+                        'id_user' => $value->id_user,
                         'game_accounts_id' => $value->game_accounts_id,
                         'nickname' => $value->nickname,
                         'name' => $value->name,
@@ -214,7 +217,7 @@ class ScrimController extends Controller
             $scrim = $this->scrim->join('game_accounts', 'scrims.game_accounts_id', '=', 'game_accounts.id_game_account')
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
-            ->select('scrims.*', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
+            ->select('scrims.*', 'users.id as id_user', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email','users.avatar', 'games.name as game_name', 'games.picture')
             ->where('game_accounts.id_game_account', '=', $idGameAccount)
             ->get();
             if ($scrim->count() < '1') {
@@ -239,6 +242,7 @@ class ScrimController extends Controller
                         'updated_at' => $value->updated_at
                     ],
                     'master-scrim' => [
+                        'id_user' => $value->id_user,
                         'game_accounts_id' => $value->game_accounts_id,
                         'nickname' => $value->nickname,
                         'name' => $value->name,
@@ -277,7 +281,7 @@ class ScrimController extends Controller
             $scrim = $this->scrim->join('game_accounts', 'scrims.game_accounts_id', '=', 'game_accounts.id_game_account')
             ->join('users', 'game_accounts.users_id', '=', 'users.id')
             ->join('games', 'scrims.games_id', '=', 'games.id')
-            ->select('scrims.*', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email', 'users.avatar', 'games.name as game_name', 'games.picture')
+            ->select('scrims.*', 'users.id as id_user', 'game_accounts.nickname', 'users.name', 'users.phone', 'users.email', 'users.avatar', 'games.name as game_name', 'games.picture')
             ->where('games.id', '=', $idGame)
             ->get();
             if ($scrim->count() < '1') {
@@ -302,6 +306,7 @@ class ScrimController extends Controller
                         'updated_at' => $value->updated_at
                     ],
                     'master-scrim' => [
+                        'id_user' => $value->id_user,
                         'game_accounts_id' => $value->game_accounts_id,
                         'nickname' => $value->nickname,
                         'name' => $value->name,
