@@ -30,7 +30,6 @@ class Auth extends Controller
         //validasi role
         if (auth('user')->user()->roles_id != "1") {
             return response()->json([
-                "code" => 403,
                 "status" => "error",
                 "message" => "It's not your role"
             ], 403);
@@ -61,7 +60,7 @@ class Auth extends Controller
             $this->admin->ip_address= $request->getClientIp();
 
             if ($this->admin->save()) {
-                return response()->json(['code' => 201,'status' => 'success', 'message' => 'Registration successfully!'], 201);
+                return response()->json(['status' => 'success', 'message' => 'Registration successfully!'], 201);
             }
         } catch (\Exception $e) {
             return response()->json([
@@ -72,7 +71,6 @@ class Auth extends Controller
     }
     public function login(Request $request)
     {
-
         //validasi login
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|max:255|email:rfc,dns,strict,spoof,filter',
@@ -132,7 +130,6 @@ class Auth extends Controller
                 $token->delete();
             });
             return response()->json([
-                'code' => 200,
                 'status'  => 'success',
                 'message' => 'Logged out successfully',
             ], 200);
@@ -159,20 +156,18 @@ class Auth extends Controller
         ]);
         //jika validasi eror
         if ($validator->fails()) {
-            return response()->json(['status' => false, 'message' => $validator->errors()], 409);
+            return response()->json(['status' => false, 'message' => $validator->errors()], 400);
         }
         $sessAdmin = $this->admin->where('id', $id)->first();
         // return $sessAdmin;
         try {
             if (!$sessAdmin || !app('hash')->check($request->old_password, $sessAdmin->password)) {
                 return response()->json([
-                    "code" => 400,
                     "status" => "error",
                     "message" => "Check your old password.",
                 ], 400);
             } elseif (app('hash')->check($request->new_password, $sessAdmin->password)) {
                 return response()->json([
-                    "code" => 400,
                     "status" => "error",
                     "message" => "Please enter a password which is not similar then current password.",
                 ], 400);
@@ -181,7 +176,6 @@ class Auth extends Controller
                 $sessAdmin->ip_address = $request->getClientIp();
                 $sessAdmin->save();
                 return response()->json([
-                    "code" => 201,
                     "status" => "success",
                     "message" => "Password updated successfully."
                 ], 201);

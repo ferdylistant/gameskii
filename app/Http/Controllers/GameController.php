@@ -199,17 +199,33 @@ class GameController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $role = auth('user')->user()->roles_id;
+        if (($role != '1' && $role != '2')) {
+            return response()->json([
+                "status" => "error",
+                "message" => "It's not your role"
+            ], 403);
+        }
         //validasi form
         $validator = Validator::make($request->all(), [
-            'name' => 'required|min:3|max:15',
-            'picture' => 'file|max:3048|image',
-            'banner' => 'file|max:5048|image',
+            'name' => 'required|min:3|max:15|unique:games,name',
+            'picture' => 'required|file|max:3048|image',
+            'top_banner.*' => 'required|file|max:5048|image',
+            'bottom_banner.*' => 'required|file|max:5048|image',
+            'title_bottom_banner.*' => 'required|max:20'
         ]);
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()
+            ], 400);
         }
         try {
-            $gameData = $this->game->findOrFail($id);
+            $gameData = $this->game->join('top_banners', 'top_banners.games_id', '=', 'games.id')
+            ->join('bottom_banners', 'bottom_banners.games_id', '=', 'games.id')
+            ->where('games.id', '=', $id)
+            ->select('games.*', 'top_banners.path as top_banner', 'bottom_banners.path as bottom_banner', 'bottom_banners.title as title_bottom_banner')
+            ->first();
 
             if ($request->hasFile('picture')) {
                 $dataFile = $request->file('picture');
@@ -222,33 +238,31 @@ class GameController extends Controller
                 $dataFile->move(storage_path('uploads/picture-game'), $imageName);
                 $gameData->picture      = $imageName;
             }
-            if ($request->hasFile('banner')) {
-                $dataFile = $request->file('banner');
+            if ($request->hasFile('top_banner')) {
+                $dataFile = $request->file('top_banner');
                 $imageName = date('mdYHis') . $dataFile->hashName();
 
-                $current_image_path = storage_path('uploads/banner-game/'.$gameData->banner);
+                $current_image_path = storage_path('uploads/banner-game/top/'.$gameData->top_banner);
                 if (file_exists($current_image_path)) {
                     File::delete($current_image_path);
                 }
-                $dataFile->move(storage_path('uploads/banner-game'), $imageName);
-                $gameData->banner      = $imageName;
+                $dataFile->move(storage_path('uploads/banner-game/top'), $imageName);
+                $gameData->path      = $imageName;
             }
             if ($request->has('name')) {
                 $gameData->name      = $request->name;
             }
-            $gameData->user_id = auth('user')->user()->id;
             if ($gameData->save()) {
                 return response()->json([
-                    'code' => 201,
                     'status' => 'success',
                     'message' => 'Game updated successfully!'
                 ], 201);
             }
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
-            ], 400);
+            ]);
         }
     }
 }
