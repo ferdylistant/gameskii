@@ -130,10 +130,12 @@ class ScrimController extends Controller
                 'message' => "You don't have a game account"
             ], 404);
         }
-        $scrims = $this->scrim->where('game_accounts_id','=', $gameAccount->id_game_account)
-        ->where('games_id','=', $sessGame['game']['id'])
+        $scrim = $this->scrim->join('ranks','ranks.id','=','scrims.ranks_id')
+        ->where('scrims.game_accounts_id','=', $gameAccount->id_game_account)
+        ->where('scrims.games_id','=', $sessGame['game']['id'])
+        ->select('scrims.*','ranks.class as rank_class')
         ->get();
-        if ($scrims->count() == 0) {
+        if ($scrim->count() == 0) {
             return response()->json([
                 'status' => 'error',
                 'message' => "You don't have any scrims"
@@ -141,13 +143,13 @@ class ScrimController extends Controller
         }
 
         try {
-            foreach ($scrims as $scrim) {
-                $loopScrims[] = [
+            $arrayData = [
+                'status' => 'success',
+                'message' => 'My Data Scrim',
+                'data' => [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
-                    'rank_class' => $this->rank->where('id',$scrim->ranks_id)
-                    ->select('class')
-                    ->first(),
+                    'rank_class' => $scrim->rank_class,
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
                     'team_play' => $this->scrimMatch->where('scrims_id','=', $scrim->id)->get()->count(),
@@ -158,12 +160,7 @@ class ScrimController extends Controller
                     'result' => $scrim->result,
                     'created_at' => $scrim->created_at,
                     'updated_at' => $scrim->updated_at,
-                ];
-            }
-            $arrayData = [
-                'status' => 'success',
-                'message' => 'My Data Scrim',
-                'data' => $loopScrims
+                ]
             ];
             return response()->json($arrayData, 200);
         } catch (\Exception $e) {
@@ -194,9 +191,11 @@ class ScrimController extends Controller
             ], 408);
         }
         try {
-            $scrim = $this->scrim->where('id', '=', $idScrim)
-            ->where('games_id','=',$sessGame['game']['id'])
-            ->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            $scrim = $this->scrim->join('ranks','ranks.id','=','scrims.ranks_id')
+            ->where('scrims.id', '=', $idScrim)
+            ->where('scrims.games_id','=',$sessGame['game']['id'])
+            ->where('scrims.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->select('scrims.*','ranks.class as rank_class')
             ->first();
             if (!$scrim) {
                 return response()->json([
@@ -210,9 +209,7 @@ class ScrimController extends Controller
                 'data' => [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
-                    'rank_class' => $this->rank->where('id',$scrim->ranks_id)
-                    ->select('class')
-                    ->first(),
+                    'rank_class' => $scrim->rank_class,
                     'name_party' => $scrim->name_party,
                     'image' => URL::to('/api/picture-scrim/'.$scrim->image),
                     'team_play' => $this->scrimMatch->where('scrims_id','=', $scrim->id)->get()->count(),
