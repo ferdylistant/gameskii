@@ -19,10 +19,10 @@ $router->group(['prefix' => 'api/admin'], function () use ($router) {
         $router->get('/games-data', 'GameController@getGameData');
         $router->post('/post-games', 'GameController@create');
         $router->post('/post-ranks', 'RankController@create');
-        $router->get('/get-all-scrims', 'ScrimController@getScrims');
-        $router->get('/get-scrim-by-id/{idScrim}', 'ScrimController@getScrimById');
-        $router->get('/get-scrim-by-user/{idUser}', 'ScrimController@getScrimByIdUser');
-        $router->get('/get-scrim-by-game/{idGame}', 'ScrimController@getScrimByIdGame');
+        $router->get('/get-all-scrims', 'Admin\ScrimController@getScrims');
+        $router->get('/get-scrim-by-id/{idScrim}', 'Admin\ScrimController@getScrimById');
+        $router->get('/get-scrim-by-user/{idUser}', 'Admin\ScrimController@getScrimByIdUser');
+        $router->get('/get-scrim-by-game/{idGame}', 'Admin\ScrimController@getScrimByIdGame');
         $router->post('/update-games/{id}', 'GameController@update');
         $router->post('/update-profile', 'Client\Put\UpdateProfileController@update');
         $router->post('/update-profile-image', 'Client\Put\UpdateImageProfileController@update');
