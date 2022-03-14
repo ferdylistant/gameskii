@@ -20,4 +20,7 @@ class TournamentController extends Controller
         $this->tournament = new Tournament();
         $this->gameAccount = new GameAccount();
     }
+    public function createTournament (Request $request)
+    {
+    }
 }
