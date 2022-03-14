@@ -76,6 +76,7 @@ class EoTournamentController extends Controller
                 'city' => 'required|string|max:30',
                 'district' => 'required|string|max:30',
                 'address' => 'required|string|max:100',
+                'terms' => 'required',
             ]);
             if ($validator->fails()) {
                 return response()->json([
