@@ -14,7 +14,7 @@ class CreateImageSponsorTournamentsTable extends Migration
     public function up()
     {
         Schema::create('image_sponsor_tournaments', function (Blueprint $table) {
-            $table->id()->primary();
+            $table->bigIncrements('id');
             $table->uuid('tournaments_id')->index();
             $table->timestamps();
         });
