@@ -32,7 +32,7 @@ class CreateTournamentsTable extends Migration
             $table->tinyInteger('quota');
             $table->integer('prize');
             $table->enum('result', ['On Going','Win','Lose']);
-            $table->binary('sponsor_pict')->nullable();
+            $table->binary('picture')->nullable();
             $table->timestamps();
         });
     }
