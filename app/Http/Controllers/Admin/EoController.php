@@ -117,4 +117,69 @@ class EoController extends Controller
             ]);
         }
     }
+    public function rejectRequestEo(Request $request,$idEo)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id == '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource.'
+                ], 401);
+            }
+            $dataEo = $this->eo->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
+                ->join('users', 'users.id', '=', 'game_accounts.users_id')
+                ->select('tournament_eos.*', 'game_accounts.nickname','game_accounts.users_id', 'users.avatar')
+                ->where('tournament_eos.id', '=', $idEo)
+                ->where('tournament_eos.status', '=', '0')
+                ->first();
+            if ($dataEo == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Not Found.'
+                ], 404);
+            }
+            $alreadyReject = $this->eo->where('id', '=', $idEo)
+                ->where('status', '=', '2')
+                ->first();
+            if ($alreadyReject) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'This request has already been rejected.'
+                ], 400);
+            }
+            $rejected_at = Carbon::now('Asia/Jakarta');
+            $dataEo->status = '2';
+            $dataEo->rejected_at = $rejected_at->toDateTimeString();
+            if ($dataEo->save()){
+                $details = [
+                    'id' => $dataEo->id,
+                    'game_accounts_id' => $dataEo->game_accounts_id,
+                    'nickname' => $dataEo->nickname,
+                    'avatar' => $dataEo->avatar,
+                    'organization_name' => $dataEo->organization_name,
+                    'organization_email' => $dataEo->organization_email,
+                    'organization_phone' => $dataEo->organization_phone,
+                    'provinsi' => $dataEo->provinsi,
+                    'kabupaten' => $dataEo->kabupaten,
+                    'kecamatan' => $dataEo->kecamatan,
+                    'address' => $dataEo->address,
+                    'rejected_at' => $dataEo->rejected_at,
+                    'status' => $dataEo->status,
+                    'message' => 'Request has been rejected by admin.',
+                ];
+                $user = $this->user->where('id', '=', $dataEo->users_id)->first();
+                $user->notify(new EORequestRejectedNotification($details));
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Eo Tournament has been rejected.'
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
