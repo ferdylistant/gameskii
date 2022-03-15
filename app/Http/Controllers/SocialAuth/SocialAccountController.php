@@ -44,13 +44,13 @@ class SocialAccountController extends Controller
             $data = json_decode($response->getBody()->getContents(), true);
             $user = $this->endUser->where('email',$data['email'])->first();
             $current = Carbon::now('Asia/Jakarta');
-            return response()->json($user);
+            // return response()->json($user);
             if (!$user) {
                 $user = $this->endUser->create([
                     'name' => $data['name'],
                     'email' => $data['email'],
                     'picture' => $data['picture'],
-                    'roles_id' => '3',
+                    'roles_id' => 3,
                     'is_verified' => '1',
                     'email_verified_at' => $current->toDateTimeString(),
                     'last_login' => $current->toDateTimeString(),
