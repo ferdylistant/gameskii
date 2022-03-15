@@ -60,6 +60,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-scrims', 'EndUser\ScrimController@getAllScrims');
             $router->get('/get-myscrims', 'EndUser\ScrimController@getMyScrims');
             $router->get('/get-myscrim/{idScrim}', 'EndUser\ScrimController@getMyScrimId');
+            $router->get('/get-scrim-i-follow', 'EndUser\ScrimFollowController@getScrimFollowed');
             $router->post('/add-scrim-team/{idScrim}/{idTeam}', 'EndUser\ScrimController@addTeam');
             $router->post('/join-scrim/{idScrim}', 'EndUser\ScrimController@joinScrim');
             $router->post('/accept-scrim/{idScrim}', 'EndUser\ScrimController@acceptInvitation');
