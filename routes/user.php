@@ -65,6 +65,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/accept-scrim/{idScrim}', 'EndUser\ScrimController@acceptInvitation');
             $router->post('/reject-scrim/{idScrim}', 'EndUser\ScrimController@rejectInvitation');
             $router->post('/registration-eo', 'EndUser\EoTournamentController@registrationEo');
+            $router->get('/get-my-eo', 'EndUser\EoTournamentController@getMyEo');
+            $router->get('/get-eo-tournament', 'EndUser\EoTournamentController@getEoTournament');
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth

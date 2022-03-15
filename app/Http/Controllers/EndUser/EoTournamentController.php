@@ -139,4 +139,143 @@ class EoTournamentController extends Controller
             ]);
         }
     }
+    public function getMyEo(Request $request)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this page.'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 408);
+            }
+            $dataEo = $this->eo->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
+                ->join('users', 'users.id', '=', 'game_accounts.users_id')
+                ->where('tournament_eos.game_accounts_id', '=', $sessGameAccount->id_game_account)
+                ->where('game_accounts.games_id', '=', $sessGame['game']['id'])
+                ->where('game_accounts.users_id', '=', auth('user')->user()->id)
+                ->where('tournament_eos.status', '=', '1')
+                ->select('tournament_eos.*','game_accounts.users_id','users.name','users.avatar','game_accounts.nickname')
+                ->first();
+            if (!$dataEo) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not an EO.'
+                ], 403);
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'eo' => [
+                        'id' => $dataEo->id,
+                        'organization_name' => $dataEo->organization_name,
+                        'organization_email' => $dataEo->organization_email,
+                        'organization_phone' => $dataEo->organization_phone,
+                        'provinsi' => $dataEo->provinsi,
+                        'kabupaten' => $dataEo->kabupaten,
+                        'kecamatan' => $dataEo->kecamatan,
+                        'address' => $dataEo->address,
+                        'status' => $dataEo->status,
+                        'verified_at' => $dataEo->verified_at,
+                        'nickname' => $dataEo->nickname,
+                        'created_at' => $dataEo->created_at,
+                        'updated_at' => $dataEo->updated_at,
+                    ],
+                    'user' => [
+                        'users_id' => $dataEo->users_id,
+                        'game_accounts_id' => $dataEo->game_accounts_id,
+                        'name' => $dataEo->name,
+                        'nickname' => $dataEo->nickname,
+                        'avatar' => $dataEo->avatar,
+                    ],
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getEoTournament(Request $request)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this page.'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 408);
+            }
+            $dataEo = $this->eo->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
+                ->join('users', 'users.id', '=', 'game_accounts.users_id')
+                ->where('game_accounts.games_id', '=', $sessGame['game']['id'])
+                ->where('tournament_eos.status', '=', '1')
+                ->select('tournament_eos.*','game_accounts.users_id','users.name','users.avatar','game_accounts.nickname')
+                ->get();
+            if ($dataEo->count() == 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'There is no EO.'
+                ], 404);
+            }
+            foreach ($dataEo as $eo) {
+                $result[] = [
+                    'eo' => [
+                        'id' => $eo->id,
+                        'organization_name' => $eo->organization_name,
+                        'organization_email' => $eo->organization_email,
+                        'organization_phone' => $eo->organization_phone,
+                        'provinsi' => $eo->provinsi,
+                        'kabupaten' => $eo->kabupaten,
+                        'kecamatan' => $eo->kecamatan,
+                        'address' => $eo->address,
+                        'status' => $eo->status,
+                        'verified_at' => $eo->verified_at,
+                        'created_at' => $eo->created_at,
+                        'updated_at' => $eo->updated_at
+                    ],
+                    'user' => [
+                        'users_id' => $eo->users_id,
+                        'game_accounts_id' => $eo->game_accounts_id,
+                        'name' => $eo->name,
+                        'nickname' => $eo->nickname,
+                        'avatar' => $eo->avatar,
+                    ],
+                ];
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $result
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
