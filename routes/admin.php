@@ -26,6 +26,7 @@ $router->group(['prefix' => 'api/admin'], function () use ($router) {
         $router->get('/get-scrim-by-game/{idGame}', 'Admin\ScrimController@getScrimByIdGame');
         $router->get('/get-request-eo', 'Admin\EoController@getRequestEo');
         $router->post('/accept-request-eo/{idEo}', 'Admin\EoController@acceptRequestEo');
+        $router->post('/reject-request-eo/{idEo}', 'Admin\EoController@rejectRequestEo');
         $router->post('/update-games/{id}', 'GameController@update');
         $router->post('/update-profile', 'Client\Put\UpdateProfileController@update');
         $router->post('/update-profile-image', 'Client\Put\UpdateImageProfileController@update');

@@ -28,6 +28,7 @@ class EoTournament extends Model implements AuthenticatableContract, Authorizabl
         'kecamatan',
         'address',
         'status',
-        'verified_at'
+        'verified_at',
+        'rejected_at'
     ];
 }
