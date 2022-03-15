@@ -46,7 +46,7 @@ class SocialAccountController extends Controller
             $data = json_decode($response->getBody()->getContents(), true);
             $user = $this->endUser->where('email',$data['email'])->first();
             $current = Carbon::now('Asia/Jakarta');
-            if ($user == null) {
+            if (!$user) {
                 $user = $this->endUser->create([
                     'name' => $data['name'],
                     'email' => $data['email'],
