@@ -24,8 +24,6 @@ class SocialAccountController extends Controller
     }
     public function requestIdToken(Request $request)
     {
-        //BELUM BERES
-
         $validator = Validator::make($request->all(), [
             'id_token' => 'required|string',
         ]);
@@ -46,6 +44,7 @@ class SocialAccountController extends Controller
             $data = json_decode($response->getBody()->getContents(), true);
             $user = $this->endUser->where('email',$data['email'])->first();
             $current = Carbon::now('Asia/Jakarta');
+            return response()->json($user);
             if (!$user) {
                 $user = $this->endUser->create([
                     'name' => $data['name'],
