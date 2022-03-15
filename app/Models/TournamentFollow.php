@@ -10,14 +10,14 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 
-class ScrimFollow extends Model implements AuthenticatableContract, AuthorizableContract
+class TournamentFollow extends Model implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable, HasApiTokens;
 
-    protected $table = 'scrim_follows';
+    protected $table = 'tournament_follows';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'scrims_id',
+        'tournaments_id',
         'game_accounts_id',
     ];
     protected $hidden = [
