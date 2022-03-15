@@ -42,32 +42,33 @@ class SocialAccountController extends Controller
                     ]
                 ]);
             $data = json_decode($response->getBody()->getContents(), true);
-            $user = $this->endUser->where('email',$data['email'])->first();
+            $dataUser = $this->endUser->where('email',$data['email'])->first();
             $current = Carbon::now('Asia/Jakarta');
             // return response()->json($user);
-            if (!$user) {
-                $user = $this->endUser->create([
-                    'name' => $data['name'],
-                    'email' => $data['email'],
-                    'picture' => $data['picture'],
-                    'roles_id' => 3,
-                    'is_verified' => '1',
-                    'email_verified_at' => $current->toDateTimeString(),
-                    'last_login' => $current->toDateTimeString(),
-                    'ip_address' => $request->getClientIp()
-                ]);
-                $accessToken = $user->createToken('authToken')->accessToken;
-                return response()->json([
-                    'token_type' => "Bearer",
-                    'expires_in' => 31535999,
-                    'access_token' => $accessToken,
-                ], 250);
+            if (!$dataUser) {
+                $user = $this->endUser;
+                $user->name = $data['name'];
+                $user->email = $data['email'];
+                $user->avatar = $data['picture'];
+                $user->roles_id = '3';
+                $user->is_verified = '1';
+                $user->email_verified_at = $current->toDateTimeString();
+                $user->last_login = $current->toDateTimeString();
+                $user->ip_address = $request->getClientIp();
+                if ($user->save()){
+                    $accessToken = $user->createToken('authToken')->accessToken;
+                    return response()->json([
+                        'token_type' => "Bearer",
+                        'expires_in' => 31535999,
+                        'access_token' => $accessToken,
+                    ], 250);
+                }
             }
-            $user->forceFill([
+            $dataUser->forceFill([
                 'last_login' => $current->toDateTimeString(),
                 'ip_address' => $request->getClientIp()
             ])->save();
-            $accessToken = $user->createToken('authToken')->accessToken;
+            $accessToken = $dataUser->createToken('authToken')->accessToken;
             return response()->json([
                 'token_type' => "Bearer",
                 'expires_in' => 31535999,
