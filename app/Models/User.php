@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +43,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     ];
     public function sendPasswordResetNotification($token)
     {
-        $url = 'http://api.gameski.com/api/reset-password?token=' . $token;
+        $url = URL::to('/api/reset-password?token=' . $token);
         $this->notify(new ResetPasswordNotification($url));
     }
     // public function sendEmailVerificationNotification($token)
