@@ -24,7 +24,7 @@ class ScrimFollowController extends Controller
     {
         try{
             $roles_id = auth('user')->user()->roles_id;
-            if ($roles_id == '3') {
+            if ($roles_id != '3') {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
@@ -74,6 +74,64 @@ class ScrimFollowController extends Controller
                 'status' => 'success',
                 'data' => $data
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function followScrim(Request $request,$idScrim)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource.'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 401);
+            }
+            $scrim = $this->scrim->where('id',$idScrim)->first();
+            if (!$scrim) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Scrim not found.'
+                ], 404);
+            }
+            $myScrim = $this->scrim->where('id','=',$idScrim)
+                ->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+                ->first();
+            if ($myScrim) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "This is your scrim. You can't follow it."
+                ], 403);
+            }
+            $scrimFollow = $this->scrimFollow->where('scrims_id','=',$idScrim)
+                ->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+                ->first();
+            if ($scrimFollow) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You already follow this scrim.'
+                ], 400);
+            }
+            $this->scrimFollow->scrims_id = $idScrim;
+            $this->scrimFollow->game_accounts_id = $sessGameAccount->id_game_account;
+            if ($this->scrimFollow->save()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'You have successfully follow this scrim.'
+                ], 200);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
