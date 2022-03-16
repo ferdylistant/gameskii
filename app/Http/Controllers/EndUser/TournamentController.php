@@ -113,8 +113,8 @@ class TournamentController extends Controller
                     foreach ($dataFile as $value) {
                         $imageName = date('mdYHis') . $value->hashName();
                         $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
-                        $idTour[] = $id;
                         $dataImage[] = $imageName;
+                        $idTour[] = $id;
                     }
                 }
                 $this->imageSponsor->tournaments_id = $idTour;
