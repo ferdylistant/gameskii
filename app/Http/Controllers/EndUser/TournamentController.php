@@ -231,12 +231,12 @@ class TournamentController extends Controller
             $distanceCreate = $this->tournament->where('games_id', '=', $sessGame['game']['id'])
             ->where('eo_id', '=', $verifiedEo->id)->first();
             if ($distanceCreate){
-                $dateCreated = new Carbon($data->created_at, 'Asia/Jakarta');
+                $dateCreated = new Carbon($distanceCreate->created_at, 'Asia/Jakarta');
                 $diffDays = $dateCreated->isToday();
                 if ($diffDays) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'You can create scrim only once a day',
+                        'message' => 'You can create tournament only once a day',
                     ], 403);
                 }
             }
