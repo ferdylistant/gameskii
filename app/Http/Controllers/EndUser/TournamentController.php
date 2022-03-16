@@ -61,6 +61,18 @@ class TournamentController extends Controller
                     'message' => 'You are not registered as an EO to create a tournament.'
                 ], 403);
             }
+            $distanceCreate = $this->tournament->where('games_id', '=', $sessGame['game']['id'])
+            ->where('eo_id', '=', $verifiedEo->id)->first();
+            if ($distanceCreate){
+                $dateCreated = new Carbon($distanceCreate->created_at, 'Asia/Jakarta');
+                $diffDays = $dateCreated->isToday();
+                if ($diffDays) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'You can create tournament only once a day',
+                    ], 403);
+                }
+            }
             $validator = Validator::make($request->all(), [
                 'name_tournament' => 'required|string|max:255',
                 'ranks_id' => 'required|integer',
@@ -228,18 +240,6 @@ class TournamentController extends Controller
                     'status' => 'error',
                     'message' => 'You are not EO.'
                 ], 401);
-            }
-            $distanceCreate = $this->tournament->where('games_id', '=', $sessGame['game']['id'])
-            ->where('eo_id', '=', $verifiedEo->id)->first();
-            if ($distanceCreate){
-                $dateCreated = new Carbon($distanceCreate->created_at, 'Asia/Jakarta');
-                $diffDays = $dateCreated->isToday();
-                if ($diffDays) {
-                    return response()->json([
-                        'status' => 'error',
-                        'message' => 'You can create tournament only once a day',
-                    ], 403);
-                }
             }
             $dataTournament = $this->tournament->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
                 ->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
