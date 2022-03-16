@@ -246,8 +246,8 @@ class TournamentController extends Controller
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
                 ->join('games', 'games.id', '=', 'tournaments.games_id')
                 ->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
-                ->where('tournaments.games_id', '=', $sessGame['game']['id'])
-                ->where('tournaments.eo_id', '=', $verifiedEo->id)
+                ->where('tournaments.games_id', $sessGame['game']['id'])
+                ->where('tournaments.eo_id', $verifiedEo->id)
                 ->select('tournaments.*',
                 'tournament_eos.id as id_tournament_eo','tournament_eos.organization_name','tournament_eos.organization_email','tournament_eos.organization_phone',
                 'tournament_eos.provinsi','tournament_eos.kabupaten','tournament_eos.kecamatan','tournament_eos.address',
