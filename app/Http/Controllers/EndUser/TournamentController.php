@@ -136,7 +136,7 @@ class TournamentController extends Controller
                 ], 408);
             }
             $dataTournament = $this->tournament->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
-                ->join('tournament_eos', 'tournament_eos.tournaments_id', '=', 'tournaments.id')
+                ->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
                 ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
                 ->join('games', 'games.id', '=', 'tournaments.games_id')
@@ -226,7 +226,7 @@ class TournamentController extends Controller
                 ], 401);
             }
             $dataTournament = $this->tournament->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
-                ->join('tournament_eos', 'tournament_eos.tournaments_id', '=', 'tournaments.id')
+                ->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
                 ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
                 ->join('games', 'games.id', '=', 'tournaments.games_id')
