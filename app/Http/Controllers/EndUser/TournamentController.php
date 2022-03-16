@@ -11,6 +11,7 @@ use App\Models\GameAccount;
 use App\Models\EoTournament;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\ImageSponsorTournament;
 use Illuminate\Support\Facades\Validator;
 
 class TournamentController extends Controller
@@ -23,6 +24,7 @@ class TournamentController extends Controller
         $this->tournament = new Tournament();
         $this->gameAccount = new GameAccount();
         $this->rank = new Rank();
+        $this->imageSponsor = new ImageSponsorTournament();
     }
     public function createTournament (Request $request)
     {
@@ -91,17 +93,18 @@ class TournamentController extends Controller
                 $dataFile->move(storage_path('uploads/picture-tournament'), $imageName);
                 $this->tournament->picture = $imageName;
             }
-            if($request->hasFile('sponsor_img')) {
-                $dataFile = $request->file('sponsor_img');
-                foreach ($dataFile as $value) {
-                    $imageName = date('mdYHis') . $value->hashName();
-                    foreach ($request->sponsor_img as $storage) {
-                        $storage->move(storage_path('uploads/sponsor-tournament'), $imageName);
-                        $this->tournament->image = $imageName;
+            if ($this->tournament->save()) {
+                if($request->hasFile('sponsor_img')) {
+                    $dataFile = $request->file('sponsor_img');
+                    foreach ($dataFile as $value) {
+                        $imageName = date('mdYHis') . $value->hashName();
+                        foreach ($request->sponsor_img as $storage) {
+                            $storage->move(storage_path('uploads/sponsor-tournament'), $imageName);
+                            $this->imageSponsor->tournaments_id = $this->tournament->id;
+                            $this->imageSponsor->image = $imageName;
+                        }
                     }
                 }
-            }
-            if ($this->tournament->save()) {
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Tournament created successfully.'
