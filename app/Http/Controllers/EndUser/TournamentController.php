@@ -163,7 +163,7 @@ class TournamentController extends Controller
                         'play_date' => $value->play_date,
                         'quota' => $value->quota,
                         'prize' => $value->prize,
-                        'picture' => $value->picture,
+                        'picture' => URL::to('/api/picture-tournament/'.$value->picture),
                         'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
                         'created_at' => $value->created_at,
                         'updated_at' => $value->updated_at
@@ -254,7 +254,7 @@ class TournamentController extends Controller
                         'play_date' => $value->play_date,
                         'quota' => $value->quota,
                         'prize' => $value->prize,
-                        'picture' => $value->picture,
+                        'picture' => URL::to('/api/picture-tournament/'.$value->picture),
                         'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
                         'created_at' => $value->created_at,
                         'updated_at' => $value->updated_at

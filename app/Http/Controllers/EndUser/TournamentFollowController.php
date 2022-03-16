@@ -39,7 +39,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
-                ], 401);
+                ], 408);
             }
             $tournament = $this->tournament->where('id',$idTournament)->first();
             if (!$tournament) {
@@ -102,7 +102,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
-                ], 401);
+                ], 408);
             }
             $tournament = $this->tournament->where('id',$idTournament)->first();
             if (!$tournament) {
@@ -126,6 +126,97 @@ class TournamentFollowController extends Controller
                     'message' => 'You have successfully unfollowed this tournament.'
                 ], 200);
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getTournamentFollowed(Request $request)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource.'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 408);
+            }
+            $tournamentFollow = $this->tournamentFollow->join('tournaments', 'tournaments.id', '=', 'tournament_follows.tournaments_id')
+                ->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
+                -join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
+                ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
+                -join('users', 'users.id', '=', 'game_accounts.users_id')
+                -join('games', 'games.id', '=', 'tournament_eos.games_id')
+                ->where('tournament_follows.game_accounts_id', '=', $sessGameAccount->id_game_account)
+                ->where('tournaments.games_id', '=', $sessGame['game']['id'])
+                ->select('tournaments.*',
+                'tournament_eos.id as id_tournament_eo',
+                'tournament_eos.organization_name',
+                'tournament_eos.organization_email',
+                'tournament_eos.organization_phone',
+                'tournament_eos.provinsi',
+                'tournament_eos.kabupaten',
+                'tournament_eos.kecamatan',
+                'tournament_eos.address',
+                'users.avatar',
+                'game_accounts.nickname',
+                'image_sponsor_tournaments.image',
+                'games.name as game_name')->get();
+            if ($tournamentFollow->count() < 1) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You have not followed any tournament.'
+                ], 404);
+            }
+            foreach ($tournamentFollow as $key => $value) {
+                $result[] = [
+                    'tournament' => [
+                        'id' => $value->id,
+                        'name_tournament' => $value->name_tournament,
+                        'ranks' => $this->rank->where('id',$value->ranks_id)->select('class')->first(),
+                        'tournament_system' => $value->tournament_system,
+                        'bracket_type' => $value->bracket_type,
+                        'play_date' => $value->play_date,
+                        'quota' => $value->quota,
+                        'prize' => $value->prize,
+                        'picture' => URL::to('/api/picture-tournament/'.$value->picture),
+                        'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at,
+                    ],
+                    'eo' => [
+                        'id_tournament_eo' => $value->id_tournament_eo,
+                        'organization_name' => $value->organization_name,
+                        'organization_email' => $value->organization_email,
+                        'organization_phone' => $value->organization_phone,
+                        'provinsi' => $value->provinsi,
+                        'kabupaten' => $value->kabupaten,
+                        'kecamatan' => $value->kecamatan,
+                        'address' => $value->address,
+                        'game_accounts_id' => $value->game_accounts_id,
+                        'nickname' => $value->nickname,
+                        'avatar' => $value->avatar,
+                        'game_name' => $value->game_name
+                    ]
+                ];
+            }
+            return response()->json([
+                'status' => 'success',
+                'data' => $result
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
