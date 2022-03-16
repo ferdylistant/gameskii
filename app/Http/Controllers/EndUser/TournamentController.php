@@ -241,18 +241,10 @@ class TournamentController extends Controller
                     'message' => 'You are not EO.'
                 ], 401);
             }
-            $dataTournament = $this->tournament->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
-                ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
-                ->join('users', 'users.id', '=', 'game_accounts.users_id')
-                ->join('games', 'games.id', '=', 'tournaments.games_id')
-                ->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
+            $dataTournament = $this->tournament->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
                 ->where('tournaments.games_id', $sessGame['game']['id'])
                 ->where('tournaments.eo_id', $verifiedEo->id)
-                ->select('tournaments.*',
-                'tournament_eos.id as id_tournament_eo','tournament_eos.organization_name','tournament_eos.organization_email','tournament_eos.organization_phone',
-                'tournament_eos.provinsi','tournament_eos.kabupaten','tournament_eos.kecamatan','tournament_eos.address',
-                'image_sponsor_tournaments.image','users.avatar' ,'game_accounts.nickname', 'games.name as game_name')
-                ->groupBy('tournaments.eo_id')
+                ->select('tournaments.*','image_sponsor_tournaments.image')
                 ->get();
             return response()->json($dataTournament);
             if ($dataTournament->count() < 1) {
@@ -263,34 +255,18 @@ class TournamentController extends Controller
             }
             foreach ($dataTournament as $value) {
                 $data[] = [
-                    'tournament' => [
-                        'id' => $value->id,
-                        'name_tournament' => $value->name_tournament,
-                        'ranks' => $this->rank->where('id', $value->ranks_id)->select('class')->first(),
-                        'tournament_system' => $value->tournament_system,
-                        'bracket_type' => $value->bracket_type,
-                        'play_date' => $value->play_date,
-                        'quota' => $value->quota,
-                        'prize' => $value->prize,
-                        'picture' => URL::to('/api/picture-tournament/'.$value->picture),
-                        'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
-                        'created_at' => $value->created_at,
-                        'updated_at' => $value->updated_at
-                    ],
-                    'eo' => [
-                        'id_tournament_eo' => $value->id_tournament_eo,
-                        'organization_name' => $value->organization_name,
-                        'organization_email' => $value->organization_email,
-                        'organization_phone' => $value->organization_phone,
-                        'provinsi' => $value->provinsi,
-                        'kabupaten' => $value->kabupaten,
-                        'kecamatan' => $value->kecamatan,
-                        'address' => $value->address,
-                        'game_accounts_id' => $value->game_accounts_id,
-                        'nickname' => $value->nickname,
-                        'avatar' => $value->avatar,
-                        'game_name' => $value->game_name,
-                    ]
+                    'id' => $value->id,
+                    'name_tournament' => $value->name_tournament,
+                    'ranks' => $this->rank->where('id', $value->ranks_id)->select('class')->first(),
+                    'tournament_system' => $value->tournament_system,
+                    'bracket_type' => $value->bracket_type,
+                    'play_date' => $value->play_date,
+                    'quota' => $value->quota,
+                    'prize' => $value->prize,
+                    'picture' => URL::to('/api/picture-tournament/'.$value->picture),
+                    'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
+                    'created_at' => $value->created_at,
+                    'updated_at' => $value->updated_at
                     ];
             }
             return response()->json([
