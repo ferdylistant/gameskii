@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use Carbon\Carbon;
 use App\Models\Game;
 use App\Models\User;
 use App\Models\GameAccount;
@@ -9,6 +10,7 @@ use App\Models\EoTournament;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Notifications\EORequestAcceptedNotification;
+use App\Notifications\EORequestRejectedNotification;
 
 class EoController extends Controller
 {
