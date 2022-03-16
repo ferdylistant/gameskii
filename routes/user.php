@@ -72,6 +72,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-eo-tournament', 'EndUser\EoTournamentController@getEoTournament');
             $router->post('/create-tournament', 'EndUser\TournamentController@createTournament');
             $router->get('/get-all-tournament', 'EndUser\TournamentController@getTournaments');
+            $router->get('/get-my-tournament', 'EndUser\TournamentController@getMyTournaments');
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth

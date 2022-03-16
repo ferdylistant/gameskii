@@ -33,6 +33,9 @@ class ScrimFollowController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
@@ -94,6 +97,9 @@ class ScrimFollowController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
@@ -130,6 +136,49 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'You have successfully follow this scrim.'
+                ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function unfollowScrim(Request $request,$idScrim)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource.'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 401);
+            }
+            $scrimFollow = $this->scrimFollow->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+                ->where('scrims_id','=',$idScrim)
+                ->first();
+            if (!$scrimFollow) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "You don't follow this scrim."
+                ], 400);
+            }
+            if ($scrimFollow->delete()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'You have successfully unfollow this scrim.'
                 ], 200);
             }
         } catch (\Exception $e) {
