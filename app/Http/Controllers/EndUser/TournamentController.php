@@ -149,7 +149,7 @@ class TournamentController extends Controller
                 'tournament_eos.provinsi','tournament_eos.kabupaten','tournament_eos.kecamatan','tournament_eos.address',
                 'image_sponsor_tournaments.image','users.avatar' ,'game_accounts.nickname', 'games.name as game_name')
                 ->get();
-            if ($dataTournament->isEmpty()) {
+            if ($dataTournament->count() < 1) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Tournament not found.'
@@ -240,7 +240,7 @@ class TournamentController extends Controller
                 'tournament_eos.provinsi','tournament_eos.kabupaten','tournament_eos.kecamatan','tournament_eos.address',
                 'image_sponsor_tournaments.image','users.avatar' ,'game_accounts.nickname', 'games.name as game_name')
                 ->get();
-            if ($dataTournament->isEmpty()) {
+            if ($dataTournament->count() < 1) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Tournament not found.'
