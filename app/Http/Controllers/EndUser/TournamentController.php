@@ -116,9 +116,9 @@ class TournamentController extends Controller
                         $idTour[] = $id;
                         $dataImage[] = $imageName;
                     }
-                    $this->imageSponsor->tournaments_id = $idTour;
-                    $this->imageSponsor->image = $dataImage;
                 }
+                $this->imageSponsor->tournaments_id = $idTour;
+                $this->imageSponsor->image = $dataImage;
                 if ($this->imageSponsor->save()) {
                     return response()->json([
                         'status' => 'success',
