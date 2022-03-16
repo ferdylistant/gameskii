@@ -18,6 +18,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/picture-game/{imageName}', 'Api\ImageController@getPicture');
     $router->get('/picture-team/{imageName}', 'Api\ImageController@getPictureTeam');
     $router->get('/picture-scrim/{imageName}', 'Api\ImageController@getPictureScrim');
+    $router->get('/picture-sponsor-tournament/{imageName}', 'Api\ImageController@getPictureSponsorTournament');
     $router->get('/logo-rank/{imageName}', 'Api\ImageController@getLogoRank');
     $router->get('/banner-game/top/{imageName}', 'Api\ImageController@getBannerTop');
     $router->get('/banner-game/bottom/{imageName}', 'Api\ImageController@getBannerBottom');
@@ -70,6 +71,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-my-eo', 'EndUser\EoTournamentController@getMyEo');
             $router->get('/get-eo-tournament', 'EndUser\EoTournamentController@getEoTournament');
             $router->post('/create-tournament', 'EndUser\TournamentController@createTournament');
+            $router->get('/get-all-tournament', 'EndUser\TournamentController@getTournaments');
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth

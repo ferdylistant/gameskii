@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\EndUser;
 
 use App\Models\Game;
+use App\Models\Rank;
 use App\Models\User;
+use Ramsey\Uuid\Uuid;
 use App\Models\Tournament;
 use App\Models\GameAccount;
 use App\Models\EoTournament;
@@ -20,6 +22,7 @@ class TournamentController extends Controller
         $this->eo = new EoTournament();
         $this->tournament = new Tournament();
         $this->gameAccount = new GameAccount();
+        $this->rank = new Rank();
     }
     public function createTournament (Request $request)
     {
@@ -34,6 +37,9 @@ class TournamentController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
@@ -100,6 +106,77 @@ class TournamentController extends Controller
                     'status' => 'success',
                     'message' => 'Tournament created successfully.'
                 ], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getTournaments(Request $request)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not authorized to access this resource.'
+                ], 401);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 408);
+            }
+            $dataTournament = $this->tournament->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
+                ->join('tournament_eos', 'tournament_eos.tournaments_id', '=', 'tournaments.id')
+                ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
+                ->join('users', 'users.id', '=', 'game_accounts.users_id')
+                ->join('games', 'games.id', '=', 'tournaments.games_id')
+                ->where('tournaments.games_id', '=', $sessGame['game']['id'])
+                ->select('tournaments.*',
+                'tournament_eos.id as id_tournament_eo','tournament_eos.organization_name','tournament_eos.organization_email','tournament_eos.organization_phone',
+                'tournament_eos.provinsi','tournament_eos.kabupaten','tournament_eos.kecamatan','tournament_eos.address',
+                'image_sponsor_tournaments.image','users.avatar' ,'game_accounts.nickname', 'games.name as game_name')
+                ->get();
+            foreach ($dataTournament as $value) {
+                $data[] = [
+                    'tournament' => [
+                        'id' => $value->id,
+                        'name_tournament' => $value->name_tournament,
+                        'ranks' => $this->rank->where('id', $value->ranks_id)->select('class')->first(),
+                        'tournament_system' => $value->tournament_system,
+                        'bracket_type' => $value->bracket_type,
+                        'play_date' => $value->play_date,
+                        'quota' => $value->quota,
+                        'prize' => $value->prize,
+                        'picture' => $value->picture,
+                        'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
+                        'created_at' => $value->created_at,
+                        'updated_at' => $value->updated_at
+                    ],
+                    'eo' => [
+                        'id_tournament_eo' => $value->id_tournament_eo,
+                        'organization_name' => $value->organization_name,
+                        'organization_email' => $value->organization_email,
+                        'organization_phone' => $value->organization_phone,
+                        'provinsi' => $value->provinsi,
+                        'kabupaten' => $value->kabupaten,
+                        'kecamatan' => $value->kecamatan,
+                        'address' => $value->address,
+                        'game_accounts_id' => $value->game_accounts_id,
+                        'nickname' => $value->nickname,
+                        'avatar' => $value->avatar,
+                        'game_name' => $value->game_name,
+                    ]
+                    ];
             }
         } catch (\Exception $e) {
             return response()->json([

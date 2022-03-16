@@ -140,4 +140,42 @@ class ImageController extends Controller
             ]);
         }
     }
+    public function getPictureTournament($imageName)
+    {
+        $imagePath = storage_path('uploads/picture-tournament/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Pict not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getPictureSponsorTournament($imageName)
+    {
+        $imagePath = storage_path('uploads/sponsor-tournament/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Pict not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
