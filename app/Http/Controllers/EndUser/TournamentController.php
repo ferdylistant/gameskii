@@ -112,10 +112,10 @@ class TournamentController extends Controller
                     foreach ($dataFile as $value) {
                         $imageName = date('mdYHis') . $value->hashName();
                         $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
-                        $this->imageSponsor->upsert([
-                            'tournament_id' => $this->tournament->id,
-                            'image' => $imageName,
-                        ],['tournament_id'],['image']);
+                        $imageSponsor = new ImageSponsorTournament();
+                        $imageSponsor->image = $imageName;
+                        $imageSponsor->tournaments_id = $this->tournament->id;
+                        $imageSponsor->save();
                     }
                 }
                 return response()->json([
