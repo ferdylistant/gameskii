@@ -115,7 +115,7 @@ class TournamentController extends Controller
                         $this->imageSponsor->upsert([
                             'tournament_id' => $this->tournament->id,
                             'image' => $imageName,
-                        ]);
+                        ],['tournament_id'],['image']);
                     }
                 }
                 return response()->json([
