@@ -241,11 +241,11 @@ class TournamentController extends Controller
                     'message' => 'You are not EO.'
                 ], 401);
             }
-            $dataTournament = $this->tournament->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
-                ->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
+            $dataTournament = $this->tournament->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
                 ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
                 ->join('games', 'games.id', '=', 'tournaments.games_id')
+                ->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
                 ->where('tournaments.games_id', '=', $sessGame['game']['id'])
                 ->where('tournaments.eo_id', '=', $verifiedEo->id)
                 ->select('tournaments.*',
