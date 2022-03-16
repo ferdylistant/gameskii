@@ -166,6 +166,13 @@ class ScrimFollowController extends Controller
                     'message' => 'Session timeout. Please login again.'
                 ], 401);
             }
+            $scrim = $this->scrim->where('id',$idScrim)->first();
+            if (!$scrim) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Scrim not found.'
+                ], 404);
+            }
             $scrimFollow = $this->scrimFollow->where('game_accounts_id','=',$sessGameAccount->id_game_account)
                 ->where('scrims_id','=',$idScrim)
                 ->first();

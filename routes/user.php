@@ -63,6 +63,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-myscrim/{idScrim}', 'EndUser\ScrimController@getMyScrimId');
             $router->get('/get-scrim-i-follow', 'EndUser\ScrimFollowController@getScrimFollowed');
             $router->post('/follow-scrim/{idScrim}', 'EndUser\ScrimFollowController@followScrim');
+            $router->post('/unfollow-scrim/{idScrim}', 'EndUser\ScrimFollowController@unfollowScrim');
             $router->post('/add-scrim-team/{idScrim}/{idTeam}', 'EndUser\ScrimController@addTeam');
             $router->post('/join-scrim/{idScrim}', 'EndUser\ScrimController@joinScrim');
             $router->post('/accept-scrim/{idScrim}', 'EndUser\ScrimController@acceptInvitation');
@@ -73,6 +74,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/create-tournament', 'EndUser\TournamentController@createTournament');
             $router->get('/get-all-tournament', 'EndUser\TournamentController@getTournaments');
             $router->get('/get-my-tournament', 'EndUser\TournamentController@getMyTournaments');
+            $router->post('/follow-tournament/{idTournament}', 'EndUser\TournamentFollowController@followTournament');
+            $router->post('/unfollow-tournament/{idTournament}', 'EndUser\TournamentFollowController@unfollowTournament');
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth
