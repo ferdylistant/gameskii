@@ -20,4 +20,20 @@ class Tournament extends Model implements AuthenticatableContract, AuthorizableC
     protected $fillable = [
         'id','eo_id','games_id','ranks_id','name_tournament','tournament_system','bracket_type','play_date','quota','prize','result','picture'
     ];
+    public function eo()
+    {
+        return $this->belongsTo('App\Models\Eo', 'eo_id');
+    }
+    public function games()
+    {
+        return $this->belongsTo('App\Models\Game', 'games_id');
+    }
+    public function ranks()
+    {
+        return $this->belongsTo('App\Models\Rank', 'ranks_id');
+    }
+    public function imageSponsorTournament()
+    {
+        return $this->hasMany('App\Models\ImageSponsorTournament', 'tournaments_id');
+    }
 }
