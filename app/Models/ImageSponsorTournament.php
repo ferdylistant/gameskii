@@ -24,11 +24,4 @@ class ImageSponsorTournament extends Model implements AuthenticatableContract, A
     {
         return $this->belongsTo('App\Models\Tournament', 'tournaments_id');
     }
-    public function saveUploads($id,$imageName)
-    {
-        return $this->create([
-            'tournaments_id' => $id,
-            'image' => $imageName
-        ]);
-    }
 }
