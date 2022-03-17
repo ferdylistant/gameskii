@@ -8,6 +8,7 @@ use App\Models\SocialFollow;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
@@ -134,10 +135,6 @@ class ProfileController extends Controller
                 ->where('games.id', $sessGame['game']['id'])
                 ->select('users.*')
                 ->first();
-                // return response()->json([
-                //     'status' => 'success',
-                //     'data' => $user,
-                // ], 200);
             if ($user == null) {
                 return response()->json([
                     'status' => 'error',
@@ -148,6 +145,10 @@ class ProfileController extends Controller
                 $dataFile = $request->file('avatar');
                 $imageName = date('mdYHis') . $dataFile->hashName();
                 $imageUrl = URL::to('/api/avatar/'.$imageName);
+                $current_image_path = storage_path('uploads/picture-game/'.$user->avatar);
+                if (file_exists($current_image_path)) {
+                    File::delete($current_image_path);
+                }
                 $dataFile->move(storage_path('uploads/avatar'), $imageName);
                 $user->avatar         = $imageUrl;
             }
