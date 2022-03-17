@@ -13,6 +13,7 @@ use App\Models\EoTournament;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\File;
 use App\Models\ImageSponsorTournament;
 use Illuminate\Support\Facades\Validator;
 
@@ -114,7 +115,7 @@ class TournamentController extends Controller
                     $imageName = date('mdYHis') . $value->hashName();
                     $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
                     $imageSponsor = new ImageSponsorTournament();
-                    $imageSponsor->image = $value->implode(',', $imageName);
+                    $imageSponsor->image = File::implode(',', $imageName);
                 }
                 $imageSponsor->tournaments_id = $this->tournament->id;
                 if ($imageSponsor->save()){
