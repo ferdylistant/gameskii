@@ -115,12 +115,13 @@ class TournamentController extends Controller
                     $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
                     $imageSponsor = new ImageSponsorTournament();
                     $imageSponsor->image = $fileName.$imageName.',';
-                    $imageSponsor->save();
                 }
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Tournament created successfully',
-                ], 200);
+                if ($imageSponsor->save()){
+                    return response()->json([
+                        'status' => 'success',
+                        'message' => 'Tournament created successfully',
+                    ], 200);
+                }
             }
         } catch (\Exception $e) {
             return response()->json([
