@@ -8,6 +8,7 @@ use App\Models\GameAccount;
 use App\Models\EoTournament;
 use Illuminate\Http\Request;
 use App\Models\TournamentFollow;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 
 class TournamentFollowController extends Controller
