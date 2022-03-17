@@ -164,15 +164,23 @@ class GameController extends Controller
             }
             if ($request->hasFile('top_banner')) {
                 $dataFile = $request->file('top_banner');
-                $imageName = date('mdYHis') . $dataFile->hashName();
-                $dataFile->move(storage_path('uploads/banner-game/top'), $imageName);
-                $this->topBanner->path     = $imageName;
+                foreach ($dataFile as $value) {
+                    $imageName = date('mdYHis') . $value->hashName();
+                    $value->move(storage_path('uploads/banner-game/top'), $imageName);
+                    $topBannerGame = new TopBannerGame();
+                    $path['path'] = $imageName;
+                }
+                $topBannerGame->path = $path['path'];
             }
             if ($request->hasFile('bottom_banner')) {
                 $dataFile = $request->file('bottom_banner');
-                $imageName = date('mdYHis') . $dataFile->hashName();
-                $dataFile->move(storage_path('uploads/banner-game/bottom'), $imageName);
-                $this->bottomBanner->path     = $imageName;
+                foreach ($dataFile as $value) {
+                    $imageName = date('mdYHis') . $value->hashName();
+                    $value->move(storage_path('uploads/banner-game/bottom'), $imageName);
+                    $bottomBannerGame = new BottomBannerGame();
+                    $path['path'] = $imageName;
+                }
+                $bottomBannerGame->path = $path['path'];
             }
 
             $this->game->id = Uuid::uuid4()->toString();
@@ -180,11 +188,11 @@ class GameController extends Controller
             if ($this->game->save()) {
                 $games_id = $this->game->id;
                 // return response()->json($this->game);
-                $this->topBanner->games_id = $games_id;
-                $this->bottomBanner->title = $request->title_bottom_banner;
-                $this->bottomBanner->games_id = $games_id;
-                $this->topBanner->save();
-                $this->bottomBanner->save();
+                $topBannerGame->games_id = $games_id;
+                $bottomBannerGame->title = $request->title_bottom_banner;
+                $bottomBannerGame->games_id = $games_id;
+                $topBannerGame->save();
+                $bottomBannerGame->save();
                 return response()->json([
                     'status' => 'posted',
                     'message' => 'Game has been posted successfully!'
