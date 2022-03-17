@@ -108,7 +108,6 @@ class TournamentController extends Controller
             }
             if ($this->tournament->save()) {
                 $dataFile = $request->file('sponsor_img');
-                $imageSponsor->tournaments_id = $this->tournament->id;
                 $fileName = '';
                 foreach ($dataFile as $value) {
                     $imageName = date('mdYHis') . $value->hashName();
@@ -116,6 +115,7 @@ class TournamentController extends Controller
                     $imageSponsor = new ImageSponsorTournament();
                     $imageSponsor->image = $fileName.$imageName.',';
                 }
+                $imageSponsor->tournaments_id = $this->tournament->id;
                 if ($imageSponsor->save()){
                     return response()->json([
                         'status' => 'success',
