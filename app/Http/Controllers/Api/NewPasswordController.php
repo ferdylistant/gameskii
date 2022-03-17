@@ -18,7 +18,7 @@ class NewPasswordController extends Controller
         $this->validate($request, [
             'email' => 'required|email',
         ]);
-        
+
         $status = Password::sendResetLink(
             $request->only('email')
         );
@@ -26,7 +26,7 @@ class NewPasswordController extends Controller
         if ($status == Password::RESET_LINK_SENT) {
             return response()->json([
                 "status" => __($status),
-                "message" => 'Reset password link sent on your email id.'
+                "message" => 'Password reset link has been sent to your email'
             ]);
         }
 
