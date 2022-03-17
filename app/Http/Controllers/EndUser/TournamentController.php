@@ -114,7 +114,7 @@ class TournamentController extends Controller
                     $imageName = date('mdYHis') . $value->hashName();
                     $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
                     $imageSponsor = new ImageSponsorTournament();
-                    $imageSponsor->image = implode(',', $imageName);
+                    $imageSponsor->image = $value->implode(',', $imageName);
                 }
                 $imageSponsor->tournaments_id = $this->tournament->id;
                 if ($imageSponsor->save()){
