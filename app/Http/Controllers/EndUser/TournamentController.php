@@ -11,6 +11,7 @@ use App\Models\Tournament;
 use App\Models\GameAccount;
 use App\Models\EoTournament;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\ImageSponsorTournament;
 use Illuminate\Support\Facades\Validator;
@@ -253,7 +254,7 @@ class TournamentController extends Controller
                 'tournament_eos.provinsi','tournament_eos.kabupaten','tournament_eos.kecamatan','tournament_eos.address',
                 'image_sponsor_tournaments.image','users.avatar' ,'game_accounts.nickname', 'games.name as game_name')
                 ->get();
-            return response()->json($dataTournament);
+            // return response()->json($dataTournament);
             if ($dataTournament->count() < 1) {
                 return response()->json([
                     'status' => 'error',
