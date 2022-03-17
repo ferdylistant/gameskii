@@ -114,9 +114,9 @@ class TournamentController extends Controller
                     $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
                     $imageSponsor = new ImageSponsorTournament();
                     $imageSponsor->image = $fileName.$imageName.',';
+                    $imageSponsor->tournaments_id = $this->tournament->id;
+                    $imageSponsor->save();
                 }
-                $imageSponsor->tournaments_id = $this->tournament->id;
-                $imageSponsor->save();
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Tournament created successfully',
