@@ -181,7 +181,7 @@ class TournamentFollowController extends Controller
                     'message' => 'You have not followed any tournament.'
                 ], 404);
             }
-            foreach ($tournamentFollow as $key => $value) {
+            foreach ($tournamentFollow as $value) {
                 $result[] = [
                     'tournament' => [
                         'id' => $value->id,
