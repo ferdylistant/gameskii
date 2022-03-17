@@ -109,12 +109,12 @@ class TournamentController extends Controller
             }
             if ($this->tournament->save()) {
                 $dataFile = $request->file('sponsor_img');
-                $fileName = '';
+                // $fileName = '';
                 foreach ($dataFile as $value) {
                     $imageName = date('mdYHis') . $value->hashName();
                     $value->move(storage_path('uploads/sponsor-tournament'), $imageName);
                     $imageSponsor = new ImageSponsorTournament();
-                    $imageSponsor->image = $fileName.$imageName.',';
+                    $imageSponsor->image = implode(',', $imageName);
                 }
                 $imageSponsor->tournaments_id = $this->tournament->id;
                 if ($imageSponsor->save()){
