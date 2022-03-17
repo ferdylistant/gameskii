@@ -6,9 +6,10 @@ use App\Models\User;
 use App\Models\GameAccount;
 use App\Models\SocialFollow;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
-use Illuminate\Validation\Rules\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
