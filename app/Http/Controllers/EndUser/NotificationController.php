@@ -63,6 +63,11 @@ class NotificationController extends Controller
     {
         try {
             $user = auth('user')->user()->unreadNotifications;
+            return response()->json([
+                'status' => 'success',
+                'message' => 'All notifications has been marked as read',
+                'data' => $user
+            ],200);
             if ($user->count() < 0) {
                 return response()->json([
                     'status' => 'error',
