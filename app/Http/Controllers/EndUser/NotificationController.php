@@ -63,6 +63,12 @@ class NotificationController extends Controller
     {
         try {
             $user = auth('user')->user()->unreadNotifications;
+            if (!$user) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Notification not found'
+                ], 404);
+            }
             foreach ($user as $notification) {
                 // return response()->json($notification);
                 $result[] = $notification;
