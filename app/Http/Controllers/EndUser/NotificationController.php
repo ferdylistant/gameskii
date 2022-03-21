@@ -67,7 +67,8 @@ class NotificationController extends Controller
             if ($user->count() < 1) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Notification not found'
+                    'message' => 'Notification not found',
+                    'data' => $user
                 ], 404);
             }
             foreach ($user as $notification) {
