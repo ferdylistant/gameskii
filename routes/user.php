@@ -69,6 +69,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/join-scrim/{idScrim}', 'EndUser\ScrimController@joinScrim');
             $router->post('/accept-scrim/{idScrim}', 'EndUser\ScrimController@acceptInvitation');
             $router->post('/reject-scrim/{idScrim}', 'EndUser\ScrimController@rejectInvitation');
+            $router->post('/join-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@joinRoom');
             $router->post('/registration-eo', 'EndUser\EoTournamentController@registrationEo');
             $router->get('/get-my-eo', 'EndUser\EoTournamentController@getMyEo');
             $router->get('/get-eo-tournament', 'EndUser\EoTournamentController@getEoTournament');
