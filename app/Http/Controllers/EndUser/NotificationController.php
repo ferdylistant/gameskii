@@ -64,7 +64,7 @@ class NotificationController extends Controller
         try {
             $user = auth('user')->user()->unreadNotifications;
 
-            if ($user == []) {
+            if ($user == ['']) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Notification not found'
