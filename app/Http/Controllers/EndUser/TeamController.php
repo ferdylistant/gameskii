@@ -1025,9 +1025,10 @@ class TeamController extends Controller
             ], 409);
         }
         $dataPlayers = $this->teamPlayer->join('game_accounts', 'game_accounts.id_game_account', '=', 'team_players.game_accounts_id')
+        ->join('users', 'users.id', '=', 'game_accounts.users_id')
         ->where('team_players.teams_id', '=', $idTeam)
         ->where('team_players.status','=','1')
-        ->select('game_accounts.id_game_account', 'game_accounts.nickname','team_players.role_team','game_accounts.avatar')
+        ->select('game_accounts.id_game_account', 'game_accounts.nickname','team_players.role_team', 'users.phone','users.email','users.avatar')
         ->get();
         try {
             $this->teamPlayer = new TeamPlayer();
