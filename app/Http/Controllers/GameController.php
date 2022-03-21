@@ -62,7 +62,7 @@ class GameController extends Controller
             return response()->json([
                 "status" => "error",
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $game = $this->game->where('id', $idGame)->first();
         if (!$game) {

@@ -29,7 +29,7 @@ class EoTournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -147,7 +147,7 @@ class EoTournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this page.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -217,7 +217,7 @@ class EoTournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this page.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');

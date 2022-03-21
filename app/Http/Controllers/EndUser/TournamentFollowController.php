@@ -29,7 +29,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -58,7 +58,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'This is your tournament. You can not follow it.'
-                ], 401);
+                ], 403);
             }
             $tournamentFollow = $this->tournamentFollow->where('tournaments_id',$idTournament)
                 ->where('game_accounts_id',$sessGameAccount->id_game_account)
@@ -67,7 +67,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You have already followed this tournament.'
-                ], 401);
+                ], 403);
             }
             $this->tournamentFollow->tournaments_id = $idTournament;
             $this->tournamentFollow->game_accounts_id = $sessGameAccount->id_game_account;
@@ -92,7 +92,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -119,7 +119,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You have not followed this tournament.'
-                ], 401);
+                ], 403);
             }
             if ($tournamentFollow->delete()) {
                 return response()->json([
@@ -142,7 +142,7 @@ class TournamentFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');

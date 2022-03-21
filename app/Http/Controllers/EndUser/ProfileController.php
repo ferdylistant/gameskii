@@ -27,7 +27,7 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGameAccount = $request->session()->get('game_account');
         $sessGame = $request->session()->get('gamedata');
@@ -99,7 +99,7 @@ class ProfileController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             // return auth('user')->user();
             $sessGameAccount = $request->session()->get('game_account');
@@ -181,7 +181,7 @@ class ProfileController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGameAccount = $request->session()->get('game_account');
         $sessGame = $request->session()->get('gamedata');

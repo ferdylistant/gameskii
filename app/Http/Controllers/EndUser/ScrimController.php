@@ -30,7 +30,7 @@ class ScrimController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this route'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         if ($sessGame == null) {
@@ -180,7 +180,7 @@ class ScrimController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
@@ -233,7 +233,6 @@ class ScrimController extends Controller
             ]);
         }
     }
-
     public function createScrim(Request $request)
     {
         $roles_id = auth('user')->user()->roles_id;
@@ -241,7 +240,7 @@ class ScrimController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to create scrim'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');

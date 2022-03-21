@@ -37,7 +37,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -121,7 +121,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -189,7 +189,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => "You don't have permission to access this resource"
-            ],401);
+            ],403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
@@ -258,7 +258,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
@@ -326,7 +326,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
@@ -394,7 +394,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255|unique:teams',
@@ -475,7 +475,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
@@ -576,7 +576,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -676,7 +676,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -775,7 +775,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -875,7 +875,7 @@ class TeamController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -973,7 +973,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
@@ -1074,7 +1074,7 @@ class TeamController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this resource'
-            ], 401);
+            ], 403);
         }
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');

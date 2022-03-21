@@ -29,7 +29,7 @@ class EoController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $dataEo = $this->eo->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
@@ -61,7 +61,7 @@ class EoController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $dataEo = $this->eo->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
@@ -127,7 +127,7 @@ class EoController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $dataEo = $this->eo->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')

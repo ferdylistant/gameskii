@@ -36,7 +36,7 @@ class TournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -140,7 +140,7 @@ class TournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -221,7 +221,7 @@ class TournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -241,7 +241,7 @@ class TournamentController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not EO.'
-                ], 401);
+                ], 403);
             }
             $dataTournament = $this->tournament->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
                 ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')

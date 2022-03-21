@@ -28,7 +28,7 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -39,7 +39,7 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
-                ], 401);
+                ], 408);
             }
             $scrims = $this->scrimFollow->join('scrims', 'scrims.id', '=', 'scrim_follows.scrims_id')
                 ->join('games', 'games.id', '=', 'scrims.games_id')
@@ -92,7 +92,7 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -103,7 +103,7 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
-                ], 401);
+                ], 408);
             }
             $scrim = $this->scrim->where('id',$idScrim)->first();
             if (!$scrim) {
@@ -153,7 +153,7 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You are not authorized to access this resource.'
-                ], 401);
+                ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -164,7 +164,7 @@ class ScrimFollowController extends Controller
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Session timeout. Please login again.'
-                ], 401);
+                ], 408);
             }
             $scrim = $this->scrim->where('id',$idScrim)->first();
             if (!$scrim) {
