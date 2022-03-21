@@ -37,7 +37,7 @@ class ScrimMatchController extends Controller
 
             }
             $sessGame = $request->session()->get('gamedata');
-            $sessGameAccount = $request->session()->get('gameaccount');
+            $sessGameAccount = $request->session()->get('game_account');
             if (($sessGame == null) || ($sessGameAccount == null)) {
                 $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
                 $game_account->is_online = 0;
@@ -173,6 +173,71 @@ class ScrimMatchController extends Controller
                     ], 200);
                 }
             }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getRequestTeamMatch(Request $request,$idScrim)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your role is not allowed to access this resource'
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == null) || ($sessGameAccount == null)) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            $scrimMaster = $this->scrim->where('id','=',$idScrim)
+            ->where('games_id','=',$sessGame['game']['id'])
+            ->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->first();
+            if ($scrimMaster == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your are not scrim master'
+                ], 403);
+            }
+            $scrimMatch = $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
+            ->join('team_players','teams.id','=','team_players.teams_id')
+            ->join('game_accounts','team_players.game_accounts_id','=','game_accounts.id_game_account')
+            ->join('users','game_accounts.users_id','=','users.id')
+            ->where('scrim_matches.scrims_id','=',$scrimMaster->id)
+            ->where('scrim_matches.result','=','On Going')
+            ->select('scrim_matches.id','teams.name as team_name','teams.ranks_id','users.phone')
+            ->get();
+            if ($scrimMatch->count() == 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No request team match'
+                ], 404);
+            }
+            foreach ($scrimMatch as $value) {
+                $result[] = [
+                    'team_name' => $value->team_name,
+                    'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->first()->class,
+                    'phone' => $value->phone
+                ];
+            }
+            return response()->json([
+                'status' => 'success',
+                'total_team' => $scrimMatch->count(),
+                'quota' => $scrimMaster->quota,
+                'data' => $result
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
