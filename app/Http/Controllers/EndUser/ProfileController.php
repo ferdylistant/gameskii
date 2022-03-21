@@ -119,7 +119,7 @@ class ProfileController extends Controller
                 'kabupaten'   => 'required|min:4|string',
                 'kecamatan'   => 'required|min:4|string',
                 'tgl_lahir'   => 'required',
-                'avatar' => 'file|max:2048|image',
+                'avatar' => 'image|mimes:jpeg,png,jpg,svg|max:2048',
             ]);
             if ($validator->fails()) {
                 return response()->json([
@@ -145,7 +145,7 @@ class ProfileController extends Controller
                 $dataFile = $request->file('avatar');
                 $imageName = date('mdYHis') . $dataFile->hashName();
                 $imageUrl = URL::to('/api/avatar/'.$imageName);
-                $current_image_path = storage_path('uploads/picture-game/'.$user->avatar);
+                $current_image_path = storage_path('uploads/avatar/'.$user->avatar);
                 if (file_exists($current_image_path)) {
                     File::delete($current_image_path);
                 }
