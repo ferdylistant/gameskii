@@ -226,7 +226,10 @@ class ScrimMatchController extends Controller
             if ($scrimMatch->count() == 0) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'No request team match'
+                    'message' => 'No request team match',
+                    'total_team' => $scrimMatch->count(),
+                    'quota' => $scrimMaster->quota,
+                    'data' => $scrimMatch
                 ], 404);
             }
             foreach ($scrimMatch as $value) {
@@ -238,6 +241,7 @@ class ScrimMatchController extends Controller
             }
             return response()->json([
                 'status' => 'success',
+                'message' => 'Get request team match success',
                 'total_team' => $scrimMatch->count(),
                 'quota' => $scrimMaster->quota,
                 'data' => $result
