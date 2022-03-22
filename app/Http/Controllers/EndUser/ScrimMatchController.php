@@ -75,7 +75,7 @@ class ScrimMatchController extends Controller
                 ], 404);
             }
             $minRank = $this->rank->min('id');
-            $scrimMaster = $scrimOn->where('game_accounts_id','=',$sessGameAccount->id)
+            $scrimMaster = $scrimOn->where('game_accounts_id','=',$sessGameAccount->id_game_account)
             ->first();
             if ($scrimMaster){
                 $teamJoin = $this->team->join('team_players', 'teams.id', '=', 'team_players.teams_id')
@@ -173,6 +173,10 @@ class ScrimMatchController extends Controller
                     ], 200);
                 }
             }
+            return response()->json([
+                'status' => 'error',
+                'message' => "Your team rank is not suitable for this scrim"
+            ], 403);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
