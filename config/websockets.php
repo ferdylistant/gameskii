@@ -26,7 +26,7 @@ return [
  * You can create a custom provider by implementing the
  * `AppProvider` interface.
  */
-'providers' => \BeyondCode\LaravelWebSockets\Apps\ConfigAppProvider::class,
+'app_provider' => \BeyondCode\LaravelWebSockets\Apps\ConfigAppProvider::class,
 
 /*
  * This array contains the hosts of which you want to allow incoming requests.
