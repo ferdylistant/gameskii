@@ -92,7 +92,7 @@ class ScrimMatchController extends Controller
                 $isRank = $this->rank->where('id','=',$scrimMaster->ranks_id)->first();
                 $rankPre = $this->rank->where('id','<',$scrimMaster->ranks_id)->max('id');
                 $rankNext = $this->rank->where('id','>',$scrimMaster->ranks_id)->min('id');
-                if (($teamJoin->ranks_id == null) && ($scrimMaster->ranks_id = $minRank)) {
+                if (($teamJoin->ranks_id == null) && ($scrimMaster->ranks_id == $minRank)) {
                     $this->scrimMatch->id = Uuid::uuid4()->toString();
                     $this->scrimMatch->scrims_id = $scrimMaster->id;
                     $this->scrimMatch->teams_id = $teamJoin->teams_id;
@@ -142,7 +142,7 @@ class ScrimMatchController extends Controller
             $isRank = $this->rank->where('id','=',$scrimOn->ranks_id)->first();
             $rankPre = $this->rank->where('id','<',$scrimOn->ranks_id)->max('id');
             $rankNext = $this->rank->where('id','>',$scrimOn->ranks_id)->min('id');
-            if (($teamJoin->ranks_id == null) && ($scrimOn->ranks_id = $minRank)) {
+            if (($teamJoin->ranks_id == null) && ($scrimOn->ranks_id == $minRank)) {
                 $this->scrimMatch->id = Uuid::uuid4()->toString();
                 $this->scrimMatch->scrims_id = $scrimOn->id;
                 $this->scrimMatch->teams_id = $teamJoin->teams_id;
