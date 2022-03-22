@@ -228,7 +228,7 @@ class ScrimMatchController extends Controller
             foreach ($scrimMatch as $value) {
                 $result[] = [
                     'team_name' => $value->team_name,
-                    'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->first()->class,
+                    'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone
                 ];
             }
