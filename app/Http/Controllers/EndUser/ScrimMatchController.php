@@ -234,6 +234,7 @@ class ScrimMatchController extends Controller
             }
             foreach ($scrimMatch as $value) {
                 $result[] = [
+                    'id' => $value->id,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone
@@ -246,6 +247,42 @@ class ScrimMatchController extends Controller
                 'quota' => $scrimMaster->quota,
                 'data' => $result
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function acceptRequestTeamMatch(Request $request,$idScrim,$idMatch)//for Master Scrim
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your role is not allowed to access this resource'
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == null) || ($sessGameAccount == null)) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            $scrimMaster = $this->scrim->where('id','=',$idScrim)->where('games_id','=',$sessGame['game']['id'])->where('game_accounts_id','=',$sessGameAccount->id_game_account)->first();
+            if ($scrimMaster == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your are not scrim master'
+                ], 403);
+            }
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
