@@ -26,7 +26,7 @@ class ScrimController extends Controller
     public function getAllScrims(Request $request)
     {
         $roles_id = auth('user')->user()->roles_id;
-        if ($roles_id == '3') {
+        if ($roles_id != '3') {
             return response()->json([
                 'status' => 'error',
                 'message' => 'You are not authorized to access this route'
