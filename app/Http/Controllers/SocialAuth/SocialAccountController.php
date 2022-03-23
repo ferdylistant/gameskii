@@ -44,6 +44,7 @@ class SocialAccountController extends Controller
             $data = json_decode($response->getBody()->getContents(), true);
             $dataUser = $this->endUser->where('email',$data['email'])->first();
             $current = Carbon::now('Asia/Jakarta');
+
             // return response()->json($user);
             if (!$dataUser) {
                 $user = $this->endUser;
@@ -63,6 +64,12 @@ class SocialAccountController extends Controller
                         'access_token' => $accessToken,
                     ], 250);
                 }
+            }
+            if($dataUser->roles_id != '3'){
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "It's not your role"
+                ], 403);
             }
             $dataUser->forceFill([
                 'last_login' => $current->toDateTimeString(),

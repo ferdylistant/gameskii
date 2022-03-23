@@ -66,7 +66,8 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/follow-scrim/{idScrim}', 'EndUser\ScrimFollowController@followScrim');
             $router->post('/unfollow-scrim/{idScrim}', 'EndUser\ScrimFollowController@unfollowScrim');
             $router->post('/join-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@joinRoom');
-            $router->get('/get-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@getRequestTeamMatch');
+            $router->get('/get-request-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@getRequestTeamMatch');
+            $router->get('/get-team-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@getTeamMatchScrim');
             $router->post('/accept-scrim-room/{idScrim}/{idMatch}', 'EndUser\ScrimMatchController@acceptRequestTeamMatch');
             $router->post('/reject-scrim-room/{idScrim}/{idMatch}', 'EndUser\ScrimMatchController@rejectRequestTeamMatch');
             $router->post('/lock-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@lockMatchScrim');
