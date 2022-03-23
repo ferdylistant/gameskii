@@ -427,11 +427,22 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            if (($scrimMatch->count() < $scrim->quota) || ($scrimMatch->count() > $scrim->quota)) {
+            if ($scrimMatch->count() != $scrim->quota) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Scrim must have at least '.$scrim->quota.' team match'
                 ], 403);
+            }
+            foreach ($scrimMatch as $scrimMatchUpdate) {
+                $scrimMatchUpdate->result = 'On Going';
+                $scrimMatchUpdate->save();
+            }
+            $scrimMaster->result = 'Battle';
+            if ($scrimMaster->save()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Room has been locked'
+                ], 200);
             }
         } catch (\Exception $e) {
             return response()->json([

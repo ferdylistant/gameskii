@@ -65,14 +65,11 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-scrim-i-follow', 'EndUser\ScrimFollowController@getScrimFollowed');
             $router->post('/follow-scrim/{idScrim}', 'EndUser\ScrimFollowController@followScrim');
             $router->post('/unfollow-scrim/{idScrim}', 'EndUser\ScrimFollowController@unfollowScrim');
-            $router->post('/add-scrim-team/{idScrim}/{idTeam}', 'EndUser\ScrimController@addTeam');
-            $router->post('/join-scrim/{idScrim}', 'EndUser\ScrimController@joinScrim');
-            $router->post('/accept-scrim/{idScrim}', 'EndUser\ScrimController@acceptInvitation');
-            $router->post('/reject-scrim/{idScrim}', 'EndUser\ScrimController@rejectInvitation');
             $router->post('/join-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@joinRoom');
             $router->get('/get-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@getRequestTeamMatch');
             $router->post('/accept-scrim-room/{idScrim}/{idMatch}', 'EndUser\ScrimMatchController@acceptRequestTeamMatch');
             $router->post('/reject-scrim-room/{idScrim}/{idMatch}', 'EndUser\ScrimMatchController@rejectRequestTeamMatch');
+            $router->post('/lock-scrim-room/{idScrim}', 'EndUser\ScrimMatchController@lockMatchScrim');
             $router->post('/registration-eo', 'EndUser\EoTournamentController@registrationEo');
             $router->get('/get-my-eo', 'EndUser\EoTournamentController@getMyEo');
             $router->get('/get-eo-tournament', 'EndUser\EoTournamentController@getEoTournament');
