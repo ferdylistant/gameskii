@@ -157,10 +157,10 @@ class TournamentFollowController extends Controller
             }
             $tournamentFollow = $this->tournamentFollow->join('tournaments', 'tournaments.id', '=', 'tournament_follows.tournaments_id')
                 ->join('tournament_eos', 'tournament_eos.id', '=', 'tournaments.eo_id')
-                -join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
+                ->join('image_sponsor_tournaments', 'image_sponsor_tournaments.tournaments_id', '=', 'tournaments.id')
                 ->join('game_accounts', 'game_accounts.id_game_account', '=', 'tournament_eos.game_accounts_id')
-                -join('users', 'users.id', '=', 'game_accounts.users_id')
-                -join('games', 'games.id', '=', 'tournament_eos.games_id')
+                ->join('users', 'users.id', '=', 'game_accounts.users_id')
+                ->join('games', 'games.id', '=', 'tournament_eos.games_id')
                 ->where('tournament_follows.game_accounts_id', '=', $sessGameAccount->id_game_account)
                 ->where('tournaments.games_id', '=', $sessGame['game']['id'])
                 ->select('tournaments.*',

@@ -129,7 +129,7 @@ class TournamentMatchController extends Controller
             ]);
         }
     }
-    public function getRequestTeam(Request $request,$idTournament)
+    public function getRequestTeamMatch(Request $request,$idTournament)
     {
         try{
             $roles_id = auth('user')->user()->roles_id;
