@@ -18,7 +18,7 @@ class ScrimMatch extends Model implements AuthenticatableContract, AuthorizableC
     protected $keyType = 'string';
     public $incrementing = false;
     protected $fillable = [
-        'id','scrims_id', 'match_no', 'teams_id','play_date', 'result', 'score', 'round'
+        'id','scrims_id', 'teams_id','play_date', 'result', 'score', 'round','status_match'
     ];
 
     /**
