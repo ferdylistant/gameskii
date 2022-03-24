@@ -98,8 +98,8 @@ class ScrimMatchController extends Controller
                 if ($teamJoin == null) {
                     return response()->json([
                         'status' => 'error',
-                        'message' => 'Team not found'
-                    ], 404);
+                        'message' => "You don't have a team"
+                    ], 403);
                 }
                 $isRank = $this->rank->where('id','=',$scrimMaster->ranks_id)->first();
                 $rankPre = $this->rank->where('id','<',$scrimMaster->ranks_id)->max('id');
@@ -108,7 +108,7 @@ class ScrimMatchController extends Controller
                     $this->scrimMatch->id = Uuid::uuid4()->toString();
                     $this->scrimMatch->scrims_id = $scrimMaster->id;
                     $this->scrimMatch->teams_id = $teamJoin->teams_id;
-                    $this->scrimMatch->result = 'On Going';
+                    $this->scrimMatch->result = 'Ready';
                     $this->scrimMatch->round = 'Not yet';
                     $this->scrimMatch->status_match = '1';
                     if ($this->scrimMatch->save())
@@ -124,7 +124,7 @@ class ScrimMatchController extends Controller
                     $this->scrimMatch->id = Uuid::uuid4()->toString();
                     $this->scrimMatch->scrims_id = $scrimMaster->id;
                     $this->scrimMatch->teams_id = $teamJoin->teams_id;
-                    $this->scrimMatch->result = 'On Going';
+                    $this->scrimMatch->result = 'Ready';
                     $this->scrimMatch->round = 'Not yet';
                     $this->scrimMatch->status_match = '1';
                     if ($this->scrimMatch->save())
@@ -148,8 +148,8 @@ class ScrimMatchController extends Controller
             if ($teamJoin == null) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Team not found'
-                ], 404);
+                    'message' => "You don't have a team"
+                ], 403);
             }
             $isRank = $this->rank->where('id','=',$scrimOn->ranks_id)->first();
             $rankPre = $this->rank->where('id','<',$scrimOn->ranks_id)->max('id');
@@ -158,7 +158,7 @@ class ScrimMatchController extends Controller
                 $this->scrimMatch->id = Uuid::uuid4()->toString();
                 $this->scrimMatch->scrims_id = $scrimOn->id;
                 $this->scrimMatch->teams_id = $teamJoin->teams_id;
-                $this->scrimMatch->result = 'On Going';
+                $this->scrimMatch->result = 'Not yet';
                 $this->scrimMatch->round = 'Not yet';
                 $this->scrimMatch->status_match = '0';
                 if ($this->scrimMatch->save())
@@ -174,7 +174,7 @@ class ScrimMatchController extends Controller
                 $this->scrimMatch->id = Uuid::uuid4()->toString();
                 $this->scrimMatch->scrims_id = $scrimOn->id;
                 $this->scrimMatch->teams_id = $teamJoin->teams_id;
-                $this->scrimMatch->result = 'On Going';
+                $this->scrimMatch->result = 'Not yet';
                 $this->scrimMatch->round = 'Not yet';
                 $this->scrimMatch->status_match = '0';
                 if ($this->scrimMatch->save())
