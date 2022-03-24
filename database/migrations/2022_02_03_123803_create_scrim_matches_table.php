@@ -16,11 +16,12 @@ class CreateScrimMatchesTable extends Migration
         Schema::create('scrim_matches', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('scrims_id')->index();
-            $table->tinyInteger('match_no');
             $table->uuid('teams_id')->index();
-            $table->enum('result',['Win','Lose'])->nullable();
-            $table->tinyInteger('score');
-            $table->enum('round',['1','2','3'])->nullable();
+            $table->dateTime('play_date')->nullable();
+            $table->enum('result',['Not yet','Ready','On Going','Win','Lose'])->nullable();
+            $table->tinyInteger('score')->nullable();
+            $table->enum('round',['Not yet','1','2','3'])->nullable();
+            $table->tinyInteger('status_match')->nullable();
             $table->timestamps();
         });
     }
