@@ -101,6 +101,7 @@ class TournamentController extends Controller
             $this->tournament->play_date = $request->play_date;
             $this->tournament->quota = $request->quota;
             $this->tournament->prize = $request->prize;
+            $this->tournament->result = 'Prepare';
             if($request->hasFile('picture')) {
                 $dataFile = $request->file('picture');
                 $imageName = date('mdYHis') . $dataFile->hashName();
@@ -181,6 +182,7 @@ class TournamentController extends Controller
                         'play_date' => $value->play_date,
                         'quota' => $value->quota,
                         'prize' => $value->prize,
+                        'result' => $value->result,
                         'picture' => URL::to('/api/picture-tournament/'.$value->picture),
                         'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
                         'created_at' => $value->created_at,
@@ -273,6 +275,7 @@ class TournamentController extends Controller
                         'play_date' => $value->play_date,
                         'quota' => $value->quota,
                         'prize' => $value->prize,
+                        'result' => $value->result,
                         'picture' => URL::to('/api/picture-tournament/'.$value->picture),
                         'sponsor_img' => URL::to('/api/picture-sponsor-tournament/'.$value->image),
                         'created_at' => $value->created_at,
