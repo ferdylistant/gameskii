@@ -90,7 +90,7 @@ class TournamentMatchController extends Controller
             $isRank = $this->rank->where('id','=',$tournament->ranks_id)->first();
             $rankPre = $this->rank->where('id','<',$tournament->ranks_id)->max('id');
             $rankNext = $this->rank->where('id','>',$tournament->ranks_id)->min('id');
-            if (($teamJoin->ranks_id == null) && ($scrimOn->ranks_id == $minRank)) {
+            if (($teamJoin->ranks_id == null) && ($tournament->ranks_id == $minRank)) {
                 $this->tournamentMatch->id = Uuid::uuid4()->toString();
                 $this->tournamentMatch->tournaments_id = $tournament->id;
                 $this->tournamentMatch->teams_id = $teamJoin->teams_id;
@@ -122,6 +122,86 @@ class TournamentMatchController extends Controller
                 'status' => 'error',
                 'message' => "Your team rank is not suitable for this tournament"
             ], 403);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function getRequestTeam(Request $request,$idTournament)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "It's not your role"
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Session time out"
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament not found"
+                ], 404);
+            }
+            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->select('tournaments.id')
+            ->first();
+            if(!$eo){
+                return response()->json([
+                    "status" => "error",
+                    "message" => "You are not an EO"
+                ], 403);
+            }
+            $requestTeam = $this->tournamentMatch->join('tournaments','tournaments.id','=','tournament_matches.tournaments_id')
+            ->join('teams','teams.id','=','tournament_matches.teams_id')
+            ->join('team_players','team_players.teams_id','=','teams.id')
+            ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
+            ->join('users','users.id','=','game_accounts.users_id')
+            ->where('tournaments.id','=',$eo->id)
+            ->select('tournament_matches.id',
+            'tournament_matches.tournaments_id',
+            'tournaments.name_tournament',
+            'teams.name as team_name',
+            'teams.ranks_id',
+            'users.phone')->get();
+            if ($requestTeam->count() == 0) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "There is no request team",
+                    "total_team" => $requestTeam->count(),
+                    "quota" => $tournament->quota,
+                    "data" => $requestTeam
+                ], 404);
+            }
+            foreach ($requestTeam as $value) {
+                $result[] = [
+                    'id' => $value->id,
+                    'tournaments_id' => $value->tournaments_id,
+                    'name_tournament' => $value->name_tournament,
+                    'team_name' => $value->team_name,
+                    'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
+                    'phone' => $value->phone
+                ];
+            }
+            return response()->json([
+                "status" => "success",
+                "message" => "Get request team success",
+                "total_team" => $requestTeam->count(),
+                "quota" => $tournament->quota,
+                "data" => $result
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
