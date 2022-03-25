@@ -175,7 +175,8 @@ class TournamentMatchController extends Controller
             'tournaments.name_tournament',
             'teams.name as team_name',
             'teams.ranks_id',
-            'users.phone')->get();
+            'users.phone',
+            'tournament_matches.status_match')->get();
             if ($requestTeam->count() == 0) {
                 return response()->json([
                     "status" => "error",
@@ -192,7 +193,8 @@ class TournamentMatchController extends Controller
                     'name_tournament' => $value->name_tournament,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
-                    'phone' => $value->phone
+                    'phone' => $value->phone,
+                    'status_match' => $value->status_match
                 ];
             }
             return response()->json([
@@ -202,6 +204,73 @@ class TournamentMatchController extends Controller
                 "quota" => $tournament->quota,
                 "data" => $result
             ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function acceptRequestTeamMatch(Request $request,$idTournament,$idMatch)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "It's not your role"
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Session time out"
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament not found"
+                ], 404);
+            }
+            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->select('tournaments.id')
+            ->first();
+            if(!$eo){
+                return response()->json([
+                    "status" => "error",
+                    "message" => "You are not an EO"
+                ], 403);
+            }
+            $alreadyAccept = $this->tournamentMatch->where('id','=',$idMatch)
+            ->where('tournaments_id','=',$eo->id)
+            ->where('status_match','=','1')
+            ->first();
+            if ($alreadyAccept != null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "This team already accepted"
+                ], 403);
+            }
+            $requestTeam = $this->tournamentMatch->where('id','=',$idMatch)
+            ->where('tournaments_id','=',$eo->id)->first();
+            if ($requestTeam == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Request team not found"
+                ], 404);
+            }
+            $requestTeam->status_match = '1';
+            if ($requestTeam->save()) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Accept request team success"
+                ], 200);
+            }
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

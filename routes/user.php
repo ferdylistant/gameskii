@@ -86,6 +86,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-tournament-followed', 'EndUser\TournamentFollowController@getTournamentFollowed');
             $router->post('/join-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@joinRoom');
             $router->get('/get-request-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@getRequestTeamMatch');
+            $router->post('/accept-tournament-room/{idTournament}/{idMatch}', 'EndUser\TournamentMatchController@acceptRequestTeamMatch');
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth
