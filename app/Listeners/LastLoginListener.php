@@ -2,9 +2,12 @@
 
 namespace App\Listeners;
 
+use Carbon\Carbon;
 use App\Events\LastLogin;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class LastLoginListener
 {
@@ -24,13 +27,13 @@ class LastLoginListener
      * @param  LastLogin  $event
      * @return void
      */
-    public function handle(LastLogin $event)
+    public function handle(LastLogin $event,Request $request)
     {
         $current = Carbon::now('Asia/Jakarta');
         $userinfo = $event->user;
-        $save = $userinfo->forceFill([
-            'last_login' => $current->toDateTimeString(),
-            'ip_address' => $request->getClientIp()])->save();
+        $save = DB::table('users')
+            ->where('id', $userinfo->id)
+            ->update(['last_login' => $current->toDateTimeString(),'ip_address' => $request->getClientIp()]);
         return $save;
     }
 }
