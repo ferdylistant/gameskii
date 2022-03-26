@@ -33,7 +33,7 @@ class LastLoginListener
         $userinfo = $event->user;
         $save = DB::table('users')
             ->where('id', $userinfo['data']['id'])
-            ->update(['last_login' => $current->toDateTimeString(),'ip_address' => $userinfo->ip_address]);
+            ->update(['last_login' => $current->toDateTimeString(),'ip_address' => $userinfo['ip_address']]);
         return $save;
     }
 }
