@@ -5,14 +5,12 @@ namespace App\Http\Controllers\EndUser;
 use Carbon\Carbon;
 use App\Models\User;
 use GuzzleHttp\Client;
-use App\Events\LastLogin;
-use App\Models\GameAccount;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\GameAccount;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Event\Dispatcher;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use App\Notifications\MailVerifyNotification;
@@ -157,9 +155,11 @@ class Auth extends Controller
                     'password'      => $request->password,
                 ]
                 ]);
-
+            $current = Carbon::now('Asia/Jakarta');
             if ($response) {
-                event(new LastLogin($data));
+                $data->forceFill([
+                    'last_login' => $current->toDateTimeString(),
+                    'ip_address' => $request->getClientIp()])->save();
             }
             return $response->getBody();
         } catch (BadResponseException $e) {
