@@ -5,14 +5,14 @@ namespace App\Events;
 use App\Events\Event;
 class LastLogin extends Event
 {
-    public $data;
+    public $user;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($user)
     {
-        $this->user = $data;
+        $this->user = $user;
     }
 }

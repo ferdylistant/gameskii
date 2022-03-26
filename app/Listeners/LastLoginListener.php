@@ -32,8 +32,8 @@ class LastLoginListener
         $current = Carbon::now('Asia/Jakarta');
         $userinfo = $event->user;
         $save = DB::table('users')
-            ->where('id', $userinfo->id)
-            ->update(['last_login' => $current->toDateTimeString()]);
+            ->where('id', $userinfo['data']['id'])
+            ->update(['last_login' => $current->toDateTimeString(),'ip_address' => $userinfo->ip_address]);
         return $save;
     }
 }

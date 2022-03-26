@@ -156,12 +156,13 @@ class Auth extends Controller
                     'password'      => $request->password,
                 ]
                 ]);
-            $current = Carbon::now('Asia/Jakarta');
+            $ipAddress = $request->getClientIp();
             if ($response) {
-                event(new LastLogin($data));
-                // $data->forceFill([
-                //     'last_login' => $current->toDateTimeString(),
-                //     'ip_address' => $request->getClientIp()])->save();
+                $user = [
+                    'data' => $data,
+                    'ip_address' => $ipAddress
+                ];
+                event(new LastLogin($user));
             }
             return $response->getBody();
         } catch (BadResponseException $e) {
