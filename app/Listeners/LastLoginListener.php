@@ -4,7 +4,6 @@ namespace App\Listeners;
 
 use Carbon\Carbon;
 use App\Events\LastLogin;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;

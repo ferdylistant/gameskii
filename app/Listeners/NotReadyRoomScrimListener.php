@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\ReadyRoomScrim;
+use App\Events\NotReadyRoomScrim;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ReadyRoomScrimListener
+class NotReadyRoomScrimListener
 {
     /**
      * Create the event listener.
@@ -22,15 +22,15 @@ class ReadyRoomScrimListener
     /**
      * Handle the event.
      *
-     * @param  ReadyRoomScrim  $event
+     * @param  NotReadyRoomScrim  $event
      * @return void
      */
-    public function handle(ReadyRoomScrim $event)
+    public function handle(NotReadyRoomScrim $event)
     {
         $scrimMatch = $event->scrimMatch;
         $save = DB::table('scrim_matches')
             ->where('id', $scrimMatch->id)
-            ->update(['result' => 'Ready']);
+            ->update(['result' => 'Not yet']);
         return $save;
     }
 }
