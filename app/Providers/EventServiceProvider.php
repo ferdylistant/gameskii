@@ -42,10 +42,13 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen($this->listen);
-        // Event::listen(
-        //     ReadyRoomScrim::class,
-        //     [ReadyRoomScrimListener::class, 'handle'],
-        // );
+        Event::listen(
+            LastLogin::class,
+            [LastLoginListener::class, 'handle'],
+        );
+        Event::listen(
+            ReadyRoomScrim::class,
+            [ReadyRoomScrimListener::class, 'handle'],
+        );
     }
 }
