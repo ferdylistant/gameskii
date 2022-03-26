@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ReadyRoomScrim;
+use Illuminate\Support\Facades\DB;
 
 class ReadyRoomScrimListener
 {
@@ -24,6 +25,10 @@ class ReadyRoomScrimListener
      */
     public function handle(ReadyRoomScrim $event)
     {
-        //
+        $scrimMatch = $event->scrimMatch;
+        $save = DB::table('scrim_matches')
+            ->where('id', $scrimMatch->id)
+            ->update(['result' => 'Ready']);
+        return $save;
     }
 }

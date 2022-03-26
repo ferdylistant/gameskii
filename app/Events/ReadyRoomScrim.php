@@ -6,14 +6,14 @@ use App\Events\Event;
 
 class ReadyRoomScrim extends Event
 {
-    public $matchScrim;
+    public $scrimMatch;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($matchScrim)
+    public function __construct($scrimMatch)
     {
-        $this->matchScrim = $matchScrim;
+        $this->scrimMatch = $scrimMatch;
     }
 }

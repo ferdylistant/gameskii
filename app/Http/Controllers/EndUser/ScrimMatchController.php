@@ -11,6 +11,7 @@ use App\Models\TeamPlayer;
 use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Models\ScrimProgress;
+use App\Events\ReadyRoomScrim;
 use App\Http\Controllers\Controller;
 
 class ScrimMatchController extends Controller
@@ -701,13 +702,11 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match has ready'
                 ], 409);
             }
-            $scrimMatch->result = 'Ready';
-            if ($scrimMatch->save()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Team match ready'
-                ], 200);
-            }
+            event(new ReadyRoomScrim($scrimMatch));
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Team match ready'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
