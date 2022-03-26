@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Events\LastLogin;
+use App\Events\ReadyRoomScrim;
 use App\Events\ReadyRoomTournament;
 use App\Listeners\LastLoginListener;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
+use App\Listeners\ReadyRoomScrimListener;
 use App\Listeners\ReadyRoomTournamentListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 
@@ -28,6 +30,9 @@ class EventServiceProvider extends ServiceProvider
         ReadyRoomTournament::class => [
             ReadyRoomTournamentListener::class,
         ],
+        ReadyRoomScrim::class => [
+            ReadyRoomScrimListener::class,
+        ],
     ];
 
     /**
@@ -37,9 +42,10 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Event::listen(
-            LastLogin::class,
-            [LastLoginListener::class, 'handle']
-        );
+        Event::listen($this->listen);
+        // Event::listen(
+        //     ReadyRoomScrim::class,
+        //     [ReadyRoomScrimListener::class, 'handle'],
+        // );
     }
 }
