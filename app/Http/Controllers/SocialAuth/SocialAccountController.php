@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SocialAuth;
 use Carbon\Carbon;
 use App\Models\User;
 use GuzzleHttp\Client;
+use App\Events\LastLogin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
@@ -71,10 +72,12 @@ class SocialAccountController extends Controller
                     'message' => "It's not your role"
                 ], 403);
             }
-            $dataUser->forceFill([
-                'last_login' => $current->toDateTimeString(),
-                'ip_address' => $request->getClientIp()
-            ])->save();
+            $ipAddress = $request->getClientIp();
+            $user = [
+                'data' => $dataUser,
+                'ip_address' => $ipAddress
+            ];
+            event(new LastLogin($user));
             $accessToken = $dataUser->createToken('authToken')->accessToken;
             return response()->json([
                 'token_type' => "Bearer",
