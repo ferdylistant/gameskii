@@ -6,11 +6,15 @@ use App\Models\Rank;
 use App\Models\Team;
 use App\Models\Scrim;
 use Ramsey\Uuid\Uuid;
+use App\Events\JoinScrim;
+use App\Events\ScrimLock;
 use App\Models\ScrimMatch;
 use App\Models\TeamPlayer;
+use App\Events\ScrimUnlock;
 use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Models\ScrimProgress;
+use App\Events\AcceptReqScrim;
 use App\Events\ReadyRoomScrim;
 use App\Events\NotReadyRoomScrim;
 use App\Http\Controllers\Controller;
@@ -156,36 +160,31 @@ class ScrimMatchController extends Controller
             $isRank = $this->rank->where('id','=',$scrimOn->ranks_id)->first();
             $rankPre = $this->rank->where('id','<',$scrimOn->ranks_id)->max('id');
             $rankNext = $this->rank->where('id','>',$scrimOn->ranks_id)->min('id');
-            if (($teamJoin->ranks_id == null) && ($scrimOn->ranks_id == $minRank)) {
-                $this->scrimMatch->id = Uuid::uuid4()->toString();
-                $this->scrimMatch->scrims_id = $scrimOn->id;
-                $this->scrimMatch->teams_id = $teamJoin->teams_id;
-                $this->scrimMatch->result = 'Not yet';
-                $this->scrimMatch->round = 'Not yet';
-                $this->scrimMatch->status_match = '0';
-                if ($this->scrimMatch->save())
-                {
-                    return response()->json([
-                        'status' => 'success',
-                        'message' => "Join scrim success, please wait for scrim master decision",
-                    ], 200);
-                }
+            $scrimMatch = [
+                'id' => Uuid::uuid4()->toString(),
+                'scrims_id' => $scrimOn->id,
+                'teams_id' => $teamJoin->teams_id,
+                'result' => 'Not yet',
+                'round' => 'Not yet',
+                'status_match' => '0',
+                'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString()
+            ];
+            if (($teamJoin->ranks_id == null) && ($scrimOn->ranks_id == $minRank))
+            {
+                event(new JoinScrim($scrimMatch));
+                return response()->json([
+                    'status' => 'success',
+                    'message' => "Join scrim success, please wait for scrim master decision",
+                ], 200);
             }
             if (($teamJoin->ranks_id == $isRank) || ($teamJoin->ranks_id == $rankPre) || ($teamJoin->ranks_id == $rankNext))
             {
-                $this->scrimMatch->id = Uuid::uuid4()->toString();
-                $this->scrimMatch->scrims_id = $scrimOn->id;
-                $this->scrimMatch->teams_id = $teamJoin->teams_id;
-                $this->scrimMatch->result = 'Not yet';
-                $this->scrimMatch->round = 'Not yet';
-                $this->scrimMatch->status_match = '0';
-                if ($this->scrimMatch->save())
-                {
-                    return response()->json([
-                        'status' => 'success',
-                        'message' => "Join scrim success, please wait for scrim master decision",
-                    ], 200);
-                }
+                event(new JoinScrim($scrimMatch));
+                return response()->json([
+                    'status' => 'success',
+                    'message' => "Join scrim success, please wait for scrim master decision",
+                ], 200);
             }
             return response()->json([
                 'status' => 'error',
@@ -320,13 +319,11 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match request not found'
                 ], 404);
             }
-            $scrimMatch->status_match = '1';
-            if ($scrimMatch->save()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Accept team match success'
-                ], 200);
-            }
+            event(new AcceptReqScrim($scrimMatch));
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Accept team match success'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -444,13 +441,12 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim must have at least '.$scrim->quota.' team match'
                 ], 403);
             }
-            $scrimMaster->result = 'Lock';
-            if ($scrimMaster->save()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Room has been locked'
-                ], 200);
-            }
+            event(new ScrimLock($scrimMaster));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Room has been locked'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -500,13 +496,12 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            $scrimMaster->result = 'Prepare';
-            if ($scrimMaster->save()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Room has been unlocked'
-                ], 200);
-            }
+            event(new ScrimUnlock($scrimMaster));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Room has been unlocked'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
