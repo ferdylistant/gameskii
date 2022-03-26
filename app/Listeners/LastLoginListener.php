@@ -27,13 +27,13 @@ class LastLoginListener
      * @param  LastLogin  $event
      * @return void
      */
-    public function handle(LastLogin $event,Request $request)
+    public function handle(LastLogin $event)
     {
         $current = Carbon::now('Asia/Jakarta');
         $userinfo = $event->user;
         $save = DB::table('users')
             ->where('id', $userinfo->id)
-            ->update(['last_login' => $current->toDateTimeString(),'ip_address' => $request->getClientIp()]);
+            ->update(['last_login' => $current->toDateTimeString()]);
         return $save;
     }
 }
