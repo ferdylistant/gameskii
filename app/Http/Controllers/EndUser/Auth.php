@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 use App\Notifications\MailVerifyNotification;
@@ -158,7 +159,7 @@ class Auth extends Controller
                 ]);
 
             if ($response) {
-                event(new LastLogin($data));
+                Event::dispatch(new LastLogin($data));
             }
             return $response->getBody();
         } catch (BadResponseException $e) {
