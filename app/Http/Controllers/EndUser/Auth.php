@@ -159,7 +159,7 @@ class Auth extends Controller
                 ]);
 
             if ($response) {
-                Event::dispatch(new LastLogin($data));
+                event(new LastLogin($data));
             }
             return $response->getBody();
         } catch (BadResponseException $e) {
