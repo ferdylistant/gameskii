@@ -563,13 +563,12 @@ class ScrimMatchController extends Controller
                     'message' => 'Room must be locked'
                 ], 403);
             }
-            $scrimLock->result = 'Battle';
-            if($scrimLock->save()){
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Room has been started'
-                ], 200);
-            }
+            event(new ScrimStart($scrimLock));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Room has been started'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

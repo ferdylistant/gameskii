@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\JoinScrim;
 use App\Events\LastLogin;
 use App\Events\ScrimLock;
+use App\Events\ScrimStart;
 use App\Events\ScrimUnlock;
 use App\Events\AcceptReqScrim;
 use App\Events\ReadyRoomScrim;
@@ -14,6 +15,7 @@ use App\Events\ReadyRoomTournament;
 use App\Listeners\JoinScrimListener;
 use App\Listeners\LastLoginListener;
 use App\Listeners\ScrimLockListener;
+use App\Listeners\ScrimStartListener;
 use Illuminate\Support\Facades\Event;
 use App\Listeners\ScrimUnlockListener;
 use Illuminate\Auth\Events\Registered;
@@ -81,6 +83,10 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             RejectReqScrim::class,
             [RejectReqScrimListener::class, 'handle'],
+        );
+        Event::listen(
+            ScrimStart::class,
+            [ScrimStartListener::class, 'handle'],
         );
     }
 }
