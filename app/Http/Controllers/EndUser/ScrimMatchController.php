@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use App\Models\ScrimProgress;
 use App\Events\AcceptReqScrim;
 use App\Events\ReadyRoomScrim;
+use App\Events\RejectReqScrim;
 use App\Events\NotReadyRoomScrim;
 use App\Http\Controllers\Controller;
 
@@ -373,12 +374,12 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            if ($scrimMatch->delete()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Reject team match success'
-                ], 200);
-            }
+            event(new RejectReqScrim($scrimMatch));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Reject team match success'
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

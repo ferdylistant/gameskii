@@ -8,6 +8,7 @@ use App\Events\ScrimLock;
 use App\Events\ScrimUnlock;
 use App\Events\AcceptReqScrim;
 use App\Events\ReadyRoomScrim;
+use App\Events\RejectReqScrim;
 use App\Events\NotReadyRoomScrim;
 use App\Events\ReadyRoomTournament;
 use App\Listeners\JoinScrimListener;
@@ -19,6 +20,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
 use App\Listeners\AcceptReqScrimListener;
 use App\Listeners\ReadyRoomScrimListener;
+use App\Listeners\RejectReqScrimListener;
 use App\Listeners\NotReadyRoomScrimListener;
 use App\Listeners\ReadyRoomTournamentListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -33,30 +35,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
-        LastLogin::class => [
-            LastLoginListener::class,
-        ],
-        ReadyRoomTournament::class => [
-            ReadyRoomTournamentListener::class,
-        ],
-        ReadyRoomScrim::class => [
-            ReadyRoomScrimListener::class,
-        ],
-        NotReadyRoomScrim::class => [
-            NotReadyRoomScrimListener::class,
-        ],
-        ScrimLock::class => [
-            ScrimLockListener::class,
-        ],
-        ScrimUnlock::class => [
-            ScrimUnlockListener::class,
-        ],
-        JoinScrim::class => [
-            JoinScrimListener::class,
-        ],
-        AcceptReqScrim::class => [
-            AcceptReqScrimListener::class,
         ],
     ];
 
@@ -99,6 +77,10 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             AcceptReqScrim::class,
             [AcceptReqScrimListener::class, 'handle'],
+        );
+        Event::listen(
+            RejectReqScrim::class,
+            [RejectReqScrimListener::class, 'handle'],
         );
     }
 }
