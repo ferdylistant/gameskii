@@ -11,6 +11,8 @@ use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Events\JoinTournament;
 use App\Models\TournamentMatch;
+use App\Events\AcceptReqTournament;
+use App\Events\RejectReqTournament;
 use App\Http\Controllers\Controller;
 
 class TournamentMatchController extends Controller
@@ -261,13 +263,69 @@ class TournamentMatchController extends Controller
                     "message" => "Request team not found"
                 ], 404);
             }
-            $requestTeam->status_match = '1';
-            if ($requestTeam->save()) {
+            event(new AcceptReqTournament($requestTeam));
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Accept request team success"
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function rejectRequestTeamMatch(Request $request,$idTournament,$idMatch)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
                 return response()->json([
-                    "status" => "success",
-                    "message" => "Accept request team success"
-                ], 200);
+                    "status" => "error",
+                    "message" => "It's not your role"
+                ], 403);
             }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Session time out"
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament not found"
+                ], 404);
+            }
+            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->select('tournaments.id')
+            ->first();
+            if(!$eo){
+                return response()->json([
+                    "status" => "error",
+                    "message" => "You are not an EO"
+                ], 403);
+            }
+            $tournamentMatch = $this->tournamentMatch->where('id','=',$idMatch)
+            ->where('tournaments_id','=',$eo->id)->first();
+            if ($tournamentMatch == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Request team not found"
+                ], 404);
+            }
+            event(new RejectReqTournament($tournamentMatch));
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Reject request team success"
+            ], 200);
+
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

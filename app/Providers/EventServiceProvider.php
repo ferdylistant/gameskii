@@ -12,7 +12,9 @@ use App\Events\JoinTournament;
 use App\Events\ReadyRoomScrim;
 use App\Events\RejectReqScrim;
 use App\Events\NotReadyRoomScrim;
+use App\Events\AcceptReqTournament;
 use App\Events\ReadyRoomTournament;
+use App\Events\RejectReqTournament;
 use App\Listeners\JoinScrimListener;
 use App\Listeners\LastLoginListener;
 use App\Listeners\ScrimLockListener;
@@ -26,7 +28,9 @@ use App\Listeners\JoinTournamentListener;
 use App\Listeners\ReadyRoomScrimListener;
 use App\Listeners\RejectReqScrimListener;
 use App\Listeners\NotReadyRoomScrimListener;
+use App\Listeners\AcceptReqTournamentListener;
 use App\Listeners\ReadyRoomTournamentListener;
+use App\Listeners\RejectReqTournamentListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 
 class EventServiceProvider extends ServiceProvider
@@ -93,6 +97,14 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             JoinTournament::class,
             [JoinTournamentListener::class, 'handle'],
+        );
+        Event::listen(
+            AcceptReqTournament::class,
+            [AcceptReqTournamentListener::class, 'handle'],
+        );
+        Event::listen(
+            RejectReqTournament::class,
+            [RejectReqTournamentListener::class, 'handle'],
         );
     }
 }
