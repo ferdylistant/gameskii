@@ -8,6 +8,7 @@ use App\Events\ScrimLock;
 use App\Events\ScrimStart;
 use App\Events\ScrimUnlock;
 use App\Events\AcceptReqScrim;
+use App\Events\JoinTournament;
 use App\Events\ReadyRoomScrim;
 use App\Events\RejectReqScrim;
 use App\Events\NotReadyRoomScrim;
@@ -21,6 +22,7 @@ use App\Listeners\ScrimUnlockListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
 use App\Listeners\AcceptReqScrimListener;
+use App\Listeners\JoinTournamentListener;
 use App\Listeners\ReadyRoomScrimListener;
 use App\Listeners\RejectReqScrimListener;
 use App\Listeners\NotReadyRoomScrimListener;
@@ -87,6 +89,10 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             ScrimStart::class,
             [ScrimStartListener::class, 'handle'],
+        );
+        Event::listen(
+            JoinTournament::class,
+            [JoinTournamentListener::class, 'handle'],
         );
     }
 }

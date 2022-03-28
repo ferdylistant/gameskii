@@ -9,6 +9,7 @@ use App\Models\TeamPlayer;
 use App\Models\Tournament;
 use App\Models\GameAccount;
 use Illuminate\Http\Request;
+use App\Events\JoinTournament;
 use App\Models\TournamentMatch;
 use App\Http\Controllers\Controller;
 
@@ -90,33 +91,29 @@ class TournamentMatchController extends Controller
             $isRank = $this->rank->where('id','=',$tournament->ranks_id)->first();
             $rankPre = $this->rank->where('id','<',$tournament->ranks_id)->max('id');
             $rankNext = $this->rank->where('id','>',$tournament->ranks_id)->min('id');
+            $tournamentMatch = [
+                'id' => Uuid::uuid4()->toString(),
+                'tournaments_id' => $tournament->id,
+                'teams_id' => $teamJoin->teams_id,
+                'result' => 'Not yet',
+                'round' => 'Not yet',
+                'status_match' => '0',
+            ];
             if (($teamJoin->ranks_id == null) && ($tournament->ranks_id == $minRank)) {
-                $this->tournamentMatch->id = Uuid::uuid4()->toString();
-                $this->tournamentMatch->tournaments_id = $tournament->id;
-                $this->tournamentMatch->teams_id = $teamJoin->teams_id;
-                $this->tournamentMatch->result = 'Not yet';
-                $this->tournamentMatch->round = 'Not yet';
-                $this->tournamentMatch->status_match = '0';
-                if ($this->tournamentMatch->save()) {
-                    return response()->json([
-                        "status" => "success",
-                        "message" => "You join this tournament, please wait for tournament eo decision"
-                    ], 200);
-                }
+                event(new JoinTournament($tournamentMatch));
+
+                return response()->json([
+                    "status" => "success",
+                    "message" => "You join this tournament, please wait for tournament eo decision"
+                ], 200);
             }
             if (($teamJoin->ranks_id == $isRank) || ($teamJoin->ranks_id == $rankPre) || ($teamJoin->ranks_id == $rankNext)) {
-                $this->tournamentMatch->id = Uuid::uuid4()->toString();
-                $this->tournamentMatch->tournaments_id = $tournament->id;
-                $this->tournamentMatch->teams_id = $teamJoin->teams_id;
-                $this->tournamentMatch->result = 'Not yet';
-                $this->tournamentMatch->round = 'Not yet';
-                $this->tournamentMatch->status_match = '0';
-                if ($this->tournamentMatch->save()) {
-                    return response()->json([
-                        "status" => "success",
-                        "message" => "You join this tournament, please wait for tournament eo decision"
-                    ], 200);
-                }
+                event(new JoinTournament($tournamentMatch));
+
+                return response()->json([
+                    "status" => "success",
+                    "message" => "You join this tournament, please wait for tournament eo decision"
+                ], 200);
             }
             return response()->json([
                 'status' => 'error',
