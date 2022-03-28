@@ -24,6 +24,7 @@ class TournamentController extends Controller
         $this->game = new Game();
         $this->eo = new EoTournament();
         $this->tournament = new Tournament();
+        $this->tournamentMatch = new TournamentMatch();
         $this->gameAccount = new GameAccount();
         $this->rank = new Rank();
         $this->imageSponsor = new ImageSponsorTournament();
@@ -180,6 +181,7 @@ class TournamentController extends Controller
                         'tournament_system' => $value->tournament_system,
                         'bracket_type' => $value->bracket_type,
                         'play_date' => $value->play_date,
+                        'team_play' => $this->tournamentMatch->where('tournaments_id','=', $value->id)->get()->count(),
                         'quota' => $value->quota,
                         'prize' => $value->prize,
                         'result' => $value->result,
@@ -273,6 +275,7 @@ class TournamentController extends Controller
                         'tournament_system' => $value->tournament_system,
                         'bracket_type' => $value->bracket_type,
                         'play_date' => $value->play_date,
+                        'team_play' => $this->tournamentMatch->where('tournaments_id','=', $value->id)->get()->count(),
                         'quota' => $value->quota,
                         'prize' => $value->prize,
                         'result' => $value->result,
