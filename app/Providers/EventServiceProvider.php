@@ -12,6 +12,7 @@ use App\Events\JoinTournament;
 use App\Events\ReadyRoomScrim;
 use App\Events\RejectReqScrim;
 use App\Events\TournamentLock;
+use App\Events\TournamentStart;
 use App\Events\TournamentUnlock;
 use App\Events\NotReadyRoomScrim;
 use App\Events\AcceptReqTournament;
@@ -30,6 +31,7 @@ use App\Listeners\JoinTournamentListener;
 use App\Listeners\ReadyRoomScrimListener;
 use App\Listeners\RejectReqScrimListener;
 use App\Listeners\TournamentLockListener;
+use App\Listeners\TournamentStartListener;
 use App\Listeners\TournamentUnlockListener;
 use App\Listeners\NotReadyRoomScrimListener;
 use App\Listeners\AcceptReqTournamentListener;
@@ -117,6 +119,10 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             TournamentUnlock::class,
             [TournamentUnlockListener::class, 'handle'],
+        );
+        Event::listen(
+            TournamentStart::class,
+            [TournamentStartListener::class, 'handle'],
         );
     }
 }
