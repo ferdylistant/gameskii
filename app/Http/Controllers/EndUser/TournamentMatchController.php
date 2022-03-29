@@ -10,6 +10,7 @@ use App\Models\Tournament;
 use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Events\JoinTournament;
+use App\Events\TournamentLock;
 use App\Models\TournamentMatch;
 use App\Events\AcceptReqTournament;
 use App\Events\RejectReqTournament;
@@ -39,6 +40,9 @@ class TournamentMatchController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     "status" => "error",
                     "message" => "Session time out"
@@ -141,6 +145,9 @@ class TournamentMatchController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     "status" => "error",
                     "message" => "Session time out"
@@ -223,6 +230,9 @@ class TournamentMatchController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     "status" => "error",
                     "message" => "Session time out"
@@ -289,6 +299,9 @@ class TournamentMatchController extends Controller
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
             if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
                 return response()->json([
                     "status" => "error",
                     "message" => "Session time out"
@@ -327,6 +340,79 @@ class TournamentMatchController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function lockMatchTournament(Request $request,$idTournament)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "It's not your role"
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Session time out"
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament not found"
+                ], 404);
+            }
+            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->select('tournaments.id')
+            ->first();
+            if(!$eo){
+                return response()->json([
+                    "status" => "error",
+                    "message" => "You are not an EO"
+                ], 403);
+            }
+            $tournamentMatch = $this->tournamentMatch->where('tournaments_id','=',$eo->id)
+            ->where('status_match','=','1')
+            ->get();
+            if ($tournamentMatch->count() < 1) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Team match not found"
+                ], 404);
+            }
+            $teamReady = $tournamentMatch->where('result','=','Ready')->get();
+            if ($teamReady->count() < 1) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Every team must be ready"
+                ], 403);
+            }
+            if ($teamReady()->count() != $tournament->quota) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament must have at least ".$tournament->quota." teams"
+                ], 403);
+            }
+            event(new TournamentLock($tournament));
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Tournament has been locked"
+            ], 200);
+        } catch(\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => $e->getMessage()
