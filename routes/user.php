@@ -86,6 +86,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/get-tournament-followed', 'EndUser\TournamentFollowController@getTournamentFollowed');
             $router->post('/join-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@joinRoom');
             $router->get('/get-request-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@getRequestTeamMatch');
+            $router->get('/get-team-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@getTeamMatchTournament');
             $router->post('/accept-tournament-room/{idTournament}/{idMatch}', 'EndUser\TournamentMatchController@acceptRequestTeamMatch');
             $router->post('/reject-tournament-room/{idTournament}/{idMatch}', 'EndUser\TournamentMatchController@rejectRequestTeamMatch');
             $router->post('/lock-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@lockMatchTournament');

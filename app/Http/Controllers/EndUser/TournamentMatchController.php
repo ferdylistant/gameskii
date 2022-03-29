@@ -219,6 +219,82 @@ class TournamentMatchController extends Controller
             ]);
         }
     }
+    public function getTeamMatchTournament(Request $request,$idTournament)
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "It's not your role"
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Session time out"
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == null) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament not found"
+                ], 404);
+            }
+            $tournamentMatch = $this->tournamentMatch->join('tournaments','tournaments.id','=','tournament_matches.tournaments_id')
+            ->join('teams','teams.id','=','tournament_matches.teams_id')
+            ->join('team_players','team_players.teams_id','=','teams.id')
+            ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
+            ->join('users','users.id','=','game_accounts.users_id')
+            ->where('tournament_matches.tournaments_id','=',$tournament->id)
+            ->where('tournament_matches.status_match','=','1')
+            ->select('tournament_matches.id',
+            'tournament_matches.tournaments_id',
+            'tournaments.name_tournament',
+            'teams.name as team_name',
+            'teams.ranks_id',
+            'users.phone',
+            'tournament_matches.status_match')->get();
+            if ($tournamentMatch->count() == 0) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "There is no team match",
+                    "total_team" => $tournamentMatch->count(),
+                    "quota" => $tournament->quota,
+                    "data" => $tournamentMatch
+                ], 404);
+            }
+            foreach ($tournamentMatch as $value) {
+                $result[] = [
+                    'id' => $value->id,
+                    'tournaments_id' => $value->tournaments_id,
+                    'name_tournament' => $value->name_tournament,
+                    'team_name' => $value->team_name,
+                    'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
+                    'phone' => $value->phone,
+                    'status_match' => $value->status_match
+                ];
+            }
+            return response()->json([
+                "status" => "success",
+                "message" => "Get team match success",
+                "total_team" => $tournamentMatch->count(),
+                "quota" => $tournament->quota,
+                "data" => $result
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
     public function acceptRequestTeamMatch(Request $request,$idTournament,$idMatch)
     {
         try{
