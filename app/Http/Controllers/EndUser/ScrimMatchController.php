@@ -490,12 +490,11 @@ class ScrimMatchController extends Controller
                     'message' => 'Your are not scrim master'
                 ], 403);
             }
-            $scrimMatch = $this->scrimMatch->where('scrims_id', '=', $scrimMaster->id)->where('status_match', '=', '1')->get();
-            if ($scrimMatch->count() == 0) {
+            if ($scrimMaster->result == 'Battle') {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Team match not found'
-                ], 404);
+                    'message' => 'Scrim has been battle'
+                ], 403);
             }
             event(new ScrimUnlock($scrimMaster));
 
