@@ -179,7 +179,8 @@ class TournamentFollowController extends Controller
             if ($tournamentFollow->count() < 1) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'You have not followed any tournament.'
+                    'message' => 'You have not followed any tournament.',
+                    'data' => []
                 ], 404);
             }
             foreach ($tournamentFollow as $value) {
@@ -216,6 +217,7 @@ class TournamentFollowController extends Controller
             }
             return response()->json([
                 'status' => 'success',
+                'message' => 'Successfully get data.',
                 'data' => $result
             ], 200);
         } catch (\Exception $e) {
