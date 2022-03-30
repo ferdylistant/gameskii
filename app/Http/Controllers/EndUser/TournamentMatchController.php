@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\EndUser;
 
+use Carbon\Carbon;
 use App\Models\Rank;
 use App\Models\Team;
 use Ramsey\Uuid\Uuid;
@@ -106,6 +107,8 @@ class TournamentMatchController extends Controller
                 'result' => 'Not yet',
                 'round' => 'Not yet',
                 'status_match' => '0',
+                'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString()
             ];
             if (($teamJoin->ranks_id == null) && ($tournament->ranks_id == $minRank)) {
                 event(new JoinTournament($tournamentMatch));
