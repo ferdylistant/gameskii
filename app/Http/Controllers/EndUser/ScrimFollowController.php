@@ -41,7 +41,7 @@ class ScrimFollowController extends Controller
                     'message' => 'Session timeout. Please login again.'
                 ], 408);
             }
-            $scrims = $this->scrimFollow->join('scrims', 'scrims.id', '=', 'scrim_follows.scrims_id')
+            $scrims = $this->scrim->join('scrim_follows', 'scrim_follows.scrims_id', '=', 'scrims.id')
                 ->where('scrim_follows.game_accounts_id', '=', $sessGameAccount->id_game_account)
                 ->select('scrims.*')
                 ->get();
