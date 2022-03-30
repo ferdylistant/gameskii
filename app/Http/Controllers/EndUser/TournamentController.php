@@ -103,7 +103,6 @@ class TournamentController extends Controller
             $this->tournament->play_date = $request->play_date;
             $this->tournament->quota = $request->quota;
             $this->tournament->prize = $request->prize;
-            $this->tournament->result = 'Prepare';
             if($request->hasFile('picture')) {
                 $dataFile = $request->file('picture');
                 $imageName = date('mdYHis') . $dataFile->hashName();
