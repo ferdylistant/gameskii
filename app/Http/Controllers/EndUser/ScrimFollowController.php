@@ -51,7 +51,8 @@ class ScrimFollowController extends Controller
             if ($scrims->count() == 0) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'You have no scrim followed.'
+                    'message' => 'You have no scrim followed.',
+                    'data' => $scrims
                 ], 404);
             }
             foreach ($scrims as $scrim) {
@@ -75,6 +76,7 @@ class ScrimFollowController extends Controller
             }
             return response()->json([
                 'status' => 'success',
+                'message' => 'Get scrim followed success.',
                 'data' => $data
             ], 200);
         } catch (\Exception $e) {
