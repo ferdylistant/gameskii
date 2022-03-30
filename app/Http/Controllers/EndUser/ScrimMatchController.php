@@ -94,7 +94,7 @@ class ScrimMatchController extends Controller
                 ], 404);
             }
             $minRank = $this->rank->min('id');
-            $scrimMaster = $scrimOn->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            $scrimMaster = $scrimOn->where('game_accounts_id','=',$sessGameAccount->id_game_account)->where('id','=',$scrim->id)
             ->first();
             if ($scrimMaster){
                 $teamJoin = $this->team->join('team_players', 'teams.id', '=', 'team_players.teams_id')
