@@ -23,9 +23,27 @@ class SocialFollowController extends Controller
     public function getListFriendRequest(Request $request)
     {
         try {
-            $user = auth('user')->user();
-            $idGameAccount = $this->gameAccount->where('users_id', $user->id)->first();
-            $listFriendRequest = $this->follow->where('game_accounts_id', '=', $idGameAccount->id_game_account)
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != 3)
+            {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => "It's not your role"
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == null) || ($sessGameAccount == null))
+            {
+                $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout. Please login again.'
+                ], 408);
+            }
+            $listFriendRequest = $this->follow->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
             ->where('acc_following_id', '=', NULL)
             ->where('status_follow', '=', '0')->get();
             if ($listFriendRequest->count() < '1') {
