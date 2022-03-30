@@ -11,6 +11,7 @@ use App\Models\Tournament;
 use App\Models\GameAccount;
 use App\Models\EoTournament;
 use Illuminate\Http\Request;
+use App\Models\TournamentMatch;
 use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use App\Models\ImageSponsorTournament;
