@@ -41,14 +41,14 @@ class ScrimFollowController extends Controller
                     'message' => 'Session timeout. Please login again.'
                 ], 408);
             }
-            $scrims = $this->scrimFollow->join('scrims', 'scrims.id', '=', 'scrim_follows.scrims_id')
+            $scrims = $this->scrim->join('scrim_follows', 'scrim_follows.scrims_id', '=', 'scrims.id')
                 ->join('games', 'games.id', '=', 'scrims.games_id')
                 ->join('game_accounts', 'game_accounts.id', '=', 'scrim_follows.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
                 ->select('scrims.*')
                 ->where('scrim_follows.game_accounts_id', '=', $sessGameAccount->id_game_account)
                 ->get();
-            if ($scrims->count() == 0) {
+            if ($scrims->count() < 1) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'You have no scrim followed.',
