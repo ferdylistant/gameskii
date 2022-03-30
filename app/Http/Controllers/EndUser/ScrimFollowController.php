@@ -45,7 +45,7 @@ class ScrimFollowController extends Controller
                 ->join('games', 'games.id', '=', 'scrims.games_id')
                 ->join('game_accounts', 'game_accounts.id', '=', 'scrim_follows.game_accounts_id')
                 ->join('users', 'users.id', '=', 'game_accounts.users_id')
-                ->select('scrims.*')
+                ->select('scrims.*','scrim_follows.scrims_id','scrim_follows.game_accounts_id')
                 ->where('scrim_follows.game_accounts_id', '=', $sessGameAccount->id_game_account)
                 ->get();
             if ($scrims->count() < 1) {
