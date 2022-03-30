@@ -41,8 +41,7 @@ class ScrimFollowController extends Controller
                     'message' => 'Session timeout. Please login again.'
                 ], 408);
             }
-            $scrims = $this->scrimFollow->where('scrim_follows.game_accounts_id', '=', $sessGameAccount->id_game_account)
-                ->get();
+            $scrims = $this->scrimFollow->where('game_accounts_id', '=', $sessGameAccount->id_game_account)->get();
             if ($scrims->count() == 0) {
                 return response()->json([
                     'status' => 'error',
@@ -50,9 +49,9 @@ class ScrimFollowController extends Controller
                     'data' => $scrims
                 ], 404);
             }
-            $scrims = $this->scrim->whereIn('id', $scrims->pluck('scrims_id'))
+            $scrimFollow = $this->scrim->whereIn('id', $scrims->pluck('scrims_id'))
                 ->get();
-            foreach ($scrims as $scrim) {
+            foreach ($scrimFollow as $scrim) {
                 $data[] = [
                     'id' => $scrim->id,
                     'games_id' => $scrim->games_id,
