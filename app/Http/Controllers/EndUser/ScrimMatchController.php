@@ -390,7 +390,7 @@ class ScrimMatchController extends Controller
                     'message' => 'Your are not scrim master'
                 ], 403);
             }
-            $scrimMatch = $this->scrimMatch->where('id', '=', $idMatch)->where('scrims_id', '=', $scrimMaster->id)->first();
+            $scrimMatch = $this->scrimMatch->where('id', '=', $idMatch)->where('scrims_id', '=', $scrim->id)->first();
             if ($scrimMatch == NULL) {
                 return response()->json([
                     'status' => 'error',
@@ -438,14 +438,16 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $scrimMaster = $scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)->first();
+            $scrimMaster = $this->scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('id','=',$scrim->id)
+            ->where('games_id','=',$scrim->games_id)->first();
             if ($scrimMaster == NULL) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Your are not scrim master'
                 ], 403);
             }
-            $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrimMaster->id)->where('status_match','=','1')->get();
+            $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')->get();
             if ($scrimMatch->count() == 0) {
                 return response()->json([
                     'status' => 'error',
@@ -506,7 +508,9 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $scrimMaster = $scrim->where('game_accounts_id', '=', $sessGameAccount->id_game_account)->first();
+            $scrimMaster = $this->scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('id','=',$scrim->id)
+            ->where('games_id','=',$scrim->games_id)->first();
             if ($scrimMaster == NULL) {
                 return response()->json([
                     'status' => 'error',
@@ -560,14 +564,16 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $scrimMaster = $scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)->first();
+            $scrimMaster = $this->scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('id','=',$scrim->id)
+            ->where('games_id','=',$scrim->games_id)->first();
             if ($scrimMaster == NULL) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Your are not scrim master'
                 ], 403);
             }
-            $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrimMaster->id)->where('status_match','=','1')->get();
+            $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')->get();
             if ($scrimMatch->count() == 0) {
                 return response()->json([
                     'status' => 'error',
@@ -578,7 +584,10 @@ class ScrimMatchController extends Controller
                 $match->result = 'On Going';
                 $match->save();
             }
-            $scrimLock = $scrimMaster->where('result','=','Lock')->first();
+            $scrimLock = $this->scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('id','=',$scrim->id)
+            ->where('games_id','=',$scrim->games_id)
+            ->where('result','=','Lock')->first();
             if ($scrimLock == NULL) {
                 return response()->json([
                     'status' => 'error',
@@ -650,7 +659,6 @@ class ScrimMatchController extends Controller
                     'id' => $value->id,
                     'scrims_id' => $value->scrims_id,
                     'teams_id' => $value->teams_id,
-                    'name_party' => $value->name_party,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
@@ -663,6 +671,7 @@ class ScrimMatchController extends Controller
                 'message' => 'Team match',
                 'total_team' => $scrimMatch->count(),
                 'quota' => $scrim->quota,
+                'name_party' => $scrim->name_party,
                 'data' => $result
             ], 200);
 
