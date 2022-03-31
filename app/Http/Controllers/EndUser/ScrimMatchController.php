@@ -43,7 +43,6 @@ class ScrimMatchController extends Controller
                     "status" => "error",
                     "message" => "It's not your role"
                 ], 403);
-
             }
             $sessGame = $request->session()->get('gamedata');
             $sessGameAccount = $request->session()->get('game_account');
@@ -238,7 +237,7 @@ class ScrimMatchController extends Controller
             ->join('users','game_accounts.users_id','=','users.id')
             ->where('scrim_matches.scrims_id','=',$scrimMaster->id)
             ->where('scrim_matches.status_match','=','0')
-            ->where('team_players.status','=','1')
+            ->where('team_players.role_team','=','Master')
             ->select('scrim_matches.id','scrim_matches.scrims_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match')
             ->get();
             if ($scrimMatch->count() == 0) {
