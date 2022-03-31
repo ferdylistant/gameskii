@@ -44,7 +44,6 @@ class SocialFollowController extends Controller
                 ], 408);
             }
             $listFriendRequest = $this->follow->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
-            ->where('acc_following_id', '=', NULL)
             ->where('status_follow', '=', '0')->get();
             if ($listFriendRequest->count() < '1') {
                 return response()->json([
