@@ -56,7 +56,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->get('/list-invitation-master', 'EndUser\TeamController@getListInvitationFromMaster');
             $router->get('/list-join-team-member', 'EndUser\TeamController@getListMemberJoins');
             $router->get('/get-myteams', 'EndUser\TeamController@getMyTeams');
-            $router->get('/get-team/{idTeam}', 'EndUser\TeamController\@getTeam');
+            $router->get('/get-team/{idTeam}', 'EndUser\TeamController@getTeam');
             $router->get('/get-all-teams', 'EndUser\TeamController@getAllTeams');
             $router->post('/create-scrim', 'EndUser\ScrimController@createScrim');
             $router->get('/get-scrims', 'EndUser\ScrimController@getAllScrims');
