@@ -264,6 +264,7 @@ class ScrimMatchController extends Controller
                     'message' => 'No request team match',
                     'total_team' => $scrimMatch->count(),
                     'quota' => $scrimMaster->quota,
+                    'name_party' => $scrimMaster->name_party,
                     'data' => $scrimMatch
                 ], 404);
             }
@@ -283,7 +284,8 @@ class ScrimMatchController extends Controller
                 'message' => 'Get request team match success',
                 'total_team' => $scrimMatch->count(),
                 'quota' => $scrimMaster->quota,
-                'data' => $scrimMaster->name_party,$result
+                'name_party' => $scrimMaster->name_party,
+                'data' => $result
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
