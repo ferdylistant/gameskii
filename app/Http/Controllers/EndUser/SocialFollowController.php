@@ -250,6 +250,9 @@ class SocialFollowController extends Controller
         $sessGame = $request->session()->get('gamedata');
         $sessGameAccount = $request->session()->get('game_account');
         if (($sessGame == null) || ($sessGameAccount == null)) {
+            $game_account = $this->gameAccount->where('users_id',auth('user')->user()->id)->first();
+            $game_account->is_online = 0;
+            $game_account->save();
             return response()->json([
                 'status' => 'error',
                 'message' => 'Session timeout'
@@ -260,7 +263,7 @@ class SocialFollowController extends Controller
             $dataFollowing = $this->gameAccount->where('id_game_account', '=', $idGameAccount)
             ->where('games_id', '=', $sessGame['game']['id'])
             ->first();
-            if (!$dataFollowing) {
+            if ($dataFollowing == NULL) {
                 return response()->json([
                     'status' => 'error',
                     'message' => "Game account data not found"
@@ -299,7 +302,7 @@ class SocialFollowController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Friend accept successfully'
-            ], 202);
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
