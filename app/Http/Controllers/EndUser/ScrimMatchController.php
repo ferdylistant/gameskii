@@ -237,6 +237,8 @@ class ScrimMatchController extends Controller
             ->join('game_accounts','team_players.game_accounts_id','=','game_accounts.id_game_account')
             ->join('users','game_accounts.users_id','=','users.id')
             ->where('scrim_matches.scrims_id','=',$scrimMaster->id)
+            ->where('scrim_matches.status_match','=','0')
+            ->where('team_players.status','=','1')
             ->select('scrim_matches.id','scrim_matches.scrims_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match')
             ->get();
             if ($scrimMatch->count() == 0) {
