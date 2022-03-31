@@ -272,7 +272,6 @@ class ScrimMatchController extends Controller
                     'id' => $value->id,
                     'scrims_id' => $value->scrims_id,
                     'teams_id' => $value->teams_id,
-                    'name_party' => $value->name_party,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
@@ -284,7 +283,7 @@ class ScrimMatchController extends Controller
                 'message' => 'Get request team match success',
                 'total_team' => $scrimMatch->count(),
                 'quota' => $scrimMaster->quota,
-                'data' => $result
+                'data' => ['name_party' => $value->name_party,$result]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
