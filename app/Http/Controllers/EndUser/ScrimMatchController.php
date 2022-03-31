@@ -249,9 +249,16 @@ class ScrimMatchController extends Controller
             ->where('scrim_matches.scrims_id','=',$scrimMaster->id)
             ->where('scrim_matches.status_match','=','0')
             ->where('team_players.role_team','=','Master')
-            ->select('scrim_matches.id','scrim_matches.scrims_id','scrim_matches.teams_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match')
+            ->select('scrim_matches.id',
+            'scrim_matches.scrims_id',
+            'scrim_matches.teams_id',
+            'scrims.name_party',
+            'teams.name as team_name',
+            'teams.ranks_id',
+            'users.phone',
+            'scrim_matches.status_match')
             ->get();
-            if ($scrimMatch->count() == 0) {
+            if ($scrimMatch->count() < '1') {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'No request team match',
