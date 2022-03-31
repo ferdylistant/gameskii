@@ -336,7 +336,7 @@ class ScrimMatchController extends Controller
                     'message' => 'This team match already accepted'
                 ], 403);
             }
-            $scrimMatch = $this->scrimMatch->where('id','=',$idMatch)->where('scrims_id','=',$scrimMaster->id)->first();
+            $scrimMatch = $this->scrimMatch->where('id','=',$idMatch)->where('scrims_id','=',$scrim->id)->first();
             if ($scrimMatch == NULL) {
                 return response()->json([
                     'status' => 'error',
