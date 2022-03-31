@@ -18,7 +18,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -37,7 +37,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -56,7 +56,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -75,7 +75,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -94,7 +94,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -113,7 +113,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -132,7 +132,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -151,7 +151,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -170,7 +170,7 @@ class ImageController extends Controller
         }
         try {
             $file = file_get_contents($imagePath);
-            return response($file, 200)->header('Content-Type', 'image/jpeg');
+            return response($file, 200)->header('Content-Type', 'image/*');
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
