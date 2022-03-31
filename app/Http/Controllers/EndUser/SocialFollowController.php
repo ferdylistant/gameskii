@@ -97,6 +97,18 @@ class SocialFollowController extends Controller
                 ], 404);
             }
             $sessGameAccount = $request->session()->get('game_account');
+            if($sessGameAccount == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            if ($sessGameAccount->id_game_account == $idGameAccount) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You can not add yourself'
+                ], 403);
+            }
             $dataFollow = $this->follow->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
             ->where('acc_following_id', '=', $idGameAccount)
             ->where('status_follow', '=', '2')
