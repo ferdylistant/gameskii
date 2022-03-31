@@ -75,16 +75,27 @@ class ScrimMatchController extends Controller
                     'message' => 'You can not join this scrim, because it is started'
                 ], 403);
             }
+            $teamCheck = $this->team->join('team_players','team_players.teams_id','=','teams.id')
+            ->where('team_players.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('teams.games_id','=',$sessGame['game']['id'])
+            ->where('team_players.status','=','1')
+            ->select('teams.id')
+            ->first();
+            if ($teamCheck == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not in a team'
+                ], 403);
+            }
             $alreadyJoin = $this->scrimMatch->join('teams','teams.id','=','scrim_matches.teams_id')
             ->join('team_players','team_players.teams_id','=','teams.id')
             ->where('scrim_matches.scrims_id','=',$idScrim)
-            ->where('team_players.game_accounts_id','=',$sessGameAccount->id_game_account)
-            ->where('team_players.status','=',1)
+            ->where('scrim_matches.teams_id','=',$teamCheck->id)
             ->first();
             if ($alreadyJoin) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'You already join this scrim'
+                    'message' => 'Your team already joined this scrim'
                 ], 409);
             }
             $scrimOn = $scrim->where('status','=','On')->first();
@@ -95,7 +106,7 @@ class ScrimMatchController extends Controller
                 ], 404);
             }
             $minRank = $this->rank->min('id');
-            $scrimMaster = $scrimOn->where('game_accounts_id','=',$sessGameAccount->id_game_account)->where('id','=',$scrim->id)
+            $scrimMaster = $this->scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)->where('id','=',$scrim->id)
             ->first();
             if ($scrimMaster){
                 $teamJoin = $this->team->join('team_players', 'teams.id', '=', 'team_players.teams_id')
@@ -231,14 +242,14 @@ class ScrimMatchController extends Controller
                 ], 403);
             }
             $scrimMatch = $this->scrimMatch->join('scrims','scrims.id','=','scrim_matches.scrims_id')
-            ->join('teams','scrim_matches.teams_id','=','teams.id')
-            ->join('team_players','teams.id','=','team_players.teams_id')
-            ->join('game_accounts','team_players.game_accounts_id','=','game_accounts.id_game_account')
-            ->join('users','game_accounts.users_id','=','users.id')
+            ->join('teams','teams.id','=','scrim_matches.teams_id')
+            ->join('team_players','team_players.teams_id','=','teams.id')
+            ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
+            ->join('users','users.id','=','game_accounts.users_id')
             ->where('scrim_matches.scrims_id','=',$scrimMaster->id)
             ->where('scrim_matches.status_match','=','0')
             ->where('team_players.role_team','=','Master')
-            ->select('scrim_matches.id','scrim_matches.scrims_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match')
+            ->select('scrim_matches.id','scrim_matches.scrims_id','scrim_matches.teams_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match')
             ->get();
             if ($scrimMatch->count() == 0) {
                 return response()->json([
@@ -253,6 +264,7 @@ class ScrimMatchController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'scrims_id' => $value->scrims_id,
+                    'teams_id' => $value->teams_id,
                     'name_party' => $value->name_party,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
@@ -613,7 +625,8 @@ class ScrimMatchController extends Controller
             ->join('users','game_accounts.users_id','=','users.id')
             ->where('scrim_matches.scrims_id','=',$scrim->id)
             ->where('scrim_matches.status_match','=','1')
-            ->select('scrim_matches.id','scrim_matches.scrims_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match')
+            ->where('team_players.role_team','=','Master')
+            ->select('scrim_matches.id','scrim_matches.scrims_id','scrim_matches.teams_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match','scrim_matches.result')
             ->get();
             if ($scrimMatch->count() == 0) {
                 return response()->json([
@@ -628,11 +641,13 @@ class ScrimMatchController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'scrims_id' => $value->scrims_id,
+                    'teams_id' => $value->teams_id,
                     'name_party' => $value->name_party,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
-                    'status_match' => $value->status_match
+                    'status_match' => $value->status_match,
+                    'status_ready' => $value->result
                 ];
             }
             return response()->json([
