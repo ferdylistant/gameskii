@@ -573,7 +573,9 @@ class ScrimMatchController extends Controller
                     'message' => 'Your are not scrim master'
                 ], 403);
             }
-            $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')->get();
+            $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')
+            ->where('result','=','Ready')
+            ->get();
             if ($scrimMatch->count() == 0) {
                 return response()->json([
                     'status' => 'error',
@@ -584,8 +586,7 @@ class ScrimMatchController extends Controller
                 $match->result = 'On Going';
                 $match->save();
             }
-            $scrimLock = $this->scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)
-            ->where('id','=',$scrim->id)
+            $scrimLock = $this->scrim->where('id','=',$scrim->id)
             ->where('games_id','=',$scrim->games_id)
             ->where('result','=','Lock')->first();
             if ($scrimLock == NULL) {
