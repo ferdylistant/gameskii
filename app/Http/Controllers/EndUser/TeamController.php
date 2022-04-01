@@ -485,6 +485,20 @@ class TeamController extends Controller
                 'message' => 'Session timeout'
             ], 408);
         }
+        $masterTeam = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+        ->where('team_players.teams_id', '=', $idTeam)
+        ->where('team_players.game_accounts_id', $idGameAccount)
+        ->where('team_players.status', '1')
+        ->where('team_players.role_team', 'Master')
+        ->where('teams.games_id', $sessGame['game']['id'])
+        ->select('team_players.game_accounts_id')
+        ->first();
+        if ($masterTeam->game_accounts_id == $sessGameAccount->id_game_account){
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You are master of this team, cannot add yourself to your team'
+            ], 403);
+        }
         $gameAccount = $this->gameAccount->where('id_game_account',$idGameAccount)->first();
         if (!$gameAccount) {
             return response()->json([
@@ -1003,6 +1017,19 @@ class TeamController extends Controller
                 'status' => 'error',
                 'message' => 'Master not found!'
             ], 404);
+        }
+        $dataTeamOwn = $this->teamPlayer->join('teams', 'team_players.teams_id', '=', 'teams.id')
+        ->where('team_players.teams_id', '=', $idTeam)
+        ->where('team_players.game_accounts_id', '=', $sessGameAccount->id_game_account)
+        ->where('team_players.status', '=', '1')
+        ->where('team_players.role_team', '=', 'Master')
+        ->select('teams.id')
+        ->first();
+        if ($dataTeamOwn) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You cannot join to your own team!'
+            ], 403);
         }
         $alreadyJoin = $this->teamPlayer->where('game_accounts_id', '=', $sessGameAccount->id_game_account)
         ->where('teams_id', '=', $idTeam)
