@@ -5,6 +5,7 @@ namespace App\Http\Controllers\EndUser;
 use Carbon\Carbon;
 use App\Models\Scrim;
 use Ramsey\Uuid\Uuid;
+use App\Models\ScrimMatch;
 use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Models\ScrimProgress;
@@ -19,6 +20,7 @@ class ScrimProgressController extends Controller
         $this->scrim = new Scrim();
         $this->gameAccount = new GameAccount();
         $this->scrimProgress = new ScrimProgress();
+        $this->scrimMatch = new ScrimMatch();
     }
     public function uploadResultMatch(Request $request, $idScrim)
     {
