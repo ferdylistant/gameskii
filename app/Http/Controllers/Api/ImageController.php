@@ -121,6 +121,25 @@ class ImageController extends Controller
             ]);
         }
     }
+    public function getPictureScrimProgress($imageName)
+    {
+        $imagePath = storage_path('uploads/scrim-progress/'.$imageName);
+        if ((!file_exists($imagePath))) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Pict not found"
+            ], 404);
+        }
+        try {
+            $file = file_get_contents($imagePath);
+            return response($file, 200)->header('Content-Type', 'image/jpeg, image/png, image/jpg,image/webp');
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
     public function getLogoRank($imageName)
     {
         $imagePath = storage_path('uploads/logo-rank/'.$imageName);

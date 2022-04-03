@@ -20,6 +20,7 @@ class ScrimProgress extends Model implements AuthenticatableContract, Authorizab
     protected $fillable = [
         'id',
         'scrims_id',
+        'scrim_matches_id',
         'round',
         'result',
         'total_kills',
