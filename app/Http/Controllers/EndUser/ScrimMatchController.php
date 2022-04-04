@@ -644,7 +644,7 @@ class ScrimMatchController extends Controller
             ->where('scrim_matches.scrims_id','=',$scrim->id)
             ->where('scrim_matches.status_match','=','1')
             ->where('team_players.role_team','=','Master')
-            ->select('scrim_matches.id','scrim_matches.scrims_id','scrim_matches.teams_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match','scrim_matches.result')
+            ->select('scrim_matches.id','scrim_matches.scrims_id','scrim_matches.teams_id','scrims.name_party','teams.name as team_name','teams.ranks_id','users.phone','scrim_matches.status_match','scrim_matches.result as status_ready','scrims.result as status_scrim')
             ->get();
             if ($scrimMatch->count() == 0) {
                 return response()->json([
@@ -664,6 +664,7 @@ class ScrimMatchController extends Controller
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
                     'status_match' => $value->status_match,
+                    'status_scrim' => $value->status_scrim,
                     'status_ready' => $value->result
                 ];
             }
