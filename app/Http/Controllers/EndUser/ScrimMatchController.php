@@ -664,7 +664,7 @@ class ScrimMatchController extends Controller
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
                     'status_match' => $value->status_match,
-                    'status_scrim' => $value->status_scrim,
+                    'status_room' => $value->status_scrim,
                     'status_ready' => $value->result
                 ];
             }
