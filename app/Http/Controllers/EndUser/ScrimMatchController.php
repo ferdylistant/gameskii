@@ -256,7 +256,10 @@ class ScrimMatchController extends Controller
             'teams.name as team_name',
             'teams.ranks_id',
             'users.phone',
-            'scrim_matches.status_match')
+            'scrim_matches.status_match',
+            'scrim_matches.result as status_ready',
+            'scrims.result as status_scrim',
+            )
             ->get();
             if ($scrimMatch->count() < '1') {
                 return response()->json([
@@ -276,7 +279,9 @@ class ScrimMatchController extends Controller
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
-                    'status_match' => $value->status_match
+                    'status_match' => $value->status_match,
+                    'status_room' => $value->status_scrim,
+                    'status_ready' => $value->status_ready
                 ];
             }
             return response()->json([
@@ -665,7 +670,7 @@ class ScrimMatchController extends Controller
                     'phone' => $value->phone,
                     'status_match' => $value->status_match,
                     'status_room' => $value->status_scrim,
-                    'status_ready' => $value->result
+                    'status_ready' => $value->status_ready
                 ];
             }
             return response()->json([
