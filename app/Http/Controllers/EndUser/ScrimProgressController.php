@@ -67,6 +67,12 @@ class ScrimProgressController extends Controller
                     "message" => "You are not a player team in this scrim match"
                 ], 404);
             }
+            if ($scrimMatch->result == 'Not yet' || $scrimMatch->result == 'Ready') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "You can't upload result match, because the match is not yet started"
+                ], 403);
+            }
             if ($sessGame['game']['id'] == '3d9fe0a9-a052-48c9-95c6-1ca494fe93c3') { //Mobile Legend
                 $validator = Validator::make($request->all(), [
                     'screenshot' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:5048',
