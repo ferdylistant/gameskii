@@ -58,13 +58,22 @@ class TournamentMatchController extends Controller
                     "message" => "Tournament not found"
                 ], 404);
             }
-            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            if ($tournament->result != 'Prepare') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "You can't join this tournament, it's already started"
+                ], 403);
+            }
+            $eo = $this->tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournaments.id','=',$tournament->id)
+            ->where('tournaments.games_id','=',$tournament->games_id)
             ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->select('tournament_eos.game_accounts_id','tournaments.id','tournaments.games_id')
             ->first();
             if ($eo != null) {
                 return response()->json([
                     "status" => "error",
-                    "message" => "You are an EO, you can't join a tournament"
+                    "message" => "You are an EO, your team can't join a tournament"
                 ], 403);
             }
             if ($tournament->result != 'Prepare') {
@@ -73,11 +82,22 @@ class TournamentMatchController extends Controller
                     "message" => "You can't join a tournament that has already started"
                 ], 403);
             }
+            $teamCheck = $this->team->join('team_players','team_players.teams_id','=','teams.id')
+            ->where('team_players.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('teams.games_id','=',$sessGame['game']['id'])
+            ->where('team_players.status','=','1')
+            ->select('teams.id')
+            ->first();
+            if ($teamCheck == NULL) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'You are not in a team'
+                ], 403);
+            }
             $alreadyJoin = $this->tournamentMatch->join('teams','teams.id','=','tournament_matches.teams_id')
             ->join('team_players','team_players.teams_id','=','teams.id')
             ->where('tournament_matches.tournaments_id','=',$idTournament)
-            ->where('team_players.game_accounts_id','=',$sessGameAccount->id_game_account)
-            ->where('team_players.status','=','1')
+            ->where('tournament_matches.teams_id','=',$teamCheck->id)
             ->first();
             if ($alreadyJoin != null) {
                 return response()->json([
