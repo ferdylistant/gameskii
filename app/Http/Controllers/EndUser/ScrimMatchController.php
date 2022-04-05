@@ -657,6 +657,7 @@ class ScrimMatchController extends Controller
                     'message' => 'No team match',
                     'total_team' => $scrimMatch->count(),
                     'quota' => $scrim->quota,
+                    'name_party' => $scrim->name_party,
                     'data' => $scrimMatch
                 ], 404);
             }
@@ -675,7 +676,7 @@ class ScrimMatchController extends Controller
             }
             return response()->json([
                 'status' => 'success',
-                'message' => 'Team match',
+                'message' => 'Team match found',
                 'total_team' => $scrimMatch->count(),
                 'quota' => $scrim->quota,
                 'name_party' => $scrim->name_party,

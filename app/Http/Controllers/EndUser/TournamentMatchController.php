@@ -178,16 +178,11 @@ class TournamentMatchController extends Controller
                     "message" => "Session time out"
                 ], 408);
             }
-            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
-            if ($tournament == null) {
-                return response()->json([
-                    "status" => "error",
-                    "message" => "Tournament not found"
-                ], 404);
-            }
-            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            $eo = $this->tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournaments.id','=',$idTournament)
+            ->where('tournaments.games_id','=',$sessGame['game']['id'])
             ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
-            ->select('tournaments.id')
+            ->select('tournaments.id','tournaments.quota','tournaments.name_tournament')
             ->first();
             if(!$eo){
                 return response()->json([
@@ -207,13 +202,17 @@ class TournamentMatchController extends Controller
             'teams.name as team_name',
             'teams.ranks_id',
             'users.phone',
-            'tournament_matches.status_match')->get();
-            if ($requestTeam->count() == 0) {
+            'tournament_matches.status_match',
+            'tournament_matches.result as status_ready',
+            'tournaments.result as status_tournament',
+            )->get();
+            if ($requestTeam->count() < 1) {
                 return response()->json([
                     "status" => "error",
                     "message" => "There is no request team",
                     "total_team" => $requestTeam->count(),
-                    "quota" => $tournament->quota,
+                    "quota" => $eo->quota,
+                    'name_tournament' => $eo->name_tournament,
                     "data" => $requestTeam
                 ], 404);
             }
@@ -221,11 +220,12 @@ class TournamentMatchController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'tournaments_id' => $value->tournaments_id,
-                    'name_tournament' => $value->name_tournament,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
-                    'status_match' => $value->status_match
+                    'status_match' => $value->status_match,
+                    'staus_ready' => $value->status_ready,
+                    'status_tournament' => $value->status_tournament,
                 ];
             }
             return response()->json([
@@ -233,6 +233,7 @@ class TournamentMatchController extends Controller
                 "message" => "Get request team success",
                 "total_team" => $requestTeam->count(),
                 "quota" => $tournament->quota,
+                'name_tournament' => $eo->name_tournament,
                 "data" => $result
             ], 200);
         } catch (\Exception $e) {
@@ -283,13 +284,17 @@ class TournamentMatchController extends Controller
             'teams.name as team_name',
             'teams.ranks_id',
             'users.phone',
-            'tournament_matches.status_match')->get();
+            'tournament_matches.status_match',
+            'tournament_matches.result as status_ready',
+            'tournaments.result as status_tournament',
+            )->get();
             if ($tournamentMatch->count() == 0) {
                 return response()->json([
                     "status" => "error",
                     "message" => "There is no team match",
                     "total_team" => $tournamentMatch->count(),
                     "quota" => $tournament->quota,
+                    'name_tournament' => $tournament->name_tournament,
                     "data" => $tournamentMatch
                 ], 404);
             }
@@ -297,11 +302,12 @@ class TournamentMatchController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'tournaments_id' => $value->tournaments_id,
-                    'name_tournament' => $value->name_tournament,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
-                    'status_match' => $value->status_match
+                    'status_match' => $value->status_match,
+                    'staus_ready' => $value->status_ready,
+                    'status_tournament' => $value->status_tournament,
                 ];
             }
             return response()->json([
@@ -309,6 +315,7 @@ class TournamentMatchController extends Controller
                 "message" => "Get team match success",
                 "total_team" => $tournamentMatch->count(),
                 "quota" => $tournament->quota,
+                'name_tournament' => $tournament->name_tournament,
                 "data" => $result
             ], 200);
         } catch (\Exception $e) {
