@@ -327,7 +327,7 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $scrimMaster = $scrim->where('game_accounts_id','=',$sessGameAccount->id_game_account)->first();
+            $scrimMaster = $this->scrim->where('id','=',$idScrim)->where('games_id','=',$sessGame['game']['id'])->where('game_accounts_id','=',$sessGameAccount->id_game_account)->first();
             if ($scrimMaster == NULL) {
                 return response()->json([
                     'status' => 'error',

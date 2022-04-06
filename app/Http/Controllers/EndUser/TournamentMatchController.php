@@ -9,6 +9,7 @@ use Ramsey\Uuid\Uuid;
 use App\Models\TeamPlayer;
 use App\Models\Tournament;
 use App\Models\GameAccount;
+use App\Models\EoTournament;
 use Illuminate\Http\Request;
 use App\Events\JoinTournament;
 use App\Events\TournamentLock;
@@ -29,6 +30,7 @@ class TournamentMatchController extends Controller
         $this->gameAccount = new GameAccount();
         $this->rank = new Rank();
         $this->teamPlayer = new TeamPlayer();
+        $this->eo = new EoTournament();
     }
     public function joinRoom(Request $request,$idTournament)
     {
@@ -94,6 +96,24 @@ class TournamentMatchController extends Controller
                     'message' => 'You are not in a team'
                 ], 403);
             }
+            $eoTeam = $this->eo->join('tournaments','tournaments.eo_id','=','tournament_eos.id')
+            ->where('tournaments.id','=',$tournament->id)
+            ->where('tournaments.games_id','=',$tournament->games_id)
+            ->select('tournament_eos.game_accounts_id')
+            ->first();
+            if ($eoTeam != NULL) {
+                $memberTeam = $this->teamPlayer->where('game_accounts_id','=',$eoTeam->game_accounts_id)
+                ->where('status','=','1')
+                ->select('teams_id')
+                ->first();
+                if ($teamCheck->id == $memberTeam->teams_id) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => "You can't join cause one of your team member is an Tournament EO"
+                    ], 403);
+                }
+            }
+
             $alreadyJoin = $this->tournamentMatch->join('teams','teams.id','=','tournament_matches.teams_id')
             ->join('team_players','team_players.teams_id','=','teams.id')
             ->where('tournament_matches.tournaments_id','=',$idTournament)
@@ -184,7 +204,7 @@ class TournamentMatchController extends Controller
             ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
             ->select('tournaments.id','tournaments.quota','tournaments.name_tournament')
             ->first();
-            if(!$eo){
+            if($eo == null){
                 return response()->json([
                     "status" => "error",
                     "message" => "You are not an EO"
@@ -353,11 +373,13 @@ class TournamentMatchController extends Controller
                     "message" => "Tournament not found"
                 ], 404);
             }
-            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            $eo = $this->tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournaments.id','=',$tournament->id)
+            ->where('tournaments.games_id','=',$tournament->games_id)
             ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
             ->select('tournaments.id')
             ->first();
-            if(!$eo){
+            if($eo == null){
                 return response()->json([
                     "status" => "error",
                     "message" => "You are not an EO"
@@ -378,7 +400,7 @@ class TournamentMatchController extends Controller
             if ($requestTeam == null) {
                 return response()->json([
                     "status" => "error",
-                    "message" => "Request team not found"
+                    "message" => "Team match request not found"
                 ], 404);
             }
             event(new AcceptReqTournament($requestTeam));
