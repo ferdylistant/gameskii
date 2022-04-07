@@ -220,6 +220,7 @@ class TournamentMatchController extends Controller
             ->where('team_players.role_team','=','Master')
             ->select('tournament_matches.id',
             'tournament_matches.tournaments_id',
+            'tournament_matches.teams_id',
             'tournaments.name_tournament',
             'teams.name as team_name',
             'teams.ranks_id',
@@ -242,6 +243,7 @@ class TournamentMatchController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'tournaments_id' => $value->tournaments_id,
+                    'teams_id' => $value->teams_id,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
@@ -303,6 +305,7 @@ class TournamentMatchController extends Controller
             ->where('team_players.role_team','=','Master')
             ->select('tournament_matches.id',
             'tournament_matches.tournaments_id',
+            'tournament_matches.teams_id',
             'tournaments.name_tournament',
             'teams.name as team_name',
             'teams.ranks_id',
@@ -325,6 +328,7 @@ class TournamentMatchController extends Controller
                 $result[] = [
                     'id' => $value->id,
                     'tournaments_id' => $value->tournaments_id,
+                    'teams_id' => $value->teams_id,
                     'team_name' => $value->team_name,
                     'ranks_class' => $this->rank->where('id','=',$value->ranks_id)->select('class')->first(),
                     'phone' => $value->phone,
