@@ -216,6 +216,8 @@ class TournamentMatchController extends Controller
             ->join('game_accounts','game_accounts.id_game_account','=','team_players.game_accounts_id')
             ->join('users','users.id','=','game_accounts.users_id')
             ->where('tournaments.id','=',$eo->id)
+            ->where('tournament_matches.status_match','=','0')
+            ->where('team_players.role_team','=','Master')
             ->select('tournament_matches.id',
             'tournament_matches.tournaments_id',
             'tournaments.name_tournament',
