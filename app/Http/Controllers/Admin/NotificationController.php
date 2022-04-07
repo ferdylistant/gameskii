@@ -37,7 +37,7 @@ class NotificationController extends Controller
         try {
             $user = User::where('id', auth('user')->user()->id)->first();
             $notif = $user->notifications()->get();
-            if ($notif) {
+            if ($notif->count() > 0) {
                 foreach ($notif as $n) {
                     $n->markAsRead();
                 }
