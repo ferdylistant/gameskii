@@ -3,7 +3,8 @@
 namespace App\Events;
 
 use App\Events\Event;
-class ReadyRoomTournament extends Event
+
+class NotReadyRoomTournament extends Event
 {
     public $tournamentMatch;
     /**

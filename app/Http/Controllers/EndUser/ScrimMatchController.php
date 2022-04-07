@@ -581,7 +581,7 @@ class ScrimMatchController extends Controller
             $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')
             ->where('result','=','Ready')
             ->get();
-            if ($scrimMatch->count() == 0) {
+            if ($scrimMatch->count() < 1) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Team match not found'

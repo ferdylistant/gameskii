@@ -17,8 +17,10 @@ use App\Events\TournamentStart;
 use App\Models\TournamentMatch;
 use App\Events\TournamentUnlock;
 use App\Events\AcceptReqTournament;
+use App\Events\ReadyRoomTournament;
 use App\Events\RejectReqTournament;
 use App\Http\Controllers\Controller;
+use App\Events\NotReadyRoomTournament;
 
 class TournamentMatchController extends Controller
 {
@@ -267,7 +269,7 @@ class TournamentMatchController extends Controller
             ]);
         }
     }
-    public function getTeamMatchTournament(Request $request,$idTournament)
+    public function getTeamMatchTournament(Request $request,$idTournament)//for Member User
     {
         try{
             $roles_id = auth('user')->user()->roles_id;
@@ -626,7 +628,7 @@ class TournamentMatchController extends Controller
             if ($roles_id != '3') {
                 return response()->json([
                     "status" => "error",
-                    "message" => "It's not your role"
+                    "message" => "Your role is not allowed to access this resource"
                 ], 403);
             }
             $sessGame = $request->session()->get('gamedata');
@@ -647,11 +649,13 @@ class TournamentMatchController extends Controller
                     "message" => "Tournament not found"
                 ], 404);
             }
-            $eo = $tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            $eo = $this->tournament->join('tournament_eos','tournament_eos.id','=','tournaments.eo_id')
+            ->where('tournaments.id','=',$tournament->id)
+            ->where('tournaments.games_id','=',$tournament->games_id)
             ->where('tournament_eos.game_accounts_id','=',$sessGameAccount->id_game_account)
             ->select('tournaments.id')
             ->first();
-            if(!$eo){
+            if($eo == NULL){
                 return response()->json([
                     "status" => "error",
                     "message" => "You are not an EO"
@@ -659,6 +663,7 @@ class TournamentMatchController extends Controller
             }
             $tournamentMatch = $this->tournamentMatch->where('tournaments_id','=',$eo->id)
             ->where('status_match','=','1')
+            ->where('result','=','Ready')
             ->get();
             if ($tournamentMatch->count() < 1) {
                 return response()->json([
@@ -670,18 +675,146 @@ class TournamentMatchController extends Controller
                 $match->result = 'On Going';
                 $match->save();
             }
-            $tournamentLock = $tournament->where('result','=','Lock')->first();
+            $tournamentLock = $this->tournament->where('id','=',$tournament->id)
+            ->where('games_id','=',$tournament->games_id)
+            ->where('result','=','Lock')->first();
             if ($tournamentLock == NULL) {
                 return response()->json([
                     "status" => "error",
                     "message" => "Room must be locked"
-                ], 404);
+                ], 403);
             }
             event(new TournamentStart($tournamentLock));
 
             return response()->json([
                 "status" => "success",
                 "message" => "Tournament has been started"
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function readyToPlay(Request $request, $idTournament)//for Member User
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Your role is not allowed to access this resource"
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if ($sessGame == null || $sessGameAccount == null) {
+                $game_account = $this->gameAccount->where('users_id', auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Session time out"
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == NULL) {
+                return response()->json([
+                    "status" => "error",
+                    "message" => "Tournament not found"
+                ], 404);
+            }
+            $teamMatch = $this->tournamentMatch->join('tournaments','tournaments.id','=','tournament_matches.tournaments_id')
+            ->join('teams','tournament_matches.teams_id','=','teams.id')
+            ->join('team_players','teams.id','=','team_players.teams_id')
+            ->where('tournament_matches.tournaments_id','=',$tournament->id)
+            ->where('tournament_matches.status_match','=','1')
+            ->where('team_players.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('team_players.status','=','1')
+            ->select('tournament_matches.id','tournament_matches.tournaments_id','tournaments.name_tournament','teams.name as team_name')
+            ->first();
+            if ($teamMatch == NULL) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Team match not found'
+                ], 404);
+            }
+            $tournamentMatch = $this->tournamentMatch->where('id','=',$teamMatch->id)->first();
+            if ($tournamentMatch->result == 'Ready') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Team match has ready'
+                ], 409);
+            }
+            event(new ReadyRoomTournament($tournamentMatch));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Team match ready'
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+    public function notReadyToPlay(Request $request,$idTournament)//for Member User
+    {
+        try{
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your role is not allowed to access this resource'
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == NULL) || ($sessGameAccount == NULL)) {
+                $game_account = $this->gameAccount->where('users_id', auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id','=',$idTournament)->where('games_id','=',$sessGame['game']['id'])->first();
+            if ($tournament == NULL) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Scrim not found'
+                ], 404);
+            }
+            $teamMatch = $this->tournamentMatch->join('tournaments','tournaments.id','=','tournament_matches.tournaments_id')
+            ->join('teams','tournament_matches.teams_id','=','teams.id')
+            ->join('team_players','teams.id','=','team_players.teams_id')
+            ->where('tournament_matches.tournaments_id','=',$tournament->id)
+            ->where('tournament_matches.status_match','=','1')
+            ->where('team_players.game_accounts_id','=',$sessGameAccount->id_game_account)
+            ->where('team_players.status','=','1')
+            ->select('tournament_matches.id','tournament_matches.tournaments_id','tournaments.name_tournament','teams.name as team_name')
+            ->first();
+            if ($teamMatch == NULL) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Team match not found'
+                ], 404);
+            }
+            $tournamentMatch = $this->tournamentMatch->where('id','=',$teamMatch->id)->first();
+            if ($tournamentMatch->result == 'Not yet') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Team match has not ready'
+                ], 409);
+            }
+            event(new NotReadyRoomTournament($tournamentMatch));
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Team match not ready'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([

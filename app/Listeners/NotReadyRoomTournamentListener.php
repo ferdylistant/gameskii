@@ -2,12 +2,12 @@
 
 namespace App\Listeners;
 
-use App\Events\ReadyRoomTournament;
+use App\Events\NotReadyRoomTournament;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ReadyRoomTournamentListener
+class NotReadyRoomTournamentListener
 {
     /**
      * Create the event listener.
@@ -22,15 +22,15 @@ class ReadyRoomTournamentListener
     /**
      * Handle the event.
      *
-     * @param  ReadyRoomTournament  $event
+     * @param  NotReadyRoomTournament  $event
      * @return void
      */
-    public function handle(ReadyRoomTournament $event)
+    public function handle(NotReadyRoomTournament $event)
     {
         $tournamentMatch = $event->tournamentMatch;
         $save = DB::table('tournament_matches')
             ->where('id', $tournamentMatch->id)
-            ->update(['result' => 'Ready']);
+            ->update(['result' => 'Not yet']);
         return $save;
     }
 }

@@ -24,6 +24,7 @@ use App\Listeners\LastLoginListener;
 use App\Listeners\ScrimLockListener;
 use App\Listeners\ScrimStartListener;
 use Illuminate\Support\Facades\Event;
+use App\Events\NotReadyRoomTournament;
 use App\Listeners\ScrimUnlockListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\ServiceProvider;
@@ -39,6 +40,7 @@ use App\Listeners\NotReadyRoomScrimListener;
 use App\Listeners\AcceptReqTournamentListener;
 use App\Listeners\ReadyRoomTournamentListener;
 use App\Listeners\RejectReqTournamentListener;
+use App\Listeners\NotReadyRoomTournamentListener;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 
 class EventServiceProvider extends ServiceProvider
@@ -77,6 +79,10 @@ class EventServiceProvider extends ServiceProvider
         Event::listen(
             NotReadyRoomScrim::class,
             [NotReadyRoomScrimListener::class, 'handle'],
+        );
+        Event::listen(
+            NotReadyRoomTournament::class,
+            [NotReadyRoomTournamentListener::class, 'handle'],
         );
         Event::listen(
             ScrimLock::class,
