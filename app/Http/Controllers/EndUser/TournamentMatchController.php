@@ -252,7 +252,7 @@ class TournamentMatchController extends Controller
                 "status" => "success",
                 "message" => "Get request team success",
                 "total_team" => $requestTeam->count(),
-                "quota" => $tournament->quota,
+                "quota" => $eo->quota,
                 'name_tournament' => $eo->name_tournament,
                 "data" => $result
             ], 200);
