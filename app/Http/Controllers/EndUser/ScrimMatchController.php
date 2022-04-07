@@ -388,7 +388,7 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $scrimMaster = $scrim->where('game_accounts_id', '=', $sessGameAccount->id_game_account)->first();
+            $scrimMaster = $this->scrim->where('id','=',$scrim->id)->where('games_id','=',$scrim->games_id)->where('game_accounts_id', '=', $sessGameAccount->id_game_account)->first();
             if ($scrimMaster == NULL) {
                 return response()->json([
                     'status' => 'error',
@@ -399,14 +399,14 @@ class ScrimMatchController extends Controller
             if ($scrimMatch == NULL) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Team match not found'
+                    'message' => 'Request team not found'
                 ], 404);
             }
             event(new RejectReqScrim($scrimMatch));
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Reject team match success'
+                'message' => 'Reject request team match success'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
