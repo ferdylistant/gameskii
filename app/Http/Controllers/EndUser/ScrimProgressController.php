@@ -179,5 +179,4 @@ class ScrimProgressController extends Controller
             ]);
         }
     }
-
 }

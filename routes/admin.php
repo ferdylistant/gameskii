@@ -30,6 +30,7 @@ $router->group(['prefix' => 'api/admin'], function () use ($router) {
         $router->post('/update-games/{id}', 'GameController@update');
         $router->post('/update-profile', 'Client\Put\UpdateProfileController@update');
         $router->post('/update-profile-image', 'Client\Put\UpdateImageProfileController@update');
-        $router->delete('/delete/{id}', 'Customers\CustomerController@destroy');
+        $router->get('/get-all-teams-by-game/{idGame}', 'Admin\TeamController@getTeams');
+        $router->get('/get-team-detail/{idGame}/{idTeam}', 'Admin\TeamController@getTeamDetail');
     });
 });
