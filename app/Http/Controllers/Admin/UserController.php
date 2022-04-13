@@ -52,6 +52,7 @@ class UserController extends Controller
             }
             return response()->json([
                 "status" => "success",
+                'message' => 'Successfully get data',
                 "data" => $result
             ], 200);
         } catch (\Exception $e) {
