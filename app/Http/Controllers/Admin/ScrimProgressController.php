@@ -71,13 +71,23 @@ class ScrimProgressController extends Controller
                         'status' => $value->status,
                         'scrim_result' => $value->scrim_result,
                     ],
-                    'scrim_match' => [
+                    'scrim_match_reporter' => [
+                        'id_scrim_progress' => $value->id,
                         'id_scrim_match' => $value->scrim_matches_id,
                         'team_name' => $value->team_name,
-
+                        'round' => $value->round,
+                        'result_match' => $value->result,
+                        'total_kills' => $value->total_kills,
+                        'screenshot' => $value->screenshot,
+                        'created_at' => $value->created_at,
                     ],
                 ];
             }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Successfully get data',
+                'data' => $result
+            ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 "status" => "error",
