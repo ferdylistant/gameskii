@@ -7,6 +7,7 @@ use App\Models\Rank;
 use App\Models\User;
 use App\Models\Scrim;
 use App\Models\ScrimMatch;
+use App\Models\GameAccount;
 use Illuminate\Http\Request;
 use App\Models\ScrimProgress;
 use Illuminate\Support\Facades\URL;
