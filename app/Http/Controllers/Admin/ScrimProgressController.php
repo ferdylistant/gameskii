@@ -83,7 +83,7 @@ class ScrimProgressController extends Controller
                         'round' => $value->round,
                         'result_match' => $value->result,
                         'total_kills' => $value->total_kills,
-                        'screenshot' => $value->screenshot,
+                        'screenshot' => URL::to('/api/scrim-progress/'.$value->screenshot),
                         'created_at' => $value->created_at,
                     ],
                 ];
