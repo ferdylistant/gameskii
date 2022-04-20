@@ -9,11 +9,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('/auth/login-with-google', 'SocialAuth\SocialAccountController@requestIdToken');
     $router->post('/register', 'EndUser\Auth@register');
     $router->post('/login', 'EndUser\Auth@login');
-    $router->post('/forgot-password', 'Api\NewPasswordController@forgotPassword');
-    $router->post('/reset-password', 'Api\NewPasswordController@reset');
-    $router->get('/email-verification', 'Api\EmailVerificationController@emailVerify');
-    $router->get('/auth/redirect', 'SocialAuth\SocialAccountController@redirectToGoogle');
-    $router->get('/auth/callback', 'SocialAuth\SocialAccountController@callbackFromGoogle');
 
     $router->group(['middleware' => 'auth:user'], function () use ($router) {
         $router->group(['middleware' => 'session'], function () use ($router) {
