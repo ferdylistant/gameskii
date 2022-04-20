@@ -14,16 +14,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('/email-verification', 'Api\EmailVerificationController@emailVerify');
     $router->get('/auth/redirect', 'SocialAuth\SocialAccountController@redirectToGoogle');
     $router->get('/auth/callback', 'SocialAuth\SocialAccountController@callbackFromGoogle');
-    $router->get('/avatar/{imageName}', 'Api\ImageController@getImage');
-    $router->get('/picture-game/{imageName}', 'Api\ImageController@getPicture');
-    $router->get('/picture-team/{imageName}', 'Api\ImageController@getPictureTeam');
-    $router->get('/picture-scrim/{imageName}', 'Api\ImageController@getPictureScrim');
-    $router->get('/picture-scrim-progress/{imageName}', 'Api\ImageController@getPictureScrimProgress');
-    $router->get('/picture-sponsor-tournament/{imageName}', 'Api\ImageController@getPictureSponsorTournament');
-    $router->get('/picture-tournament/{imageName}','Api\ImageController@getPictureTournament');
-    $router->get('/logo-rank/{imageName}', 'Api\ImageController@getLogoRank');
-    $router->get('/banner-game/top/{imageName}', 'Api\ImageController@getBannerTop');
-    $router->get('/banner-game/bottom/{imageName}', 'Api\ImageController@getBannerBottom');
 
     $router->group(['middleware' => 'auth:user'], function () use ($router) {
         $router->group(['middleware' => 'session'], function () use ($router) {
