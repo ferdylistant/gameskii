@@ -55,7 +55,13 @@ class ScrimProgressController extends Controller
                 'teams.name as team_name',
                 'games.name as game_name')
                 ->get();
-
+            if($dataScrimProgress->count() < 1){
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'No data found.',
+                    'data' => $dataScrimProgress
+                ], 404);
+            }
             foreach ($dataScrimProgress as $value) {
                 $result[] = [
                     'scrim' => [
