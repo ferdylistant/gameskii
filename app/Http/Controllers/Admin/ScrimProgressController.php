@@ -38,7 +38,7 @@ class ScrimProgressController extends Controller
             }
             $dataScrimProgress = $this->scrimProg->join('scrims', 'scrims.id', '=', 'scrim_progress.scrims_id')
                 ->join('ranks', 'ranks.id', '=', 'scrims.ranks_id')
-                ->join('scrim_matches', 'scrim_matches.id', '=', 'scrim_progress.scrim_match_id')
+                ->join('scrim_matches', 'scrim_matches.id', '=', 'scrim_progress.scrim_matches_id')
                 ->join('teams', 'teams.id', '=', 'scrim_matches.teams_id')
                 ->join('games', 'games.id', '=', 'scrims.games_id')
                 ->where('scrims.games_id', $idGame)
