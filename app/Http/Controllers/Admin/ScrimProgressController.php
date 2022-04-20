@@ -36,12 +36,11 @@ class ScrimProgressController extends Controller
                     'message' => 'You are not authorized to access this resource.'
                 ], 403);
             }
-            $dataScrimProgress = $this->scrimProg->join('scrims', 'scrims.id', '=', 'scrim_progress.scrim_id')
+            $dataScrimProgress = $this->scrimProg->join('scrims', 'scrims.id', '=', 'scrim_progress.scrims_id')
                 ->join('ranks', 'ranks.id', '=', 'scrims.ranks_id')
                 ->join('scrim_matches', 'scrim_matches.id', '=', 'scrim_progress.scrim_match_id')
                 ->join('teams', 'teams.id', '=', 'scrim_matches.teams_id')
                 ->join('games', 'games.id', '=', 'scrims.games_id')
-                ->join('users', 'users.id', '=', 'scrim_progress.user_id')
                 ->where('scrims.games_id', $idGame)
                 ->where('scrims.status', '=', 'On')
                 ->select('scrim_progress.*',
@@ -54,8 +53,7 @@ class ScrimProgressController extends Controller
                 'scrims.status',
                 'scrims.result as scrim_result',
                 'teams.name as team_name',
-                'games.name as game_name',
-                'users.name as user_name')
+                'games.name as game_name')
                 ->get();
 
             foreach ($dataScrimProgress as $value) {
