@@ -43,6 +43,7 @@ class ScrimProgressController extends Controller
                 ->join('games', 'games.id', '=', 'scrims.games_id')
                 ->where('scrims.games_id', $idGame)
                 ->where('scrims.status', '=', 'On')
+                ->where('scrim_progress.status_action', '=', 'pending')
                 ->select('scrim_progress.*',
                 'scrims.name_party',
                 'ranks.class',
@@ -102,4 +103,5 @@ class ScrimProgressController extends Controller
             ]);
         }
     }
+
 }
