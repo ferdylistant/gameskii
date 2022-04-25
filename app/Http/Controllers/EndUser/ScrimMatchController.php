@@ -866,8 +866,8 @@ class ScrimMatchController extends Controller
                     ];
                 foreach ($value as $j => $val){
                     $result[] =[
-                        'id' => $val[$j]->id,
-                        'team_name' => $val[$j]->team_name
+                        'id' => $val[$j]['id'],
+                        'team_name' => $val[$j]['team_name']
                     ];
                 }
             }
