@@ -128,7 +128,7 @@ class ScrimMatchController extends Controller
                     $this->scrimMatch->scrims_id = $scrimMaster->id;
                     $this->scrimMatch->teams_id = $teamJoin->teams_id;
                     $this->scrimMatch->result = 'Ready';
-                    $this->scrimMatch->round = 'Not yet';
+                    $this->scrimMatch->round = '0';
                     $this->scrimMatch->status_match = '1';
                     if ($this->scrimMatch->save())
                     {
@@ -144,7 +144,7 @@ class ScrimMatchController extends Controller
                     $this->scrimMatch->scrims_id = $scrimMaster->id;
                     $this->scrimMatch->teams_id = $teamJoin->teams_id;
                     $this->scrimMatch->result = 'Ready';
-                    $this->scrimMatch->round = 'Not yet';
+                    $this->scrimMatch->round = '0';
                     $this->scrimMatch->status_match = '1';
                     if ($this->scrimMatch->save())
                     {
@@ -178,7 +178,7 @@ class ScrimMatchController extends Controller
                 'scrims_id' => $scrim->id,
                 'teams_id' => $teamJoin->teams_id,
                 'result' => 'Not yet',
-                'round' => 'Not yet',
+                'round' => '0',
                 'status_match' => '0',
                 'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString()
@@ -589,6 +589,7 @@ class ScrimMatchController extends Controller
             }
             foreach ($scrimMatch as $match) {
                 $match->result = 'On Going';
+                $match->round = '1';
                 $match->save();
             }
             $scrimLock = $this->scrim->where('id','=',$scrim->id)
@@ -858,28 +859,51 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            foreach ($teamMatch as $i => $value) {
-                $match = $teamMatch->count() * pow(2,$value[$i]->id - 1) / 2;
-                $resultVs[] = [
-                    'id' => $value->id,
-                    'team_name' => $value->team_name
-                    ];
-                foreach ($value as $j => $val){
-                    $result[] =[
-                        'id' => $val[$j]['id'],
-                        'team_name' => $val[$j]['team_name']
-                    ];
+
+            $round=0;
+            while(count($teamMatch)>1)
+            {
+                $round++;  // Increment our round
+                $tables=array();  // Clear our tables
+                $index=0;
+                while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
+                    $tables[]=array($teamMatch[$index++],$teamMatch[$index++]);
+                if($index<count($teamMatch))// extra team, add to tables, but no opposing team
+                    $tables[]=array($teamMatch[$index++],NULL); 
+                $teamMatch=array(); // clear out next round participants
+                foreach($tables as $idx=>$table)
+                {
+                    $tbl=$idx+1;
+                    echo " Table #{$tbl}: ";
+                    if($table[1]===NULL)  // extra team advances to next level automatically
+                    {
+                        $result[] = [
+                            'id_scrim' => $table[0]['scrims_id'],
+                            'round' => $round,
+                            'table' => $tbl,
+                            'team1' => $table[0]['team_name'],
+                            'team2' => '',
+                            'result' => '',
+                        ];
+                        $winner=0;
+                    } else  {
+                        $result[] = [
+                            'id_scrim' => $table[0]['scrims_id'],
+                            'round' => $round,
+                            'table' => $tbl,
+                            'team1' => $table[0]['team_name'],
+                            'team2' => $table[1]['team_name'],
+                            'result' => '',
+                        ];
+                        $winner=rand(0,1);    // Generate a winner
+                    }
+                    $result[]=$table[$winner];  // Add WInnerto next round
                 }
             }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Team match found',
-                'data' => [$match
-                    // 'match'=>[
-                    //     'team_1' => $resultVs,
-                    //     'team_2' => $result
-                    // ]
-                ]
+                'data' => $result
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
