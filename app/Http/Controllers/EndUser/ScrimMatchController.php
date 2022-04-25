@@ -858,14 +858,8 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            $match = $teamMatch->count() * pow(2,$i - 1) / 2;
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Get Bracket Scrim',
-                'data' => $match
-            ], 200);
             foreach ($teamMatch as $i => $value) {
-                $match = $teamMatch->count() * pow(2,$value[$i] - 1) / 2;
+                $match = $teamMatch->count() * pow(2,$i - 1) / 2;
                 $resultVs[] = [
                     'id' => $value->id,
                     'team_name' => $value->team_name
