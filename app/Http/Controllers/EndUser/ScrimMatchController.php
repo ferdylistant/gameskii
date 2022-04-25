@@ -858,18 +858,21 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            foreach ($teamMatch as $value) {
-                $result[] =
-                [
-                    'team_1' => [
-                        'id' => $value->id,
-                        'team_name' => $value->team_name
-                    ],
-                    'team_2' => [
-                        'id' => $value->id,
-                        'team_name' => $value->team_name
-                    ],
-                ];
+            foreach ($teamMatch as $i => $value) {
+                $match = $teamMatch->count() * pow($i - 1) / 2;
+                foreach ($match as $j => $val){
+                    $result[] =
+                    [
+                        'team_1' => [
+                            'id' => $value[$i]->id,
+                            'team_name' => $value[$i]->team_name
+                        ],
+                        'team_2' => [
+                            'id' => $value[$j]->id,
+                            'team_name' => $value[$j]->team_name
+                        ],
+                    ];
+                }
             }
             return response()->json([
                 'status' => 'success',
