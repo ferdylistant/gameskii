@@ -859,25 +859,27 @@ class ScrimMatchController extends Controller
                 ], 404);
             }
             foreach ($teamMatch as $i => $value) {
-                $match = $teamMatch->count() * pow(.5,$i - 1) / 2;
-                foreach ($match as $j => $val){
-                    $result[] =
-                    [
-                        'team_1' => [
-                            'id' => $value[$i]->id,
-                            'team_name' => $value[$i]->team_name
-                        ],
-                        'team_2' => [
-                            'id' => $value[$j]->id,
-                            'team_name' => $value[$j]->team_name
-                        ],
+                // $match = $teamMatch->count() * pow(2,$i - 1) / 2;
+                $resultVs[] = [
+                    'id' => $value->id,
+                    'team_name' => $value->team_name
+                    ];
+                foreach ($value as $j => $val){
+                    $result[] =[
+                        'id' => $val->id,
+                        'team_name' => $val->team_name
                     ];
                 }
             }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Team match found',
-                'data' => $result
+                'data' => [
+                    'match'=>[
+                        'team_1' => $resultVs,
+                        'team_2' => $result
+                    ]
+                ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
