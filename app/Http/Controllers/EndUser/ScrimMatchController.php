@@ -859,7 +859,7 @@ class ScrimMatchController extends Controller
                 ], 404);
             }
             foreach ($teamMatch as $i => $value) {
-                $match = $teamMatch->count() * pow($i - 1) / 2;
+                $match = $teamMatch->count() * pow(.5,$i - 1) / 2;
                 foreach ($match as $j => $val){
                     $result[] =
                     [
