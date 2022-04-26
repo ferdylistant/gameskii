@@ -863,7 +863,6 @@ class ScrimMatchController extends Controller
             $round=0;
             while(count($teamMatch)>1)
             {
-                $round++;  // Increment our round
                 $tables=array();  // Clear our tables
                 $index=0;
                 while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
@@ -898,6 +897,7 @@ class ScrimMatchController extends Controller
                     }
                     $teamMatch[]=$table[$winner];  // Add WInnerto next round
                 }
+                $round++;  // Increment our round
             }
             return response()->json([
                 'status' => 'success',
