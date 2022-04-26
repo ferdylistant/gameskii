@@ -902,9 +902,10 @@ class ScrimMatchController extends Controller
             }
             return response()->json([
                 'status' => 'success',
-                'message' => 'Team match found',
+                'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
+                'total_participans' => $teamMatch->count(),
                 'data' => $tables,
             ], 200);
         } catch (\Exception $e) {
