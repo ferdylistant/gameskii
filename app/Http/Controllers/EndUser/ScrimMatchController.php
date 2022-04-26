@@ -869,7 +869,8 @@ class ScrimMatchController extends Controller
                 while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
                     $tables[]=array($teamMatch[$index++],$teamMatch[$index++]);
                 if($index<count($teamMatch)){// extra team, add to tables, but no opposing team
-                    $tables[]=array($teamMatch[$index++],NULL);}
+                    $tables[]=array($teamMatch[$index++],null);
+                }
                 $teamMatch=array(); // clear out next round participants
                 foreach($tables as $idx=>$table)
                 {
@@ -879,7 +880,6 @@ class ScrimMatchController extends Controller
                         $result[] = [
                             'id_scrim' => $table[0]['scrims_id'],
                             'round' => $round,
-                            'table' => $tbl,
                             'team1' => $table[0]['team_name'],
                             'team2' => '',
                             'result' => '',
@@ -889,7 +889,6 @@ class ScrimMatchController extends Controller
                         $result[] = [
                             'id_scrim' => $table[0]['scrims_id'],
                             'round' => $round,
-                            'table' => $tbl,
                             'team1' => $table[0]['team_name'],
                             'team2' => $table[1]['team_name'],
                             'result' => '',
@@ -903,7 +902,6 @@ class ScrimMatchController extends Controller
                 'status' => 'success',
                 'message' => 'Team match found',
                 'data' => $result,
-                'winner' => $teamMatch
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
