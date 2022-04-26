@@ -851,7 +851,7 @@ class ScrimMatchController extends Controller
             ->where('scrim_matches.scrims_id', '=', $scrim->id)
             ->where('scrim_matches.status_match', '=', '1')
             ->where('team_players.status', '=', '1')
-            ->select('scrim_matches.id', 'scrim_matches.scrims_id', 'scrims.name_party', 'teams.name as team_name')
+            ->select('scrim_matches.id', 'teams.name as team_name')
             ->get();
             if ($teamMatch->count() == 0) {
                 return response()->json([
@@ -901,6 +901,8 @@ class ScrimMatchController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Team match found',
+                'id_scrim' => $scrim->id,
+                'name_party' => $scrim->name_party,
                 'data' => $tables,
             ], 200);
         } catch (\Exception $e) {
