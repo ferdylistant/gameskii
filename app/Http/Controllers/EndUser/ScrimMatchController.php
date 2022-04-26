@@ -861,23 +861,25 @@ class ScrimMatchController extends Controller
             }
 
             $round=0;
-            while(count($teamMatch)>1)
+            $participans = $teamMatch;
+            while(count($participans)>1)
             {
                 $round++;  // Increment our round
                 $tables=array();  // Clear our tables
                 $index=0;
-                while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
-                    $tables[]=array($teamMatch[$index++],$teamMatch[$index++]);
-                if($index<count($teamMatch)){// extra team, add to tables, but no opposing team
-                    $tables[]=array($teamMatch[$index++],null);
+                while(count($tables) < floor(count($participans)/2))  // want an even amount of tables
+                    $tables[]=array($participans[$index++],$participans[$index++]);
+                if($index<count($participans)){// extra team, add to tables, but no opposing team
+                    $tables[]=array($participans[$index++],null);
                 }
-                $teamMatch=array(); // clear out next round participants
+                $participans=array(); // clear out next round participants
                 foreach($tables as $idx=>$table)
                 {
                     $tbl=$idx+1;
+                    $participans[] =" Table #{$tbl}: ";
                     if($table[1]===NULL)  // extra team advances to next level automatically
                     {
-                        $result[] = [
+                        $participans[] = [
                             'id_scrim' => $table[0]['scrims_id'],
                             'round' => $round,
                             'team1' => $table[0]['team_name'],
@@ -886,7 +888,7 @@ class ScrimMatchController extends Controller
                         ];
                         $winner=0;
                     } else  {
-                        $result[] = [
+                        $participans[] = [
                             'id_scrim' => $table[0]['scrims_id'],
                             'round' => $round,
                             'team1' => $table[0]['team_name'],
@@ -895,7 +897,7 @@ class ScrimMatchController extends Controller
                         ];
                         $winner=rand(0,1);    // Generate a winner
                     }
-                    $teamMatch[]=$table[$winner];  // Add WInnerto next round
+                    $participans[]=$table[$winner];  // Add WInnerto next round
                 }
             }
             return response()->json([
