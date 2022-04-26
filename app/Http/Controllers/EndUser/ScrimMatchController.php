@@ -848,6 +848,7 @@ class ScrimMatchController extends Controller
             $teamMatch = $this->scrimMatch->join('scrims', 'scrims.id', '=', 'scrim_matches.scrims_id')
             ->join('teams', 'scrim_matches.teams_id', '=', 'teams.id')
             ->join('team_players', 'teams.id', '=', 'team_players.teams_id')
+            ->where('scrims.games_id', '=', $sessGame['game']['id'])
             ->where('scrim_matches.scrims_id', '=', $scrim->id)
             ->where('scrim_matches.status_match', '=', '1')
             ->where('scrim_matches.result', '!=', 'Not yet')
