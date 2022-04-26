@@ -853,7 +853,7 @@ class ScrimMatchController extends Controller
             ->where('scrim_matches.status_match', '=', '1')
             ->where('scrim_matches.result', '!=', 'Not yet')
             ->where('team_players.status', '=', '1')
-            ->select('scrim_matches.id', 'scrim_matches.teams_id','teams.name as team_name')
+            ->select('scrim_matches.id', 'scrim_matches.teams_id','teams.name as team_name','scrim_matches.round','scrim_matches.result')
             ->get();
             if ($teamMatch->count() == 0) {
                 return response()->json([
