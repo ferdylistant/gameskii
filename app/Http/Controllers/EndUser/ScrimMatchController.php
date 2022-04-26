@@ -903,7 +903,7 @@ class ScrimMatchController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Team match found',
-                'data' => $result,
+                'data' => $participans,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
