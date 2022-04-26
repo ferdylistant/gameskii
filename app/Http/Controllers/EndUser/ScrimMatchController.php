@@ -880,7 +880,7 @@ class ScrimMatchController extends Controller
                     if($table[1]===NULL)  // extra team advances to next level automatically
                     {
                         $participans[] = [
-                            'id_scrim' => $table[0]['scrims_id'],
+                            // 'id_scrim' => $table[0]['scrims_id'],
                             'round' => $round,
                             'team1' => $table[0]['team_name'],
                             'team2' => '',
@@ -889,7 +889,7 @@ class ScrimMatchController extends Controller
                         $winner=0;
                     } else  {
                         $participans[] = [
-                            'id_scrim' => $table[0]['scrims_id'],
+                            // 'id_scrim' => $table[0]['scrims_id'],
                             'round' => $round,
                             'team1' => $table[0]['team_name'],
                             'team2' => $table[1]['team_name'],
