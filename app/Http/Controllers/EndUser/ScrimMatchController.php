@@ -861,7 +861,6 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            $totalParticipans = $teamMatch->count();
             $round=0;
             while(count($teamMatch)>1)
             {
@@ -905,7 +904,6 @@ class ScrimMatchController extends Controller
                 'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
-                'total_participans' => $totalParticipans,
                 'data' => $tables,
             ], 200);
         } catch (\Exception $e) {
