@@ -873,7 +873,7 @@ class ScrimMatchController extends Controller
                 // if($index<count($teamMatch)){// extra team, add to tables, but no opposing team
                 //     $tables[]=array($teamMatch[$index++],null);
                 // }
-                $teamMatch=array(); // clear out next round participants
+                // $teamMatch=array(); // clear out next round participants
                 // foreach($tables as $idx=>$table)
                 // {
                 //     $tbl=$idx+1;
