@@ -604,36 +604,29 @@ class ScrimMatchController extends Controller
                     'message' => 'Room must be locked'
                 ], 403);
             }
-            while($scrimMatch->count()>1)
+            while(count($scrimMatch)>1)
             {
                 $tables=array();  // Clear our tables
                 $index=0;
-                while(count($tables) < floor($scrimMatch->count()/2))  // want an even amount of tables
+                while(count($tables) < floor(count($scrimMatch)/2))  // want an even amount of tables
                     // $tables[]=array(
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
-                    if(isset($scrimMatch[$index]))
-                    {
-                        $this->scrimMatchDetail->insert([
-                            'scrims_id' => $scrim->id,
-                            'teams1_id' => $scrimMatch[$index++]->teams1_id,
-                            'teams2_id' => $scrimMatch[$index++]->teams2_id,
-                        ]);
-                        if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
-                        $this->scrimMatchDetail->insert([
-                            'scrims_id' => $scrim->id,
-                            'teams1_id' => $scrimMatch[$index++]->teams1_id,
-                            'teams2_id' => NULL,
-                        ]);
-                        }
-
-                    }
-
-
+                    $tables[]=[
+                        'scrims_id'=>$scrim->id,
+                        'teams1_id'=>$scrimMatch[$index++]->teams1_id,
+                        'teams2_id'=>$scrimMatch[$index++]->teams2_id,
+                    ];
+                if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
+                    $tables[]=[
+                        'scrims_id'=> $scrim->id,
+                        'teams1_id'=>$scrimMatch[$index++]->teams1_id,
+                        'teams2_id'=> NULL
+                    ];
+                }
                 $scrimMatch=array(); // clear out next round participants
             }
-
-            // $this->scrimMatchDetail->save($tables);
+            $this->scrimMatchDetail->saveMany($tables);
             event(new ScrimStart($scrimLock));
 
             return response()->json([
