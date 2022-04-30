@@ -886,6 +886,7 @@ class ScrimMatchController extends Controller
                 $result[] = [
                     'team1' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
                     ->where('scrim_matches.teams_id','=',$value->teams1_id)
+                    ->where('scrim_matches.scrims_id','=',$scrim->id)
                     ->select(
                         'scrim_matches.id',
                         'scrim_matches.teams_id',
@@ -895,6 +896,7 @@ class ScrimMatchController extends Controller
                         )->first(),
                     'team2' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
                     ->where('scrim_matches.teams_id','=',$value->teams2_id)
+                    ->where('scrim_matches.scrims_id','=',$scrim->id)
                     ->select(
                         'scrim_matches.id',
                         'scrim_matches.teams_id',
