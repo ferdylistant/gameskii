@@ -875,7 +875,6 @@ class ScrimMatchController extends Controller
                 $teamMatch=array(); // clear out next round participants
                 foreach($tables as $idx=>$table)
                 {
-                    $coba[] = $table;
                     $tbl=$idx+1;
                     if($table[1]===NULL)  // extra team advances to next level automatically
                     {
@@ -905,7 +904,7 @@ class ScrimMatchController extends Controller
                 'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
-                'data' => $coba,
+                'data' => $tbl,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
