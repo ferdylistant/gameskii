@@ -613,13 +613,13 @@ class ScrimMatchController extends Controller
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
                     $tables[]=[
-                        'scrims_id'=>$scrimMatch[$index++]->scrims_id,
+                        'scrims_id'=>$scrim->id,
                         'teams1_id'=>$scrimMatch[$index++]->teams1_id,
                         'teams2_id'=>$scrimMatch[$index++]->teams2_id,
                     ];
                 if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
                     $tables[]=[
-                        'scrims_id'=> $scrimMatch[$index++]->scrims_id,
+                        'scrims_id'=> $scrim->id,
                         'teams1_id'=>$scrimMatch[$index++]->teams1_id,
                         'teams2_id'=> NULL
                     ];
