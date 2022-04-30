@@ -590,11 +590,11 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            foreach ($scrimMatch as $match) {
-                $match->result = 'On Going';
-                $match->round = '1';
-                $match->save();
-            }
+            // foreach ($scrimMatch as $match) {
+            //     $match->result = 'On Going';
+            //     $match->round = '1';
+            //     $match->save();
+            // }
             $scrimLock = $this->scrim->where('id','=',$scrim->id)
             ->where('games_id','=',$scrim->games_id)
             ->where('result','=','Lock')->first();
@@ -613,7 +613,7 @@ class ScrimMatchController extends Controller
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
                     $tables[]=[
-                        'scrims_id'=>$scrim->id,
+                        'scrims_id'=>$scrimMatch[$index++]->scrims_id,
                         'teams1_id'=>$scrimMatch[$index++]->teams1_id,
                         'teams2_id'=>$scrimMatch[$index++]->teams2_id,
                     ];
