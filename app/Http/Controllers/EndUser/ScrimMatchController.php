@@ -590,11 +590,11 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            // foreach ($scrimMatch as $match) {
-            //     $match->result = 'On Going';
-            //     $match->round = '1';
-            //     $match->save();
-            // }
+            foreach ($scrimMatch as $match) {
+                $match->result = 'On Going';
+                $match->round = '1';
+                $match->save();
+            }
             $scrimLock = $this->scrim->where('id','=',$scrim->id)
             ->where('games_id','=',$scrim->games_id)
             ->where('result','=','Lock')->first();
@@ -612,26 +612,22 @@ class ScrimMatchController extends Controller
                     // $tables[]=array(
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
-                    $tables[]=[
-                        'scrims_id'=>$scrim->id,
-                        'teams1_id'=>$scrimMatch[$index++]->teams1_id,
-                        'teams2_id'=>$scrimMatch[$index++]->teams2_id,
-                    ];
+                    $this->scrimMatchDetail->insert([
+                        'scrims_id' => $scrim->id,
+                        'teams1_id' => $scrimMatch[$index++]->teams1_id,
+                        'teams2_id' => $scrimMatch[$index++]->teams2_id,
+                    ]);
                 if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
-                    $tables[]=[
-                        'scrims_id'=> $scrim->id,
-                        'teams1_id'=>$scrimMatch[$index++]->teams1_id,
-                        'teams2_id'=> NULL
-                    ];
+                    $this->scrimMatchDetail->insert([
+                        'scrims_id' => $scrim->id,
+                        'teams1_id' => $scrimMatch[$index++]->teams1_id,
+                        'teams2_id' => NULL,
+                    ]);
                 }
                 $scrimMatch=array(); // clear out next round participants
             }
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Match has been started',
-                'data' => $tables
-            ], 200);
-            $this->scrimMatchDetail->save($tables);
+
+            // $this->scrimMatchDetail->save($tables);
             event(new ScrimStart($scrimLock));
 
             return response()->json([
