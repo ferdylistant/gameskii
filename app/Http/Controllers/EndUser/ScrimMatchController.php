@@ -869,9 +869,9 @@ class ScrimMatchController extends Controller
                 $index=0;
                 while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
                     $tables[]=array($teamMatch[$index++],$teamMatch[$index++]);
-                if($index<count($teamMatch)){// extra team, add to tables, but no opposing team
+                if($index<count($teamMatch))// extra team, add to tables, but no opposing team
                     $tables[]=array($teamMatch[$index++],null);
-                }
+
                 $teamMatch=array(); // clear out next round participants
                 // foreach($tables as $idx=>$table)
                 // {
