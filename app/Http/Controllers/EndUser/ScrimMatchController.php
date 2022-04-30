@@ -612,18 +612,24 @@ class ScrimMatchController extends Controller
                     // $tables[]=array(
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
-                    $this->scrimMatchDetail->insert([
-                        'scrims_id' => $scrim->id,
-                        'teams1_id' => $scrimMatch[$index++]->teams1_id,
-                        'teams2_id' => $scrimMatch[$index++]->teams2_id,
-                    ]);
-                if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
-                    $this->scrimMatchDetail->insert([
-                        'scrims_id' => $scrim->id,
-                        'teams1_id' => $scrimMatch[$index++]->teams1_id,
-                        'teams2_id' => NULL,
-                    ]);
-                }
+                    if(!empty($scrimMatch[$index]))
+                    {
+                        $this->scrimMatchDetail->insert([
+                            'scrims_id' => $scrim->id,
+                            'teams1_id' => $scrimMatch[$index++]->teams1_id,
+                            'teams2_id' => $scrimMatch[$index++]->teams2_id,
+                        ]);
+                        if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
+                        $this->scrimMatchDetail->insert([
+                            'scrims_id' => $scrim->id,
+                            'teams1_id' => $scrimMatch[$index++]->teams1_id,
+                            'teams2_id' => NULL,
+                        ]);
+                        }
+
+                    }
+
+
                 $scrimMatch=array(); // clear out next round participants
             }
 
