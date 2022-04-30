@@ -19,6 +19,7 @@ use App\Models\ScrimProgress;
 use App\Events\AcceptReqScrim;
 use App\Events\ReadyRoomScrim;
 use App\Events\RejectReqScrim;
+use App\Models\ScrimMatchDetail;
 use App\Events\NotReadyRoomScrim;
 use App\Http\Controllers\Controller;
 
@@ -33,6 +34,7 @@ class ScrimMatchController extends Controller
         $this->scrimMatch = new ScrimMatch();
         $this->gameAccount = new GameAccount();
         $this->scrimProgress = new ScrimProgress();
+        $this->scrimMatchDetail = new ScrimMatchDetail();
     }
     public function joinRoom(Request $request, $idScrim)
     {
@@ -601,6 +603,18 @@ class ScrimMatchController extends Controller
                     'message' => 'Room must be locked'
                 ], 403);
             }
+            while(count($scrimMatch)>1)
+            {
+                $tables=array();  // Clear our tables
+                $index=0;
+                while(count($tables) < floor(count($scrimMatch)/2))  // want an even amount of tables
+                    $tables[]=array('scrims_id'=> $teamMatch[$index++]['scrims_id'],'teams1_id'=> $teamMatch[$index++]['teams_id'],'teams2_id' =>$teamMatch[$index++]['teams_id']);
+                if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
+                    $tables[]=array('scrims_id'=> $teamMatch[$index++]['scrims_id'],'teams1_id'=>$teamMatch[$index++]['teams_id'],'teams2_id'=>null);
+                }
+                $scrimMatch=array(); // clear out next round participants
+            }
+            $this->scrimMatchDetail->save($tables);
             event(new ScrimStart($scrimLock));
 
             return response()->json([
