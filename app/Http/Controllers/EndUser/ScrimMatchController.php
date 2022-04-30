@@ -582,7 +582,7 @@ class ScrimMatchController extends Controller
             }
             $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')
             ->where('result','=','Ready')
-            ->select('scrims_id','teams_id as teams1_id','teams_id as teams2_id')
+            ->select('scrims_id','teams_id as teams1_id','teams_id as teams2_id','result','round')
             ->get();
             if ($scrimMatch->count() < 1) {
                 return response()->json([

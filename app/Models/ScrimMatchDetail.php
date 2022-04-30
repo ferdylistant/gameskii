@@ -19,6 +19,8 @@ class ScrimMatchDetail extends Model implements AuthenticatableContract, Authori
         'scrims_id',
         'teams1_id',
         'teams2_id',
+        'created_at',
+        'updated_at',
     ];
     protected $hidden = [
         'id',
