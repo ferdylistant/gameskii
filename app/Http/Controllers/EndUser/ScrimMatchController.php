@@ -887,13 +887,8 @@ class ScrimMatchController extends Controller
                         ];
                         $winner=0;
                     } else  {
-                        $result[] = [
-                            'id_scrim' => $table[0]['scrims_id'],
-                            'round' => $round,
-                            'team1' => $table[0]['team_name'],
-                            'team2' => $table[1]['team_name'],
-                            'result' => '',
-                        ];
+                        $result[] = $table[1];
+
                         $winner=rand(0,1);    // Generate a winner
                     }
                     $teamMatch[]=$table[$winner];  // Add WInnerto next round
@@ -904,7 +899,7 @@ class ScrimMatchController extends Controller
                 'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
-                'data' => $tbl,
+                'data' => $result,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
