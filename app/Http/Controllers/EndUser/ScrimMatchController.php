@@ -612,7 +612,7 @@ class ScrimMatchController extends Controller
                     // $tables[]=array(
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
-                    if(!empty($scrimMatch[$index]))
+                    if(isset($scrimMatch[$index]))
                     {
                         $this->scrimMatchDetail->insert([
                             'scrims_id' => $scrim->id,
