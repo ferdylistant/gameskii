@@ -624,7 +624,7 @@ class ScrimMatchController extends Controller
                         'teams2_id'=> NULL
                     ];
                 }
-                $scrimMatch=array(); // clear out next round participants
+                // $scrimMatch=array(); // clear out next round participants
             }
             return response()->json([
                 'status' => 'success',
