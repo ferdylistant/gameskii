@@ -626,6 +626,11 @@ class ScrimMatchController extends Controller
                 }
                 $scrimMatch=array(); // clear out next round participants
             }
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Match has been started',
+                'data' => $tables
+            ], 200);
             $this->scrimMatchDetail->save($tables);
             event(new ScrimStart($scrimLock));
 
