@@ -904,7 +904,7 @@ class ScrimMatchController extends Controller
                 'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
-                'data' => $result,
+                'data' => $table,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
