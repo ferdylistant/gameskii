@@ -582,7 +582,7 @@ class ScrimMatchController extends Controller
             }
             $scrimMatch = $this->scrimMatch->where('scrims_id','=',$scrim->id)->where('status_match','=','1')
             ->where('result','=','Ready')
-            ->select('scrims_id','teams_id')
+            ->select('scrims_id','teams_id as teams1_id','teams_id as teams2_id')
             ->get();
             if ($scrimMatch->count() < 1) {
                 return response()->json([
@@ -614,13 +614,13 @@ class ScrimMatchController extends Controller
                     //     $scrimMatch[$index++]);
                     $tables[]=[
                         'scrims_id'=>$scrimMatch[$index++]->scrims_id,
-                        'teams1_id'=>$scrimMatch[$index++]->teams_id,
-                        'teams2_id'=>$scrimMatch[$index++]->teams_id,
+                        'teams1_id'=>$scrimMatch[$index++]->teams1_id,
+                        'teams2_id'=>$scrimMatch[$index++]->teams2_id,
                     ];
                 if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
                     $tables[]=[
                         'scrims_id'=> $scrimMatch[$index++]->scrims_id,
-                        'teams1_id'=>$scrimMatch[$index++]->teams_id,
+                        'teams1_id'=>$scrimMatch[$index++]->teams1_id,
                         'teams2_id'=> NULL
                     ];
                 }
