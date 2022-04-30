@@ -874,14 +874,7 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $teamMatch = $this->scrimMatchDetail->join('scrims','scrims.id','=','scrim_match_details.scrims_id')
-            ->join('scrim_matches','scrim_matches.scrims_id','=','scrims.id')
-            ->join('teams','scrim_matches.teams_id','=','teams.id')
-            ->where('scrim_match_details.scrims_id','=',$scrim->id)
-            ->where('scrim_matches.status_match','=','1')
-            ->where('scrim_matches.result','!=','Ready')
-            ->where('scrim_matches.result','!=','Not yet')
-            ->select('scrim_matches.teams_id','teams.name as team_name','scrim_matches.round','scrim_matches.result')
+            $teamMatch = $this->scrimMatchDetail->where('scrims_id', '=', $scrim->id)
             ->get();
             if ($teamMatch->count() == 0) {
                 return response()->json([
@@ -891,10 +884,24 @@ class ScrimMatchController extends Controller
             }
             foreach ($teamMatch as $value) {
                 $result[] = [
-                    'team_id' => $value->teams_id,
-                    'team_name' => $value->team_name,
-                    'round' => $value->round,
-                    'result' => $value->result
+                    'team1' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
+                    ->where('scrim_matches.teams_id','=',$value->teams1_id)
+                    ->select(
+                        'scrim_matches.id',
+                        'scrim_matches.teams_id',
+                        'teams.name as team_name',
+                        'scrim_matches.round',
+                        'scrim_matches.result',
+                        )->first(),
+                    'team2' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
+                    ->where('scrim_matches.teams_id','=',$value->teams2_id)
+                    ->select(
+                        'scrim_matches.id',
+                        'scrim_matches.teams_id',
+                        'teams.name as team_name',
+                        'scrim_matches.round',
+                        'scrim_matches.result',
+                        )->first(),
                 ];
 
             }
