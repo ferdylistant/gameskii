@@ -608,22 +608,19 @@ class ScrimMatchController extends Controller
                 $tables=array();  // Clear our tables
                 $index=0;
                 while(count($tables) < floor(count($scrimMatch)/2))  // want an even amount of tables
-                    $tables=array(
+                    $tables[]=array(
                         'scrims_id'=> $scrimMatch[$index++]['scrims_id'],
                         'teams1_id'=> $scrimMatch[$index++]['teams_id'],
                         'teams2_id' =>$scrimMatch[$index++]['teams_id']);
                 if($index<count($scrimMatch)){// extra team, add to tables, but no opposing team
-                    $tables=array(
+                    $tables[]=array(
                         'scrims_id'=> $scrimMatch[$index++]['scrims_id'],
                         'teams1_id'=>$scrimMatch[$index++]['teams_id'],
                         'teams2_id'=>null);
                 }
-                if(isset($tables)){
-                    $this->scrimMatchDetail->save($tables);
-                }
                 $scrimMatch=array(); // clear out next round participants
             }
-
+            $this->scrimMatchDetail->saveMany($tables);
             event(new ScrimStart($scrimLock));
 
             return response()->json([
