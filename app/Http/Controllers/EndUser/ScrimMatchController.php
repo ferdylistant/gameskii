@@ -604,11 +604,11 @@ class ScrimMatchController extends Controller
                     'message' => 'Room must be locked'
                 ], 403);
             }
-            while(count($scrimMatch)>1)
+            while($scrimMatch->count()>1)
             {
                 $tables=array();  // Clear our tables
                 $index=0;
-                while(count($tables) < floor(count($scrimMatch)/2))  // want an even amount of tables
+                while(count($tables) < floor($scrimMatch->count()/2))  // want an even amount of tables
                     // $tables[]=array(
                     //     $scrimMatch[$index++],
                     //     $scrimMatch[$index++]);
