@@ -619,8 +619,9 @@ class ScrimMatchController extends Controller
                         'teams2_id'=>null);
                 }
                 $scrimMatch=array(); // clear out next round participants
+                $this->scrimMatchDetail->save($tables);
             }
-            $this->scrimMatchDetail->save($tables);
+
             event(new ScrimStart($scrimLock));
 
             return response()->json([
