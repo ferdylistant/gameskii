@@ -873,38 +873,38 @@ class ScrimMatchController extends Controller
                 //     $tables[]=array($teamMatch[$index++],null);
                 // }
                 $teamMatch=array(); // clear out next round participants
-                // foreach($tables as $idx=>$table)
-                // {
-                //     $tbl=$idx+1;
-                //     if($table[1]===NULL)  // extra team advances to next level automatically
-                //     {
-                //         $result[] = [
-                //             'id_scrim' => $table[0]['scrims_id'],
-                //             'round' => $round,
-                //             'team1' => $table[0]['team_name'],
-                //             'team2' => '',
-                //             'result' => '',
-                //         ];
-                //         $winner=0;
-                //     } else  {
-                //         $result[] = [
-                //             'id_scrim' => $table[0]['scrims_id'],
-                //             'round' => $round,
-                //             'team1' => $table[0]['team_name'],
-                //             'team2' => $table[1]['team_name'],
-                //             'result' => '',
-                //         ];
-                //         $winner=rand(0,1);    // Generate a winner
-                //     }
-                //     $teamMatch[]=$table[$winner];  // Add WInnerto next round
-                // }
+                foreach($tables as $idx=>$table)
+                {
+                    $tbl=$idx+1;
+                    if($table[1]===NULL)  // extra team advances to next level automatically
+                    {
+                        $result[] = [
+                            'id_scrim' => $table[0]['scrims_id'],
+                            'round' => $round,
+                            'team1' => $table[0]['team_name'],
+                            'team2' => '',
+                            'result' => '',
+                        ];
+                        $winner=0;
+                    } else  {
+                        $result[] = [
+                            'id_scrim' => $table[0]['scrims_id'],
+                            'round' => $round,
+                            'team1' => $table[0]['team_name'],
+                            'team2' => $table[1]['team_name'],
+                            'result' => '',
+                        ];
+                        $winner=rand(0,1);    // Generate a winner
+                    }
+                    $teamMatch[]=$table[$winner];  // Add WInnerto next round
+                }
             }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
-                'data' => $tables,
+                'data' => $result,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
