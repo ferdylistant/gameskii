@@ -887,7 +887,7 @@ class ScrimMatchController extends Controller
                         ];
                         $winner=0;
                     } else  {
-                        $result[] = $table[1];
+                        $result[] = $table[0];
 
                         $winner=rand(0,1);    // Generate a winner
                     }
