@@ -874,15 +874,14 @@ class ScrimMatchController extends Controller
                     'message' => 'Scrim not found'
                 ], 404);
             }
-            $teamMatch = $this->scrimMatch->join('scrims', 'scrims.id', '=', 'scrim_matches.scrims_id')
-            ->join('teams', 'scrim_matches.teams_id', '=', 'teams.id')
-            ->join('team_players', 'teams.id', '=', 'team_players.teams_id')
-            ->where('scrims.games_id', '=', $sessGame['game']['id'])
-            ->where('scrim_matches.scrims_id', '=', $scrim->id)
-            ->where('scrim_matches.status_match', '=', '1')
-            ->where('scrim_matches.result', '!=', 'Not yet')
-            ->where('team_players.status', '=', '1')
-            ->select('scrim_matches.id', 'scrim_matches.teams_id','teams.name as team_name','scrim_matches.round','scrim_matches.result')
+            $teamMatch = $this->scrimMatchDetail->join('scrims','scrims.id','=','scrim_match_details.scrims_id')
+            ->join('scrim_matches','scrim_matches.scrims_id','=','scrims.id')
+            ->join('teams','scrim_matches.teams_id','=','teams.id')
+            ->where('scrim_match_details.scrims_id','=',$scrim->id)
+            ->where('scrim_matches.status_match','=','1')
+            ->where('scrim_matches.result','!=','Ready')
+            ->where('scrim_matches.result','!=','Not yet')
+            ->select('scrim_matches.teams_id','teams.name as team_name','scrim_matches.round','scrim_matches.result')
             ->get();
             if ($teamMatch->count() == 0) {
                 return response()->json([
@@ -890,45 +889,54 @@ class ScrimMatchController extends Controller
                     'message' => 'Team match not found'
                 ], 404);
             }
-            $round=0;
-            while(count($teamMatch)>1)
-            {
-                $round++;  // Increment our round
-                $tables=array();  // Clear our tables
-                $index=0;
-                while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
-                    $tables[]=array($teamMatch[$index++],$teamMatch[$index++]);
-                if($index<count($teamMatch))// extra team, add to tables, but no opposing team
-                    $tables[]=array($teamMatch[$index++],null);
+            foreach ($teamMatch as $value) {
+                $result[] = [
+                    'team_id' => $value->teams_id,
+                    'team_name' => $value->team_name,
+                    'round' => $value->round,
+                    'result' => $value->result
+                ];
 
-                $teamMatch=array(); // clear out next round participants
-                // foreach($tables as $idx=>$table)
-                // {
-                //     $tbl=$idx+1;
-                //     if($table[1]===NULL)  // extra team advances to next level automatically
-                //     {
-                //         $result[] = [
-                //             'id_scrim' => $table[0]['scrims_id'],
-                //             'round' => $round,
-                //             'team1' => $table[0]['team_name'],
-                //             'team2' => '',
-                //             'result' => '',
-                //         ];
-                //         $winner=0;
-                //     } else  {
-                //         $result[] = $table[0];
-
-                //         $winner=rand(0,1);    // Generate a winner
-                //     }
-                //     $teamMatch[]=$table[$winner];  // Add WInnerto next round
-                // }
             }
+            // $round=0;
+            // while(count($teamMatch)>1)
+            // {
+            //     $round++;  // Increment our round
+            //     $tables=array();  // Clear our tables
+            //     $index=0;
+            //     while(count($tables) < floor(count($teamMatch)/2))  // want an even amount of tables
+            //         $tables[]=array($teamMatch[$index++],$teamMatch[$index++]);
+            //     if($index<count($teamMatch))// extra team, add to tables, but no opposing team
+            //         $tables[]=array($teamMatch[$index++],null);
+
+            //     $teamMatch=array(); // clear out next round participants
+            //     // foreach($tables as $idx=>$table)
+            //     // {
+            //     //     $tbl=$idx+1;
+            //     //     if($table[1]===NULL)  // extra team advances to next level automatically
+            //     //     {
+            //     //         $result[] = [
+            //     //             'id_scrim' => $table[0]['scrims_id'],
+            //     //             'round' => $round,
+            //     //             'team1' => $table[0]['team_name'],
+            //     //             'team2' => '',
+            //     //             'result' => '',
+            //     //         ];
+            //     //         $winner=0;
+            //     //     } else  {
+            //     //         $result[] = $table[0];
+
+            //     //         $winner=rand(0,1);    // Generate a winner
+            //     //     }
+            //     //     $teamMatch[]=$table[$winner];  // Add WInnerto next round
+            //     // }
+            // }
             return response()->json([
                 'status' => 'success',
                 'message' => 'Scheme bracket',
                 'id_scrim' => $scrim->id,
                 'name_party' => $scrim->name_party,
-                'data' => $tables,
+                'data' => $result,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
