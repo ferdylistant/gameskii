@@ -20,6 +20,7 @@ use App\Events\AcceptReqTournament;
 use App\Events\ReadyRoomTournament;
 use App\Events\RejectReqTournament;
 use App\Http\Controllers\Controller;
+use App\Models\TournamentMatchDetail;
 use App\Events\NotReadyRoomTournament;
 
 class TournamentMatchController extends Controller
@@ -33,6 +34,7 @@ class TournamentMatchController extends Controller
         $this->rank = new Rank();
         $this->teamPlayer = new TeamPlayer();
         $this->eo = new EoTournament();
+        $this->tourMatchDetail = new TournamentMatchDetail();
     }
     public function joinRoom(Request $request,$idTournament)
     {
@@ -684,6 +686,33 @@ class TournamentMatchController extends Controller
                     "message" => "Room must be locked"
                 ], 403);
             }
+            while(count($tournamentMatch)>1)
+            {
+                $tables=array();  // Clear our tables
+                $index=0;
+                while(count($tables) < floor(count($tournamentMatch)/2))  // want an even amount of tables
+                    // $tables[]=array(
+                    //     $scrimMatch[$index++],
+                    //     $scrimMatch[$index++]);
+                    $tables[]=[
+                        'tournaments_id'=>$eo->id,
+                        'teams1_id'=>$tournamentMatch[$index++]->teams_id,
+                        'teams2_id'=>$tournamentMatch[$index++]->teams_id,
+                        'created_at'=>Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'updated_at'=>Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    ];
+                if($index < count($tournamentMatch)){// extra team, add to tables, but no opposing team
+                    $tables[]=[
+                        'tournaments_id'=> $eo->id,
+                        'teams1_id'=>$tournamentMatch[$index++]->teams_id,
+                        'teams2_id'=> NULL,
+                        'created_at'=>Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                        'updated_at'=>Carbon::now('Asia/Jakarta')->toDateTimeString(),
+                    ];
+                }
+                $tournamentMatch=array(); // clear out next round participants
+            }
+            $this->tourMatchDetail->insert($tables);
             event(new TournamentStart($tournamentLock));
 
             return response()->json([

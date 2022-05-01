@@ -22,6 +22,7 @@ use App\Events\RejectReqScrim;
 use App\Models\ScrimMatchDetail;
 use App\Events\NotReadyRoomScrim;
 use App\Http\Controllers\Controller;
+use App\Events\ScrimMatchDetail as MatchDetailEvent;
 
 class ScrimMatchController extends Controller
 {
@@ -629,7 +630,8 @@ class ScrimMatchController extends Controller
                 }
                 $scrimMatch=array(); // clear out next round participants
             }
-            $this->scrimMatchDetail->insert($tables);
+            // $this->scrimMatchDetail->insert($tables);
+            event(new MatchDetailEvent($tables));
             event(new ScrimStart($scrimLock));
 
             return response()->json([
