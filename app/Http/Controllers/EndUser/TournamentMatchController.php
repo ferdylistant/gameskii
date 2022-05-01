@@ -150,7 +150,7 @@ class TournamentMatchController extends Controller
                 'tournaments_id' => $tournament->id,
                 'teams_id' => $teamJoin->teams_id,
                 'result' => 'Not yet',
-                'round' => 'Not yet',
+                'round' => '0',
                 'status_match' => '0',
                 'created_at' => Carbon::now('Asia/Jakarta')->toDateTimeString(),
                 'updated_at' => Carbon::now('Asia/Jakarta')->toDateTimeString()
@@ -676,6 +676,7 @@ class TournamentMatchController extends Controller
             }
             foreach ($tournamentMatch as $match) {
                 $match->result = 'On Going';
+                $match->round = '1';
                 $match->save();
             }
             $tournamentLock = $this->tournament->where('id','=',$tournament->id)
