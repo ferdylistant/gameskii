@@ -13,6 +13,7 @@ use App\Models\EoTournament;
 use Illuminate\Http\Request;
 use App\Events\JoinTournament;
 use App\Events\TournamentLock;
+use App\Events\TourMatchDetail;
 use App\Events\TournamentStart;
 use App\Models\TournamentMatch;
 use App\Events\TournamentUnlock;
@@ -712,7 +713,8 @@ class TournamentMatchController extends Controller
                 }
                 $tournamentMatch=array(); // clear out next round participants
             }
-            $this->tourMatchDetail->insert($tables);
+            // $this->tourMatchDetail->insert($tables);
+            event(new TourMatchDetail($tables));
             event(new TournamentStart($tournamentLock));
 
             return response()->json([
