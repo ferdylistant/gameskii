@@ -894,6 +894,7 @@ class ScrimMatchController extends Controller
                         'scrim_matches.teams_id',
                         'teams.name as team_name',
                         'scrim_matches.round',
+                        'scrim_matches.score',
                         'scrim_matches.result',
                         )->first(),
                     'team2' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
@@ -904,6 +905,7 @@ class ScrimMatchController extends Controller
                         'scrim_matches.teams_id',
                         'teams.name as team_name',
                         'scrim_matches.round',
+                        'scrim_matches.score',
                         'scrim_matches.result',
                         )->first(),
                 ];

@@ -82,6 +82,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
             $router->post('/match-tournament-ready/{idTournament}', 'EndUser\TournamentMatchController@readyToPlay');
             $router->post('/match-tournament-not-ready/{idTournament}', 'EndUser\TournamentMatchController@notReadyToPlay');
             $router->post('/start-tournament-room/{idTournament}', 'EndUser\TournamentMatchController@startMatchTournament');
+            $router->get('/get-bracket-tournament/{idTournament}', 'EndUser\TournamentMatchController@getBracketTournament');
             $router->post('/logout', 'EndUser\Auth@logout');
         });
         //Auth

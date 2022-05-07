@@ -855,4 +855,82 @@ class TournamentMatchController extends Controller
             ]);
         }
     }
+    public function getBracketTournament(Request $request,$idTournament)//for Member User
+    {
+        try {
+            $roles_id = auth('user')->user()->roles_id;
+            if ($roles_id != '3') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Your role is not allowed to access this resource'
+                ], 403);
+            }
+            $sessGame = $request->session()->get('gamedata');
+            $sessGameAccount = $request->session()->get('game_account');
+            if (($sessGame == null) || ($sessGameAccount == null)) {
+                $game_account = $this->gameAccount->where('users_id', auth('user')->user()->id)->first();
+                $game_account->is_online = 0;
+                $game_account->save();
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Session timeout'
+                ], 408);
+            }
+            $tournament = $this->tournament->where('id', '=', $idTournament)->where('games_id', '=', $sessGame['game']['id'])->first();
+            if ($tournament == null) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Scrim not found'
+                ], 404);
+            }
+            $teamMatch = $this->tourMatchDetail->where('tournaments_id', '=', $tournament->id)
+            ->get();
+            if ($teamMatch->count() == 0) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Team match not found'
+                ], 404);
+            }
+            foreach ($teamMatch as $value) {
+                $result[] = [
+                    'team1' => $this->tournamentMatch->join('teams','tournament_matches.teams_id','=','teams.id')
+                    ->where('tournament_matches.teams_id','=',$value->teams1_id)
+                    ->where('tournament_matches.tournaments_id','=',$tournament->id)
+                    ->select(
+                        'tournament_matches.id',
+                        'tournament_matches.teams_id',
+                        'teams.name as team_name',
+                        'tournament_matches.round',
+                        'tournament_matches.score',
+                        'tournament_matches.result',
+                        )->first(),
+                    'team2' => $this->tournamentMatch->join('teams','tournament_matches.teams_id','=','teams.id')
+                    ->where('tournament_matches.teams_id','=',$value->teams2_id)
+                    ->where('tournament_matches.tournaments_id','=',$tournament->id)
+                    ->select(
+                        'tournament_matches.id',
+                        'tournament_matches.teams_id',
+                        'teams.name as team_name',
+                        'tournament_matches.round',
+                        'tournament_matches.score',
+                        'tournament_matches.result',
+                        )->first(),
+                ];
+
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Scheme bracket',
+                'id_scrim' => $tournament->id,
+                'name_party' => $tournament->name_tournament,
+                'data' => $result,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
 }
