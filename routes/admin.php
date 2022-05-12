@@ -33,5 +33,6 @@ $router->group(['prefix' => 'api/admin'], function () use ($router) {
         $router->get('/get-all-teams-by-game/{idGame}', 'Admin\TeamController@getTeams');
         $router->get('/get-team-detail/{idGame}/{idTeam}', 'Admin\TeamController@getTeamDetail');
         $router->get('/get-scrim-match-report-progress/{idGame}', 'Admin\ScrimProgressController@getScrimProgress');
+        $router->get('/get-scrim-match-report-progress-detail/{idScrimProgress}', 'Admin\ScrimProgressController@showMatchBattle');
     });
 });
