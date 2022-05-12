@@ -127,7 +127,8 @@ class ScrimProgressController extends Controller
                 ], 404);
             }
             $teamMatch = $this->scrimMatchDetail->where('scrims_id', '=', $dataScrimProgress->scrims_id)
-            ->where('teams_id', '=', $dataScrimProgress->teams_id)
+            ->where('teams1_id', '=', $dataScrimProgress->teams_id)
+            ->orWhere('teams2_id', '=', $dataScrimProgress->teams_id)
             ->first();
             if ($teamMatch == NULL) {
                 return response()->json([
