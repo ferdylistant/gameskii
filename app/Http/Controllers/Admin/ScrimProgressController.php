@@ -116,8 +116,9 @@ class ScrimProgressController extends Controller
                 ], 403);
             }
             $dataScrimProgress = $this->scrimProg->join('scrims', 'scrims.id', '=', 'scrim_progress.scrims_id')
+            ->join('scrim_matches', 'scrim_matches.id', '=', 'scrim_progress.scrim_matches_id')
             ->where('scrim_progress.id', $idScrimProgress)
-            ->select('scrim_progress.*','scrims.name_party')
+            ->select('scrim_progress.*','scrims.name_party','scrim_matches.teams_id')
             ->first();
             if ($dataScrimProgress == null) {
                 return response()->json([
@@ -126,40 +127,38 @@ class ScrimProgressController extends Controller
                 ], 404);
             }
             $teamMatch = $this->scrimMatchDetail->where('scrims_id', '=', $dataScrimProgress->scrims_id)
-            ->get();
-            if ($teamMatch->count() == 0) {
+            ->where('teams_id', '=', $dataScrimProgress->teams_id)
+            ->first();
+            if ($teamMatch == NULL) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Team match not found'
                 ], 404);
             }
-            foreach ($teamMatch as $value) {
-                $result[] = [
-                    'team1' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
-                    ->where('scrim_matches.teams_id','=',$value->teams1_id)
-                    ->where('scrim_matches.scrims_id','=',$dataScrimProgress->scrims_id)
-                    ->select(
-                        'scrim_matches.id',
-                        'scrim_matches.teams_id',
-                        'teams.name as team_name',
-                        'scrim_matches.round',
-                        'scrim_matches.score',
-                        'scrim_matches.result',
-                        )->first(),
-                    'team2' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
-                    ->where('scrim_matches.teams_id','=',$value->teams2_id)
-                    ->where('scrim_matches.scrims_id','=',$dataScrimProgress->scrims_id)
-                    ->select(
-                        'scrim_matches.id',
-                        'scrim_matches.teams_id',
-                        'teams.name as team_name',
-                        'scrim_matches.round',
-                        'scrim_matches.score',
-                        'scrim_matches.result',
-                        )->first(),
-                ];
-
-            }
+            $result = [
+                'team1' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
+                ->where('scrim_matches.teams_id','=',$teamMatch->teams1_id)
+                ->where('scrim_matches.scrims_id','=',$dataScrimProgress->scrims_id)
+                ->select(
+                    'scrim_matches.id',
+                    'scrim_matches.teams_id',
+                    'teams.name as team_name',
+                    'scrim_matches.round',
+                    'scrim_matches.score',
+                    'scrim_matches.result',
+                    )->first(),
+                'team2' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
+                ->where('scrim_matches.teams_id','=',$teamMatch->teams2_id)
+                ->where('scrim_matches.scrims_id','=',$dataScrimProgress->scrims_id)
+                ->select(
+                    'scrim_matches.id',
+                    'scrim_matches.teams_id',
+                    'teams.name as team_name',
+                    'scrim_matches.round',
+                    'scrim_matches.score',
+                    'scrim_matches.result',
+                    )->first(),
+            ];
             return response()->json([
                 'status' => 'success',
                 'message' => 'Scheme bracket',
