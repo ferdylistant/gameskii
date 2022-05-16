@@ -117,8 +117,9 @@ class ScrimProgressController extends Controller
             }
             $dataScrimProgress = $this->scrimProg->join('scrims', 'scrims.id', '=', 'scrim_progress.scrims_id')
             ->join('scrim_matches', 'scrim_matches.id', '=', 'scrim_progress.scrim_matches_id')
+            ->join('teams', 'teams.id', '=', 'scrim_matches.teams_id')
             ->where('scrim_progress.id', $idScrimProgress)
-            ->select('scrim_progress.*','scrims.name_party','scrim_matches.teams_id')
+            ->select('scrim_progress.*','scrims.name_party','scrim_matches.teams_id','teams.name as team_name')
             ->first();
             if ($dataScrimProgress == null) {
                 return response()->json([
@@ -139,7 +140,7 @@ class ScrimProgressController extends Controller
             $result = [
                 'scrim_match_reporter' => [
                     'id_scrim_progress' => $dataScrimProgress->id,
-                    'team_name' => $dataScrimProgress->name_party,
+                    'team_name' => $dataScrimProgress->team_name,
                     'round' => $teamMatch->round,
                     'result_match' => $teamMatch->result,
                     'total_kills' => $teamMatch->total_kills,
