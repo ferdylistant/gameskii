@@ -137,6 +137,17 @@ class ScrimProgressController extends Controller
                 ], 404);
             }
             $result = [
+                'scrim_match_reporter' => [
+                    'id_scrim_progress' => $dataScrimProgress->id,
+                    'team_name' => $dataScrimProgress->name_party,
+                    'round' => $teamMatch->round,
+                    'result_match' => $teamMatch->result,
+                    'total_kills' => $teamMatch->total_kills,
+                    'screenshot' => URL::to('/api/picture-scrim-progress/'.$dataScrimProgress->screenshot),
+                    'status_action' => $dataScrimProgress->status_action,
+                    'note_action' => $dataScrimProgress->note_action,
+                    'created_at' => $dataScrimProgress->created_at,
+                ],
                 'team1' => $this->scrimMatch->join('teams','scrim_matches.teams_id','=','teams.id')
                 ->where('scrim_matches.teams_id','=',$teamMatch->teams1_id)
                 ->where('scrim_matches.scrims_id','=',$dataScrimProgress->scrims_id)
