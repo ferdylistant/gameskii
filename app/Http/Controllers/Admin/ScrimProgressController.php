@@ -141,9 +141,9 @@ class ScrimProgressController extends Controller
                 'scrim_match_reporter' => [
                     'id_scrim_progress' => $dataScrimProgress->id,
                     'team_name' => $dataScrimProgress->team_name,
-                    'round' => $teamMatch->round,
-                    'result_match' => $teamMatch->result,
-                    'total_kills' => $teamMatch->total_kills,
+                    'round' => $dataScrimProgress->round,
+                    'result_match' => $dataScrimProgress->result,
+                    'total_kills' => $dataScrimProgress->total_kills,
                     'screenshot' => URL::to('/api/picture-scrim-progress/'.$dataScrimProgress->screenshot),
                     'status_action' => $dataScrimProgress->status_action,
                     'note_action' => $dataScrimProgress->note_action,
